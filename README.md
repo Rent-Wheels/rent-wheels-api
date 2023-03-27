@@ -1,6 +1,6 @@
 # Car Rental System Api
 
-`This is the official documentation of the car rental api created for the car rental system app.`
+This is the official documentation of the car rental api created for the car rental system app.
 
 <!-- ## Base URL
 
