@@ -1,0 +1,19 @@
+{
+  "name": "car-rental-system-api",
+  "version": "1.0.0",
+  "description": " Backend for the car rental system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bra-alex/car-rental-system-api.git"
+  },
+  "author": "Alexander Asiamah Boakye",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bra-alex/car-rental-system-api/issues"
+  },
+  "homepage": "https://github.com/bra-alex/car-rental-system-api#readme"
+}
