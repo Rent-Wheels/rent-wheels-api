@@ -4,6 +4,7 @@
   "description": " Backend for the car rental system",
   "main": "server.js",
   "scripts": {
+    "watch": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/bra-alex/car-rental-system-api/issues"
   },
-  "homepage": "https://github.com/bra-alex/car-rental-system-api#readme"
+  "homepage": "https://github.com/bra-alex/car-rental-system-api#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
 }
