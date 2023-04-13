@@ -3,8 +3,12 @@ import { Auth } from '../models/dto/userInputs'
 import UserModel from '../models/user.mongo'
 
 async function createAuth(authDetails: Auth) {
-  const auth = AuthModel.create(authDetails)
-  return auth
+  try {
+    const auth = AuthModel.create(authDetails)
+    return auth
+  } catch (e: any) {
+    throw new Error(e)
+  }
 }
 
 async function login({ email, password }: { email: string; password: string }) {
@@ -15,7 +19,7 @@ async function login({ email, password }: { email: string; password: string }) {
   const isValid = await auth.comparePassword(password)
 
   if (!isValid) throw new Error('Invalid email or password')
- 
+
   return await UserModel.findOne({ email })
 }
 

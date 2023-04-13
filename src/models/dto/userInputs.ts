@@ -14,6 +14,7 @@ interface SignUpDetails {
   name: string
   age: number
   phoneNumber: string
+  password: string
   email: string
   placeOfResidence: {
     lat: string

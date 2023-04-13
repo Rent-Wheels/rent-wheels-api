@@ -1,11 +1,9 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
+
+import { createUserHandler } from '../controllers/user.controller'
 
 const userRoute = express.Router()
 
-userRoute.post('/create-user', (req: Request, res: Response) => {
-  const body = req.body
-
-  res.status(201).json(body)
-})
+userRoute.post('/create-user', createUserHandler)
 
 export default userRoute
