@@ -16,11 +16,13 @@ interface SignUpDetails {
   phoneNumber: string
   password: string
   email: string
-  placeOfResidence: {
-    lat: string
-    long: string
-  }
+  placeOfResidence: Location
   identificationCard: string
+}
+
+type Location = {
+  lat: string
+  long: string
 }
 
 export { Auth, SignUpDetails }

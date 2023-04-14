@@ -8,7 +8,7 @@ dotenv.config({ path: __dirname + '/.env' })
 
 const server = http.createServer(app)
 
-server.listen(3000, async () => {
+server.listen(+(process.env.PORT ?? 3000), async () => {
   console.log('Connected')
   await mongoConnect()
 })
