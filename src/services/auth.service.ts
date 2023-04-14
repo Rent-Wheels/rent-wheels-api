@@ -1,6 +1,6 @@
+import UserModel from '../models/user.mongo'
 import AuthModel from '../models/auth.mongo'
 import { Auth } from '../models/dto/userInputs'
-import UserModel from '../models/user.mongo'
 
 async function createAuth(authDetails: Auth) {
   try {

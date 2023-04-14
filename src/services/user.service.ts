@@ -1,4 +1,4 @@
-import Roles from '../models/roles'
+import { Roles } from '../models/enums'
 import UserModel from '../models/user.mongo'
 import { SignUpDetails } from '../models/dto/userInputs'
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import Roles from '../roles'
+import { Roles } from '../enums'
 
 interface AuthDetails {
   email: string
