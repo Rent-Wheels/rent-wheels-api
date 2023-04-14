@@ -29,7 +29,18 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   identificationCard: String,
-  reservations: [mongoose.Types.ObjectId],
+  reservations: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Reservation',
+    },
+  ],
+  cars: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Car',
+    },
+  ],
 })
 
 const UserModel = mongoose.model('User', userSchema)
