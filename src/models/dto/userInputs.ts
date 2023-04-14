@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 
+import Roles from '../roles'
+
 interface AuthDetails {
   email: string
   password: string
@@ -16,6 +18,7 @@ interface SignUpDetails {
   phoneNumber: string
   password: string
   email: string
+  role: Roles
   placeOfResidence: Location
   identificationCard: string
 }

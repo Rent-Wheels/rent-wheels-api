@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     lat: String,
     long: String,
   },
+  role: {
+    type: Number,
+    required: true,
+  },
   identificationCard: String,
   reservations: [mongoose.Types.ObjectId],
 })
