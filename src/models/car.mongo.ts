@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { CarDetails } from './dto/userInputs'
 
 const carSchema = new mongoose.Schema({
   owner: {
@@ -55,6 +56,7 @@ const carSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Reservation',
       },
+      default: [],
     },
   ],
   maxDuration: {
@@ -71,6 +73,6 @@ const carSchema = new mongoose.Schema({
   },
 })
 
-const CarModel = mongoose.model('Car', carSchema)
+const CarModel = mongoose.model<CarDetails>('Car', carSchema)
 
 export default CarModel

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { Roles } from '../enums'
+import { Availability, CarType, Condition, Plan, Roles } from '../enums'
 
 interface AuthDetails {
   email: string
@@ -33,9 +33,31 @@ interface UserDetails {
   placeOfResidence: Location
 }
 
+interface CarDetails extends mongoose.Document {
+  owner: string
+  make: string
+  model: string
+  capacity: number
+  yearOfManufacture: string
+  registrationNumber: string
+  condition: Condition
+  rate: number
+  plan: Plan
+  type: CarType
+  availability: Availability
+  rentalHistory: Reservation[]
+  maxDuration: number
+  description: string
+  terms: string
+}
+
 type Location = {
   lat: string
   long: string
 }
 
-export { Auth, SignUpDetails, UserDetails }
+type Reservation = {
+  reservationId: string
+}
+
+export { Auth, SignUpDetails, UserDetails, CarDetails }
