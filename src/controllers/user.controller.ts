@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 
-import { createUser } from '../services/user.service'
 import { createAuth, login } from '../services/auth.service'
-import { Auth, SignUpDetails } from '../models/dto/userInputs'
+import { createUser, updateUser } from '../services/user.service'
+import { Auth, SignUpDetails, UserDetails } from '../models/dto/userInputs'
 
 async function createUserHandler(req: Request, res: Response) {
   try {
@@ -41,4 +41,20 @@ async function loginHandler(req: Request, res: Response) {
   }
 }
 
-export { createUserHandler, loginHandler }
+async function updateUserHandler(req: Request, res: Response) {
+  try {
+    const id = req.params.userId
+
+    const userDetails = req.body as UserDetails
+
+    userDetails.id = id
+
+    const updatedUser = await updateUser(userDetails)
+
+    return res.status(200).json(updatedUser)
+  } catch (e: any) {
+    return res.status(400).json(e.message)
+  }
+}
+
+export { createUserHandler, loginHandler, updateUserHandler }

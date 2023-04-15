@@ -12,15 +12,25 @@ interface Auth extends AuthDetails, mongoose.Document {
 }
 
 interface SignUpDetails {
-  profilePicture: string
-  name: string
-  age: number
-  phoneNumber: string
-  password: string
-  email: string
+  dob: Date
   role: Roles
-  placeOfResidence: Location
+  name: string
+  email: string
+  password: string
+  phoneNumber: string
+  profilePicture: string
   identificationCard: string
+  placeOfResidence: Location
+}
+
+interface UserDetails {
+  dob: Date
+  id: string
+  name: string
+  email: string
+  phoneNumber: string
+  profilePicture: string
+  placeOfResidence: Location
 }
 
 type Location = {
@@ -28,4 +38,4 @@ type Location = {
   long: string
 }
 
-export { Auth, SignUpDetails }
+export { Auth, SignUpDetails, UserDetails }
