@@ -21,6 +21,7 @@ interface SignUpDetails {
   profilePicture: string
   identificationCard: string
   placeOfResidence: Location
+  cars?: string[]
 }
 
 interface UserDetails {

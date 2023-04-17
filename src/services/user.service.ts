@@ -19,4 +19,15 @@ async function updateUser(userDetails: UserDetails) {
   }
 }
 
-export { createUser, updateUser }
+async function createRenter(userDetails: SignUpDetails) {
+  try {
+    userDetails.role = Roles.Renter
+    userDetails.cars = []
+
+    return await UserModel.create(userDetails)
+  } catch (e: any) {
+    throw new Error(e)
+  }
+}
+
+export { createUser, updateUser, createRenter }
