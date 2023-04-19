@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
-import { availableCars } from '../services/cars.service'
+import { addCar, availableCars } from '../services/cars.service'
+import { CarDetails } from '../models/dto/userInputs'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -10,4 +11,17 @@ async function availableCarsHandler(_req: Request, res: Response) {
   }
 }
 
-export { availableCarsHandler }
+async function addCarHandler(req: Request, res: Response) {
+  try {
+    const carDetails = req.body as CarDetails
+    carDetails.owner = req.params.userId
+
+    const car = await addCar(carDetails)
+
+    return res.status(201).json(car)
+  } catch (e: any) {
+    return res.sendStatus(400)
+  }
+}
+
+export { availableCarsHandler, addCarHandler }

@@ -1,8 +1,9 @@
 import express from 'express'
-import { availableCarsHandler } from '../controllers/car.controller'
+import { addCarHandler, availableCarsHandler } from '../controllers/car.controller'
 
 const carsRoute = express.Router()
 
+carsRoute.post('/', addCarHandler)
 carsRoute.get('/available-cars', availableCarsHandler)
 
 export default carsRoute
