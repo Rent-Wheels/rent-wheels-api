@@ -11,4 +11,7 @@ async function addCar(carDetails: CarDetails) {
   return car
 }
 
-export { availableCars, addCar }
+async function updateCar({ carId, carDetails }: { carId: string; carDetails: CarDetails }) {
+  return await CarModel.findOneAndUpdate({ _id: carId }, carDetails)
+}
+export { availableCars, addCar, updateCar }
