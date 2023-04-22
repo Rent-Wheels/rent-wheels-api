@@ -8,14 +8,17 @@ import { createUser, updateUser } from '../services/user.service'
 import { CreateUserInput, LoginInput, UpdateUserInput } from '../schema/user.schema'
 
 async function createUserHandler(
-  req: Request<Record<string, never>, Record<string, never>, CreateUserInput>,
+  req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
   res: Response,
 ) {
   try {
-    const signUpDetails = req.body.user as User
+    const signUpDetails = req.body as User
     signUpDetails.role = Roles.User
 
-    const auth = await createAuth(req.body.auth as Auth)
+    const auth = await createAuth({
+      email: signUpDetails.email,
+      password: signUpDetails.password,
+    } as Auth)
 
     if (!auth) throw new Error('Could not create user')
 
@@ -39,7 +42,7 @@ async function createUserHandler(
 }
 
 async function loginHandler(
-  req: Request<Record<string, never>, Record<string, never>, LoginInput['auth']>,
+  req: Request<Record<string, never>, Record<string, never>, LoginInput['body']>,
   res: Response,
 ) {
   try {
@@ -59,7 +62,7 @@ async function loginHandler(
 }
 
 async function updateUserHandler(
-  req: Request<UpdateUserInput['params'], Record<string, never>, UpdateUserInput['user']>,
+  req: Request<UpdateUserInput['params'], Record<string, never>, UpdateUserInput['body']>,
   res: Response,
 ) {
   try {

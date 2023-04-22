@@ -11,7 +11,7 @@ import { createCarSchema, updateCarSchema } from '../schema/car.schema'
 
 const carsRoute = express.Router()
 
-carsRoute.get('/available-cars', availableCarsHandler)
+carsRoute.get('/available', requireUser, availableCarsHandler)
 carsRoute.post('/', [requireUser, validateInput(createCarSchema)], addCarHandler)
 carsRoute.patch('/:carId/', [requireUser, validateInput(updateCarSchema)], updateCarHandler)
 

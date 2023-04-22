@@ -37,12 +37,15 @@ const userSchema = new mongoose.Schema({
       ref: 'Reservation',
     },
   ],
-  cars: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'Car',
-    },
-  ],
+  cars: {
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: 'Car',
+      },
+    ],
+    default: undefined,
+  },
 })
 
 const UserModel = mongoose.model<User>('User', userSchema)

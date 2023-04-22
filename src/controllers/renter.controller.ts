@@ -9,15 +9,18 @@ import { getRenterCars } from '../services/renter.service'
 import { createSession } from '../services/session.service'
 
 async function createRenterHandler(
-  req: Request<Record<string, never>, Record<string, never>, CreateUserInput>,
+  req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
   res: Response,
 ) {
   try {
-    const signUpDetails = req.body.user as User
+    const signUpDetails = req.body as User
     signUpDetails.role = Roles.Renter
     signUpDetails.cars = []
 
-    const auth = await createAuth(req.body.auth as Auth)
+    const auth = await createAuth({
+      email: signUpDetails.email,
+      password: signUpDetails.password,
+    } as Auth)
 
     if (!auth) throw new Error('Could not create renter')
 

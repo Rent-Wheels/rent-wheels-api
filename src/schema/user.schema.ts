@@ -1,9 +1,9 @@
-import { TypeOf, array, date, nativeEnum, object, string } from 'zod'
+import { TypeOf, array, coerce, nativeEnum, object, optional, string } from 'zod'
 
 import { Roles } from '../models/enums'
 
 const authSchema = {
-  auth: object({
+  body: object({
     email: string({
       required_error: 'Please enter a valid email address',
     }).email('Invalid email address'),
@@ -14,14 +14,14 @@ const authSchema = {
 }
 
 const userSchema = {
-  user: object({
+  body: object({
     name: string({
       required_error: 'Name is required',
     }),
     email: string({
       required_error: 'Please enter a valid email address',
     }).email('Invalid email address'),
-    dob: date({
+    dob: coerce.date({
       required_error: 'Date of birth is required',
     }),
     phoneNumber: string({
@@ -34,7 +34,7 @@ const userSchema = {
     }).optional(),
     role: nativeEnum(Roles).optional(),
     identificationCard: string().optional(),
-    reservations: array(string()).optional(),
+    reservations: optional(array(string())),
     cars: array(string()).optional(),
   }),
 }
