@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import log from '../util/logger'
 import { Roles } from '../models/enums'
 import { createAuth } from '../services/auth.service'
 import { Auth, User } from '../models/dto/userInputs'
@@ -34,7 +35,7 @@ async function createRenterHandler(
 
     return res.status(201).json({ renter, session })
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
 
     return res.sendStatus(409)
   }
@@ -46,7 +47,7 @@ async function getRenterCarsHandler(req: Request, res: Response) {
 
     return res.status(200).json(cars)
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
 
     return res.status(404).json('User not found')
   }

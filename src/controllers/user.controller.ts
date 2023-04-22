@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import log from '../util/logger'
 import { Roles } from '../models/enums'
 import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
@@ -35,7 +36,7 @@ async function createUserHandler(
       session,
     })
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
 
     return res.sendStatus(409)
   }
@@ -56,7 +57,7 @@ async function loginHandler(
 
     return res.status(200).json({ user, session })
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
     return res.status(404).json(e.message)
   }
 }

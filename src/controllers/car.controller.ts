@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
-import { addCar, availableCars, updateCar } from '../services/car.service'
+
+import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
 import { CreateCarInput, UpdateCarInput } from '../schema/car.schema'
+import { addCar, availableCars, updateCar } from '../services/car.service'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -25,7 +27,7 @@ async function addCarHandler(
 
     return res.status(201).json(car)
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
 
     return res.status(400).json(e.message)
   }
@@ -41,7 +43,7 @@ async function updateCarHandler(
     const updatedCar = await updateCar({ carId, carDetails })
     return res.status(200).json(updatedCar)
   } catch (e: any) {
-    console.log(e)
+    log.info(e)
 
     return res.status(400).json(e.message)
   }

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+
 import { Roles } from '../models/enums'
 
 export default function isRenter(_req: Request, res: Response, next: NextFunction) {
