@@ -11,39 +11,28 @@ interface Auth extends AuthDetails, mongoose.Document {
   comparePassword(password: string): Promise<boolean>
 }
 
-interface SignUpDetails {
-  dob: Date
-  role: Roles
-  name: string
-  email: string
-  password: string
-  phoneNumber: string
-  profilePicture: string
-  identificationCard: string
-  placeOfResidence: Location
-  cars?: string[]
-}
-
-interface UserDetails extends mongoose.Document {
+interface User extends mongoose.Document {
   dob: Date
   name: string
   email: string
+  password?: string
   phoneNumber: string
   profilePicture: string
   placeOfResidence: Location
   role: Roles
   identificationCard: string
   reservations: string[]
-  cars: CarDetails['_id'][]
+  cars: Car['_id'][]
 }
 
-interface SessionDetails extends mongoose.Document {
-  user: UserDetails['_id']
+interface Session extends mongoose.Document {
+  user: User['_id']
   valid: boolean
   createdAt: Date
   updatedAt: Date
 }
-interface CarDetails extends mongoose.Document {
+
+interface Car extends mongoose.Document {
   owner: string
   make: string
   model: string
@@ -70,4 +59,4 @@ type Reservation = {
   reservationId: string
 }
 
-export { Auth, SignUpDetails, UserDetails, SessionDetails, CarDetails }
+export { Auth, User, Session, Car }

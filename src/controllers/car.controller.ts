@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { addCar, availableCars, updateCar } from '../services/cars.service'
-import { CarDetails } from '../models/dto/userInputs'
+import { addCar, availableCars, updateCar } from '../services/car.service'
+import { Car } from '../models/dto/userInputs'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -13,7 +13,7 @@ async function availableCarsHandler(_req: Request, res: Response) {
 
 async function addCarHandler(req: Request, res: Response) {
   try {
-    const carDetails = req.body as CarDetails
+    const carDetails = req.body as Car
     carDetails.owner = req.params.userId
 
     const car = await addCar(carDetails)
@@ -27,7 +27,7 @@ async function addCarHandler(req: Request, res: Response) {
 async function updateCarHandler(req: Request, res: Response) {
   try {
     const carId = req.params.carId
-    const carDetails = req.body as CarDetails
+    const carDetails = req.body as Car
     const updatedCar = await updateCar({ carId, carDetails })
     return res.status(200).json(updatedCar)
   } catch (e: any) {

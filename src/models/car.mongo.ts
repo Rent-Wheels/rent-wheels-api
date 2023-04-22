@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-import { CarDetails } from './dto/userInputs'
+
+import { Car } from './dto/userInputs'
 
 const carSchema = new mongoose.Schema({
   owner: {
@@ -73,6 +74,6 @@ const carSchema = new mongoose.Schema({
   },
 })
 
-const CarModel = mongoose.model<CarDetails>('Car', carSchema)
+const CarModel = mongoose.model<Car>('Car', carSchema)
 
 export default CarModel

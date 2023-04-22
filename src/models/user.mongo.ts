@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { UserDetails } from './dto/userInputs'
+import { User } from './dto/userInputs'
 
 const userSchema = new mongoose.Schema({
   profilePicture: String,
@@ -45,6 +45,6 @@ const userSchema = new mongoose.Schema({
   ],
 })
 
-const UserModel = mongoose.model<UserDetails>('User', userSchema)
+const UserModel = mongoose.model<User>('User', userSchema)
 
 export default UserModel

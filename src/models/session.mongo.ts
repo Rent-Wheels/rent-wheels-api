@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { SessionDetails } from './dto/userInputs'
+import { Session } from './dto/userInputs'
 
 const sessionSchema = new mongoose.Schema(
   {
@@ -19,6 +19,6 @@ const sessionSchema = new mongoose.Schema(
   },
 )
 
-const SessionModel = mongoose.model<SessionDetails>('Session', sessionSchema)
+const SessionModel = mongoose.model<Session>('Session', sessionSchema)
 
 export default SessionModel

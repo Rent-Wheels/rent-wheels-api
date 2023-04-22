@@ -2,14 +2,14 @@ import { Request, Response } from 'express'
 
 import { createAuth } from '../services/auth.service'
 import { getRenterCars } from '../services/renter.service'
-import { SignUpDetails, Auth } from '../models/dto/userInputs'
+import { Auth, User } from '../models/dto/userInputs'
 import { Roles } from '../models/enums'
 import { createUser } from '../services/user.service'
 import { createSession } from '../services/session.service'
 
 async function createRenterHandler(req: Request, res: Response) {
   try {
-    const signUpDetails = req.body as SignUpDetails
+    const signUpDetails = req.body as User
     signUpDetails.role = Roles.Renter
     signUpDetails.cars = []
 

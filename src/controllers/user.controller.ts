@@ -4,11 +4,11 @@ import { Roles } from '../models/enums'
 import { createSession } from '../services/session.service'
 import { createAuth, login } from '../services/auth.service'
 import { createUser, updateUser } from '../services/user.service'
-import { Auth, SignUpDetails, UserDetails } from '../models/dto/userInputs'
+import { Auth, User } from '../models/dto/userInputs'
 
 async function createUserHandler(req: Request, res: Response) {
   try {
-    const signUpDetails = req.body as SignUpDetails
+    const signUpDetails = req.body as User
     signUpDetails.role = Roles.User
 
     const auth = await createAuth({
@@ -58,7 +58,7 @@ async function updateUserHandler(req: Request, res: Response) {
   try {
     const id = req.params.userId
 
-    const userDetails = req.body as UserDetails
+    const userDetails = req.body as User
 
     userDetails.id = id
 
