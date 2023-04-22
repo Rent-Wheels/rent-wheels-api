@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 
+import { Roles } from '../models/enums'
+import { createSession } from '../services/session.service'
 import { createAuth, login } from '../services/auth.service'
 import { createUser, updateUser } from '../services/user.service'
 import { Auth, SignUpDetails, UserDetails } from '../models/dto/userInputs'
@@ -7,6 +9,7 @@ import { Auth, SignUpDetails, UserDetails } from '../models/dto/userInputs'
 async function createUserHandler(req: Request, res: Response) {
   try {
     const signUpDetails = req.body as SignUpDetails
+    signUpDetails.role = Roles.User
 
     const auth = await createAuth({
       email: signUpDetails.email,
@@ -19,7 +22,14 @@ async function createUserHandler(req: Request, res: Response) {
 
     if (!user) throw new Error('Could not create user')
 
-    return res.status(201).json(user)
+    const session = await createSession(user._id, user)
+
+    if (!session) throw new Error('Could not create user')
+
+    return res.status(201).json({
+      user,
+      session,
+    })
   } catch (e: any) {
     console.log(e)
 
@@ -30,9 +40,14 @@ async function createUserHandler(req: Request, res: Response) {
 async function loginHandler(req: Request, res: Response) {
   try {
     const user = await login(req.body)
+
     if (!user) throw new Error('User not found')
 
-    return res.status(200).json(user)
+    const session = await createSession(user._id, user)
+
+    if (!session) throw new Error('User not found')
+
+    return res.status(200).json({ user, session })
   } catch (e: any) {
     console.log(e)
     return res.status(404).json(e.message)

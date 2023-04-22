@@ -5,8 +5,34 @@ import { findUser } from './user.service'
 import { signJWT, validateJWT } from '../util/jwt'
 import SessionModel from '../models/session.mongo'
 
-async function createSession(userId: string) {
-  return await SessionModel.create({ userId })
+async function createSession(userId: string, payload: object) {
+  const session = await SessionModel.create({ userId })
+
+  const accessToken = signJWT(
+    {
+      ...payload,
+      session: session._id,
+    },
+    {
+      expiresIn: config.get<string>('accessTokenTTL'),
+    },
+  )
+
+  const refreshToken = signJWT(
+    {
+      ...payload,
+      session: session._id,
+    },
+    {
+      expiresIn: config.get<string>('refreshTokenTTL'),
+    },
+  )
+
+  return {
+    session: session._id,
+    accessToken,
+    refreshToken,
+  }
 }
 
 async function deleteSession(sessionId: string) {

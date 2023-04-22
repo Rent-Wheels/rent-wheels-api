@@ -31,6 +31,10 @@ interface UserDetails extends mongoose.Document {
   phoneNumber: string
   profilePicture: string
   placeOfResidence: Location
+  role: Roles
+  identificationCard: string
+  reservations: string[]
+  cars: CarDetails['_id'][]
 }
 
 interface SessionDetails extends mongoose.Document {

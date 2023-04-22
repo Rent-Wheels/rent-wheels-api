@@ -1,10 +1,9 @@
-import { Roles } from '../models/enums'
 import UserModel from '../models/user.mongo'
 import { SignUpDetails, UserDetails } from '../models/dto/userInputs'
+import { FilterQuery } from 'mongoose'
 
 async function createUser(userDetails: SignUpDetails) {
   try {
-    userDetails.role = Roles.User
     return await UserModel.create(userDetails)
   } catch (e: any) {
     throw new Error(e)
@@ -19,4 +18,8 @@ async function updateUser(userDetails: UserDetails) {
   }
 }
 
-export { createUser, updateUser }
+async function findUser(query: FilterQuery<UserDetails>) {
+  return await UserModel.findOne(query)
+}
+
+export { createUser, updateUser, findUser }

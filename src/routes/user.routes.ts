@@ -5,8 +5,8 @@ import { createUserHandler, loginHandler, updateUserHandler } from '../controlle
 
 const userRoute = express.Router()
 
-userRoute.post('/login', loginHandler)
 userRoute.post('/', createUserHandler)
+userRoute.post('/login', loginHandler)
 userRoute.patch('/:userId/', userExists, updateUserHandler)
 
 export default userRoute
