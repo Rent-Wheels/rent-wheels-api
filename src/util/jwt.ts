@@ -12,7 +12,20 @@ function signJWT(object: object, options: jwt.SignOptions | undefined) {
 }
 
 function validateJWT(accessToken: string) {
-  return jwt.verify(accessToken, accessTokenPublicKey)
+  try {
+    const decoded = jwt.verify(accessToken, accessTokenPublicKey)
+    return {
+      valid: true,
+      expired: false,
+      decoded,
+    }
+  } catch (e: any) {
+    return {
+      valid: false,
+      expired: e.message === 'jwt expired',
+      decoded: null,
+    }
+  }
 }
 
 export { signJWT, validateJWT }

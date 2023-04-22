@@ -24,9 +24,8 @@ interface SignUpDetails {
   cars?: string[]
 }
 
-interface UserDetails {
+interface UserDetails extends mongoose.Document {
   dob: Date
-  id: string
   name: string
   email: string
   phoneNumber: string
@@ -34,6 +33,12 @@ interface UserDetails {
   placeOfResidence: Location
 }
 
+interface SessionDetails extends mongoose.Document {
+  user: UserDetails['_id']
+  valid: boolean
+  createdAt: Date
+  updatedAt: Date
+}
 interface CarDetails extends mongoose.Document {
   owner: string
   make: string
@@ -61,4 +66,4 @@ type Reservation = {
   reservationId: string
 }
 
-export { Auth, SignUpDetails, UserDetails, CarDetails }
+export { Auth, SignUpDetails, UserDetails, SessionDetails, CarDetails }
