@@ -20,7 +20,7 @@ async function login({ email, password }: { email: string; password: string }) {
 
   if (!isValid) throw new Error('Invalid email or password')
 
-  return await UserModel.findOne({ email })
+  return await UserModel.findOne({ email }).lean()
 }
 
 export { createAuth, login }

@@ -68,11 +68,12 @@ async function updateUserHandler(
   try {
     const id = req.params.userId
 
+    if (id !== res.locals.user._id) return res.sendStatus(403)
+
     const userDetails = req.body as User
+    userDetails._id = id
 
-    userDetails.id = id
-
-    const updatedUser = await updateUser(userDetails)
+    const updatedUser = await updateUser({ _id: id }, userDetails, { new: true })
 
     return res.status(200).json(updatedUser)
   } catch (e: any) {
