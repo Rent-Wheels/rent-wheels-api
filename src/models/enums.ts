@@ -1,27 +1,27 @@
-const enum Roles {
+enum Roles {
   User = 3921,
   Admin = 9291,
   Renter = 6631,
 }
 
-const enum Availability {
+enum Availability {
   Available = 1,
   Unavailable = 0,
 }
 
-const enum Condition {
+enum Condition {
   Good = 'Good',
   Fair = 'Fair',
   Poor = 'Poor',
   Excellent = 'Excellent',
 }
 
-const enum Plan {
+enum Plan {
   Hourly = '/hr',
   Daily = '/day',
 }
 
-const enum CarType {
+enum CarType {
   Bus = 'Bus',
   SUV = 'SUV',
   Van = 'Van',

@@ -22,7 +22,7 @@ interface User extends mongoose.Document {
   role: Roles
   identificationCard: string
   reservations: string[]
-  cars: Car['_id'][]
+  cars?: Car['_id'][]
 }
 
 interface Session extends mongoose.Document {
@@ -44,7 +44,7 @@ interface Car extends mongoose.Document {
   plan: Plan
   type: CarType
   availability: Availability
-  rentalHistory: Reservation[]
+  rentalHistory?: Reservation[]
   maxDuration: number
   description: string
   terms: string

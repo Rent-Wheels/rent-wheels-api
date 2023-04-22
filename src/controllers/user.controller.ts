@@ -1,20 +1,21 @@
 import { Request, Response } from 'express'
 
 import { Roles } from '../models/enums'
+import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
 import { createAuth, login } from '../services/auth.service'
 import { createUser, updateUser } from '../services/user.service'
-import { Auth, User } from '../models/dto/userInputs'
+import { CreateUserInput, LoginInput, UpdateUserInput } from '../schema/user.schema'
 
-async function createUserHandler(req: Request, res: Response) {
+async function createUserHandler(
+  req: Request<Record<string, never>, Record<string, never>, CreateUserInput>,
+  res: Response,
+) {
   try {
-    const signUpDetails = req.body as User
+    const signUpDetails = req.body.user as User
     signUpDetails.role = Roles.User
 
-    const auth = await createAuth({
-      email: signUpDetails.email,
-      password: signUpDetails.password,
-    } as Auth)
+    const auth = await createAuth(req.body.auth as Auth)
 
     if (!auth) throw new Error('Could not create user')
 
@@ -37,7 +38,10 @@ async function createUserHandler(req: Request, res: Response) {
   }
 }
 
-async function loginHandler(req: Request, res: Response) {
+async function loginHandler(
+  req: Request<Record<string, never>, Record<string, never>, LoginInput['auth']>,
+  res: Response,
+) {
   try {
     const user = await login(req.body)
 
@@ -54,7 +58,10 @@ async function loginHandler(req: Request, res: Response) {
   }
 }
 
-async function updateUserHandler(req: Request, res: Response) {
+async function updateUserHandler(
+  req: Request<UpdateUserInput['params'], Record<string, never>, UpdateUserInput['user']>,
+  res: Response,
+) {
   try {
     const id = req.params.userId
 

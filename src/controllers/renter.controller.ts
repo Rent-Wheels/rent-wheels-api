@@ -1,22 +1,23 @@
 import { Request, Response } from 'express'
 
-import { createAuth } from '../services/auth.service'
-import { getRenterCars } from '../services/renter.service'
-import { Auth, User } from '../models/dto/userInputs'
 import { Roles } from '../models/enums'
+import { createAuth } from '../services/auth.service'
+import { Auth, User } from '../models/dto/userInputs'
 import { createUser } from '../services/user.service'
+import { CreateUserInput } from '../schema/user.schema'
+import { getRenterCars } from '../services/renter.service'
 import { createSession } from '../services/session.service'
 
-async function createRenterHandler(req: Request, res: Response) {
+async function createRenterHandler(
+  req: Request<Record<string, never>, Record<string, never>, CreateUserInput>,
+  res: Response,
+) {
   try {
-    const signUpDetails = req.body as User
+    const signUpDetails = req.body.user as User
     signUpDetails.role = Roles.Renter
     signUpDetails.cars = []
 
-    const auth = await createAuth({
-      email: signUpDetails.email,
-      password: signUpDetails.password,
-    } as Auth)
+    const auth = await createAuth(req.body.auth as Auth)
 
     if (!auth) throw new Error('Could not create renter')
 

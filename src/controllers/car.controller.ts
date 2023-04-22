@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { addCar, availableCars, updateCar } from '../services/car.service'
 import { Car } from '../models/dto/userInputs'
+import { CreateCarInput, UpdateCarInput } from '../schema/car.schema'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -11,7 +12,10 @@ async function availableCarsHandler(_req: Request, res: Response) {
   }
 }
 
-async function addCarHandler(req: Request, res: Response) {
+async function addCarHandler(
+  req: Request<Record<string, never>, Record<string, never>, CreateCarInput['carDetails']>,
+  res: Response,
+) {
   try {
     const carDetails = req.body as Car
     carDetails.owner = req.params.userId
@@ -24,7 +28,10 @@ async function addCarHandler(req: Request, res: Response) {
   }
 }
 
-async function updateCarHandler(req: Request, res: Response) {
+async function updateCarHandler(
+  req: Request<UpdateCarInput['params'], Record<string, never>, UpdateCarInput['carDetails']>,
+  res: Response,
+) {
   try {
     const carId = req.params.carId
     const carDetails = req.body as Car
