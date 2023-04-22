@@ -13,23 +13,26 @@ async function availableCarsHandler(_req: Request, res: Response) {
 }
 
 async function addCarHandler(
-  req: Request<Record<string, never>, Record<string, never>, CreateCarInput['carDetails']>,
+  req: Request<Record<string, never>, Record<string, never>, CreateCarInput['body']>,
   res: Response,
 ) {
   try {
     const carDetails = req.body as Car
-    carDetails.owner = req.params.userId
+
+    if (carDetails.owner !== res.locals.user._id) return res.sendStatus(400)
 
     const car = await addCar(carDetails)
 
     return res.status(201).json(car)
   } catch (e: any) {
-    return res.sendStatus(400)
+    console.log(e)
+
+    return res.status(400).json(e.message)
   }
 }
 
 async function updateCarHandler(
-  req: Request<UpdateCarInput['params'], Record<string, never>, UpdateCarInput['carDetails']>,
+  req: Request<UpdateCarInput['params'], Record<string, never>, UpdateCarInput['body']>,
   res: Response,
 ) {
   try {

@@ -3,7 +3,7 @@ import { TypeOf, array, nativeEnum, number, object, string } from 'zod'
 import { Availability, CarType, Condition, Plan } from '../models/enums'
 
 const carSchema = {
-  carDetails: object({
+  body: object({
     owner: string({
       required_error: 'Owner Id required',
     }),
@@ -36,6 +36,9 @@ const carSchema = {
     }),
     availability: nativeEnum(Availability, {
       required_error: 'Availability of the car is required',
+    }),
+    location: string({
+      required_error: 'Location is required',
     }),
     rentalHistory: array(string()).optional(),
     maxDuration: number({

@@ -33,7 +33,7 @@ interface Session extends mongoose.Document {
 }
 
 interface Car extends mongoose.Document {
-  owner: string
+  owner: User['_id']
   make: string
   model: string
   capacity: number
@@ -44,6 +44,7 @@ interface Car extends mongoose.Document {
   plan: Plan
   type: CarType
   availability: Availability
+  location: string
   rentalHistory?: Reservation[]
   maxDuration: number
   description: string

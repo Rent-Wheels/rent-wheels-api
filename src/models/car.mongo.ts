@@ -51,15 +51,6 @@ const carSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rentalHistory: [
-    {
-      reservationId: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Reservation',
-      },
-      default: [],
-    },
-  ],
   maxDuration: {
     type: Number,
     required: true,
@@ -72,6 +63,14 @@ const carSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  rentalHistory: [
+    {
+      reservationId: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Reservation',
+      },
+    },
+  ],
 })
 
 const CarModel = mongoose.model<Car>('Car', carSchema)
