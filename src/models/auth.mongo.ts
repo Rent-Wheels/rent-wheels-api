@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import config from 'config'
 import mongoose from 'mongoose'
 
 import { Auth } from './dto/userInputs'
@@ -18,8 +19,8 @@ authSchema.pre('save', async function (next) {
   const user = this as Auth
 
   if (!user.isModified) return next()
-  const saltFactor: string = process.env.SALT_FACTOR ?? '10'
-  const salt = await bcrypt.genSalt(+saltFactor)
+  const saltFactor = config.get<number>('saltFactor')
+  const salt = await bcrypt.genSalt(saltFactor)
   const password = await bcrypt.hash(user.password, salt)
 
   user.password = password

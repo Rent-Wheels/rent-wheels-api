@@ -1,14 +1,16 @@
 import http from 'http'
-import * as dotenv from 'dotenv'
+import dotenv from 'dotenv'
+dotenv.config()
+
+import config from 'config'
 
 import app from './app'
 import { mongoConnect } from './util/mongo'
 
-dotenv.config({ path: __dirname + '/.env' })
-
 const server = http.createServer(app)
+const PORT = config.get<number>('port')
 
-server.listen(+(process.env.PORT ?? 3000), async () => {
+server.listen(PORT, async () => {
   console.log('Connected')
   await mongoConnect()
 })
