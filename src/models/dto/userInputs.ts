@@ -26,7 +26,7 @@ interface UserInput {
 }
 interface User extends UserInput, mongoose.Document {
   addCar(carId: string): User
-  deleteCar(carId: string): User
+  removeCar(carId: string): User
 }
 
 interface Session extends mongoose.Document {

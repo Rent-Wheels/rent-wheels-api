@@ -56,7 +56,7 @@ userSchema.methods.addCar = function (carId: string) {
 
 userSchema.methods.removeCar = function (carId: string) {
   const user = this as User
-  user.cars?.filter(car => car !== carId)
+  user.cars = user.cars?.filter(car => car.toString() !== carId)
   return user
 }
 

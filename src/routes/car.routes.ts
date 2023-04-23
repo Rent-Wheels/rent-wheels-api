@@ -21,7 +21,7 @@ carsRoute.patch(
   [requireUser, isRenter, validateInput(updateCarSchema)],
   updateCarHandler,
 )
-carsRoute.patch(
+carsRoute.delete(
   '/:carId/',
   [requireUser, isRenter, validateInput(deleteCarSchema)],
   deleteCarHandler,

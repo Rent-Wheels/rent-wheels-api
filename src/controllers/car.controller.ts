@@ -72,7 +72,7 @@ async function deleteCarHandler(
     if (owner._id.toString() !== res.locals.user._id) return res.sendStatus(403)
 
     await deleteCar({ _id: carId })
-    owner.deleteCar(carId)
+    owner.removeCar(carId)
     await owner.save()
 
     return res.sendStatus(200)
