@@ -5,8 +5,15 @@ import { Roles } from '../models/enums'
 import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
 import { createAuth, login, logout } from '../services/auth.service'
-import { createUser, updateUser } from '../services/user.service'
-import { CreateUserInput, LoginInput, UpdateUserInput } from '../schema/user.schema'
+import { createUser, deleteUser, findUser, updateUser } from '../services/user.service'
+
+import {
+  CreateUserInput,
+  DeleteUserInput,
+  GetUserInput,
+  LoginInput,
+  UpdateUserInput,
+} from '../schema/user.schema'
 
 async function createUserHandler(
   req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
@@ -88,4 +95,46 @@ async function updateUserHandler(
   }
 }
 
-export { createUserHandler, loginHandler, updateUserHandler, logoutHandler }
+async function deleteUserHandler(
+  req: Request<DeleteUserInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const userId = req.params.userId
+
+    if (userId !== res.locals.user._id) return res.sendStatus(403)
+
+    await deleteUser({ _id: userId })
+
+    return res.sendStatus(200)
+  } catch (e: any) {
+    log.info(e)
+
+    return res.sendStatus(400)
+  }
+}
+
+async function getUserHandler(
+  req: Request<GetUserInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const user = await findUser({ _id: req.params.userId })
+
+    if (!user) return res.sendStatus(404)
+
+    return res.status(200).json(user)
+  } catch (e: any) {
+    log.info(e)
+    return res.sendStatus(400)
+  }
+}
+
+export {
+  createUserHandler,
+  loginHandler,
+  logoutHandler,
+  updateUserHandler,
+  deleteUserHandler,
+  getUserHandler,
+}

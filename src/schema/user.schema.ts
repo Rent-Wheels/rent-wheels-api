@@ -61,15 +61,29 @@ const updateUserSchema = object({
   ...userSchema,
 })
 
+const deleteUserSchema = object({
+  ...params,
+})
+
+const getUserSchema = object({
+  ...params,
+})
+
 type CreateUserInput = TypeOf<typeof createUserSchema>
 type LoginInput = TypeOf<typeof loginSchema>
 type UpdateUserInput = TypeOf<typeof updateUserSchema>
+type DeleteUserInput = TypeOf<typeof deleteUserSchema>
+type GetUserInput = TypeOf<typeof getUserSchema>
 
 export {
-  createUserSchema,
   loginSchema,
+  getUserSchema,
+  createUserSchema,
   updateUserSchema,
-  CreateUserInput,
+  deleteUserSchema,
   LoginInput,
+  GetUserInput,
+  CreateUserInput,
   UpdateUserInput,
+  DeleteUserInput,
 }
