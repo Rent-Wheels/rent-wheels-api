@@ -1,6 +1,7 @@
 import UserModel from '../models/user.mongo'
 import AuthModel from '../models/auth.mongo'
 import { Auth } from '../models/dto/userInputs'
+import { deleteSession } from './session.service'
 
 async function createAuth(authDetails: Auth) {
   try {
@@ -23,4 +24,8 @@ async function login({ email, password }: { email: string; password: string }) {
   return await UserModel.findOne({ email }).lean()
 }
 
-export { createAuth, login }
+async function logout(sessionId: string) {
+  return await deleteSession(sessionId)
+}
+
+export { createAuth, login, logout }

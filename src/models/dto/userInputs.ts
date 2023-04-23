@@ -11,7 +11,7 @@ interface Auth extends AuthDetails, mongoose.Document {
   comparePassword(password: string): Promise<boolean>
 }
 
-interface User extends mongoose.Document {
+interface UserInput {
   dob: Date
   name: string
   email: string
@@ -23,6 +23,9 @@ interface User extends mongoose.Document {
   identificationCard: string
   reservations: string[]
   cars?: Car['_id'][]
+}
+interface User extends UserInput, mongoose.Document {
+  addCar(carId: string): User
 }
 
 interface Session extends mongoose.Document {

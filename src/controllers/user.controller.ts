@@ -4,7 +4,7 @@ import log from '../util/logger'
 import { Roles } from '../models/enums'
 import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
-import { createAuth, login } from '../services/auth.service'
+import { createAuth, login, logout } from '../services/auth.service'
 import { createUser, updateUser } from '../services/user.service'
 import { CreateUserInput, LoginInput, UpdateUserInput } from '../schema/user.schema'
 
@@ -62,6 +62,12 @@ async function loginHandler(
   }
 }
 
+async function logoutHandler(_req: Request, res: Response) {
+  await logout(res.locals.user.session)
+
+  return res.sendStatus(200)
+}
+
 async function updateUserHandler(
   req: Request<UpdateUserInput['params'], Record<string, never>, UpdateUserInput['body']>,
   res: Response,
@@ -82,4 +88,4 @@ async function updateUserHandler(
   }
 }
 
-export { createUserHandler, loginHandler, updateUserHandler }
+export { createUserHandler, loginHandler, updateUserHandler, logoutHandler }

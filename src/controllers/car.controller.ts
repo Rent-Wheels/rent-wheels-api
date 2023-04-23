@@ -20,10 +20,11 @@ async function addCarHandler(
 ) {
   try {
     const carDetails = req.body as Car
+    const user = res.locals.user
 
-    if (carDetails.owner !== res.locals.user._id) return res.sendStatus(400)
+    if (carDetails.owner !== user._id) return res.sendStatus(400)
 
-    const car = await addCar(carDetails)
+    const car = await addCar({ carDetails, userId: user._id })
 
     return res.status(201).json(car)
   } catch (e: any) {

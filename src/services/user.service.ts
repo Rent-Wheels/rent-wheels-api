@@ -26,7 +26,7 @@ async function updateUser(
 }
 
 async function findUser(query: FilterQuery<User>) {
-  return await UserModel.findOne(query).lean()
+  return await UserModel.findOne(query)
 }
 
 export { createUser, updateUser, findUser }
