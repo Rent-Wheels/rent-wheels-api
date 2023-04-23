@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
-import { CreateCarInput, UpdateCarInput } from '../schema/car.schema'
-import { addCar, availableCars, updateCar } from '../services/car.service'
+import { CreateCarInput, DeleteCarInput, UpdateCarInput } from '../schema/car.schema'
+import { addCar, availableCars, deleteCar, findCar, updateCar } from '../services/car.service'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -40,8 +40,12 @@ async function updateCarHandler(
 ) {
   try {
     const carId = req.params.carId
+    const userId = res.locals.user._id
     const carDetails = req.body as Car
-    const updatedCar = await updateCar({ carId, carDetails })
+
+    if (carDetails.owner !== userId) return res.sendStatus(403)
+
+    const updatedCar = await updateCar({ _id: carId }, carDetails, { new: true })
     return res.status(200).json(updatedCar)
   } catch (e: any) {
     log.info(e)
@@ -50,4 +54,24 @@ async function updateCarHandler(
   }
 }
 
-export { availableCarsHandler, addCarHandler, updateCarHandler }
+async function deleteCarHandler(
+  req: Request<DeleteCarInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const carId = req.params.carId
+    const car = await findCar({ _id: carId })
+
+    if (!car) return res.sendStatus(404)
+
+    await deleteCar({ _id: carId })
+
+    return res.sendStatus(200)
+  } catch (e: any) {
+    log.info(e)
+
+    return res.status(400).json(e.message)
+  }
+}
+
+export { availableCarsHandler, addCarHandler, updateCarHandler, deleteCarHandler }

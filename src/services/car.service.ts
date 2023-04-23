@@ -1,6 +1,7 @@
 import { findUser } from './user.service'
 import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
+import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 
 async function availableCars() {
   return await CarModel.find({ availability: true })
@@ -19,7 +20,20 @@ async function addCar({ carDetails, userId }: { carDetails: Car; userId: string 
   return car.toJSON()
 }
 
-async function updateCar({ carId, carDetails }: { carId: string; carDetails: Car }) {
-  return await CarModel.findOneAndUpdate({ _id: carId }, carDetails)
+async function updateCar(
+  filter: FilterQuery<Car>,
+  update: UpdateQuery<Car>,
+  options: QueryOptions,
+) {
+  return await CarModel.findOneAndUpdate(filter, update, options)
 }
-export { availableCars, addCar, updateCar }
+
+async function deleteCar(filter: FilterQuery<Car>) {
+  return await CarModel.deleteOne(filter)
+}
+
+async function findCar(filter: FilterQuery<Car>) {
+  return await CarModel.findOne(filter)
+}
+
+export { availableCars, addCar, updateCar, deleteCar, findCar }

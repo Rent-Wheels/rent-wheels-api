@@ -70,7 +70,19 @@ const updateCarSchema = object({
   ...params,
 })
 
+const deleteCarSchema = object({
+  ...params,
+})
+
 type CreateCarInput = TypeOf<typeof createCarSchema>
 type UpdateCarInput = TypeOf<typeof updateCarSchema>
+type DeleteCarInput = TypeOf<typeof deleteCarSchema>
 
-export { createCarSchema, updateCarSchema, CreateCarInput, UpdateCarInput }
+export {
+  createCarSchema,
+  updateCarSchema,
+  deleteCarSchema,
+  CreateCarInput,
+  UpdateCarInput,
+  DeleteCarInput,
+}
