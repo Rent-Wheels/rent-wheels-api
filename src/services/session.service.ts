@@ -5,8 +5,8 @@ import { findUser } from './user.service'
 import { signJWT, validateJWT } from '../util/jwt'
 import SessionModel from '../models/session.mongo'
 
-async function createSession(userId: string, payload: object) {
-  const session = await SessionModel.create({ userId })
+async function createSession(user: string, payload: object) {
+  const session = await SessionModel.create({ user })
 
   const accessToken = signJWT(
     {
