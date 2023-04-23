@@ -1,3 +1,5 @@
+import { FilterQuery } from 'mongoose'
+
 import UserModel from '../models/user.mongo'
 import AuthModel from '../models/auth.mongo'
 import { Auth } from '../models/dto/userInputs'
@@ -28,4 +30,8 @@ async function logout(sessionId: string) {
   return await deleteSession(sessionId)
 }
 
-export { createAuth, login, logout }
+async function deleteUserAuth(query: FilterQuery<Auth>) {
+  return await AuthModel.deleteOne(query)
+}
+
+export { createAuth, login, logout, deleteUserAuth }

@@ -104,7 +104,7 @@ async function deleteUserHandler(
 
     if (userId !== res.locals.user._id) return res.sendStatus(403)
 
-    await deleteUser({ _id: userId })
+    await deleteUser({ _id: userId }, res.locals.user.session)
 
     return res.sendStatus(200)
   } catch (e: any) {

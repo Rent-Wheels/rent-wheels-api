@@ -54,7 +54,7 @@ async function refreshSession(refreshToken: string) {
 
   const accessToken = signJWT(
     {
-      ...user,
+      ...user.toJSON(),
       session: session._id,
     },
     {

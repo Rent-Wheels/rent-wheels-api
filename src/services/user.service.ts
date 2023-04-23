@@ -4,6 +4,8 @@ import { Roles } from '../models/enums'
 import { deleteCar } from './car.service'
 import UserModel from '../models/user.mongo'
 import { User } from '../models/dto/userInputs'
+import { deleteUserAuth } from './auth.service'
+import { deleteSession } from './session.service'
 
 async function createUser(userDetails: User) {
   try {
@@ -27,7 +29,7 @@ async function updateUser(
   }
 }
 
-async function deleteUser(query: FilterQuery<User>) {
+async function deleteUser(query: FilterQuery<User>, sessionId: string) {
   const user = await findUser(query)
   if (user && user.role === Roles.Renter) {
     const userCars: string[] = user.cars as string[]
@@ -35,6 +37,8 @@ async function deleteUser(query: FilterQuery<User>) {
       await deleteCar({ _id: car })
     }
   }
+  await deleteUserAuth({ email: user?.email })
+  await deleteSession(sessionId)
 
   return await UserModel.deleteOne(query)
 }
