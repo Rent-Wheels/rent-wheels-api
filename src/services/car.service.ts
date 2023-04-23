@@ -1,7 +1,8 @@
+import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
+
 import { findUser } from './user.service'
 import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
-import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 
 async function availableCars() {
   return await CarModel.find({ availability: true })

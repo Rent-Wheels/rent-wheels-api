@@ -8,10 +8,10 @@ import { createAuth, login, logout } from '../services/auth.service'
 import { createUser, deleteUser, findUser, updateUser } from '../services/user.service'
 
 import {
+  LoginInput,
+  GetUserInput,
   CreateUserInput,
   DeleteUserInput,
-  GetUserInput,
-  LoginInput,
   UpdateUserInput,
 } from '../schema/user.schema'
 
@@ -131,10 +131,10 @@ async function getUserHandler(
 }
 
 export {
-  createUserHandler,
   loginHandler,
   logoutHandler,
+  getUserHandler,
   updateUserHandler,
   deleteUserHandler,
-  getUserHandler,
+  createUserHandler,
 }

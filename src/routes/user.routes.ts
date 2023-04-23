@@ -4,20 +4,20 @@ import requireUser from '../middlewares/requireUser'
 import validateInput from '../middlewares/validateInput'
 
 import {
+  loginSchema,
+  getUserSchema,
   createUserSchema,
   deleteUserSchema,
-  getUserSchema,
-  loginSchema,
   updateUserSchema,
 } from '../schema/user.schema'
 
 import {
-  createUserHandler,
-  deleteUserHandler,
-  getUserHandler,
   loginHandler,
   logoutHandler,
+  getUserHandler,
+  createUserHandler,
   updateUserHandler,
+  deleteUserHandler,
 } from '../controllers/user.controller'
 
 const userRoute = express.Router()

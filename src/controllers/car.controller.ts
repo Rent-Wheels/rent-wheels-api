@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
+import { findUser } from '../services/user.service'
 import { CreateCarInput, DeleteCarInput, UpdateCarInput } from '../schema/car.schema'
 import { addCar, availableCars, deleteCar, findCar, updateCar } from '../services/car.service'
 
@@ -64,7 +65,15 @@ async function deleteCarHandler(
 
     if (!car) return res.sendStatus(404)
 
+    const owner = await findUser({ _id: car.owner })
+
+    if (!owner) return res.sendStatus(404)
+
+    if (owner._id.toString() !== res.locals.user._id) return res.sendStatus(403)
+
     await deleteCar({ _id: carId })
+    owner.deleteCar(carId)
+    await owner.save()
 
     return res.sendStatus(200)
   } catch (e: any) {

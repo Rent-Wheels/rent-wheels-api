@@ -54,6 +54,12 @@ userSchema.methods.addCar = function (carId: string) {
   return user
 }
 
+userSchema.methods.removeCar = function (carId: string) {
+  const user = this as User
+  user.cars?.filter(car => car !== carId)
+  return user
+}
+
 const UserModel = mongoose.model<User>('User', userSchema)
 
 export default UserModel

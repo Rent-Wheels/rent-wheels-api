@@ -1,15 +1,16 @@
 import express from 'express'
 
-import {
-  addCarHandler,
-  availableCarsHandler,
-  deleteCarHandler,
-  updateCarHandler,
-} from '../controllers/car.controller'
 import isRenter from '../middlewares/isRenter'
 import requireUser from '../middlewares/requireUser'
 import validateInput from '../middlewares/validateInput'
 import { createCarSchema, deleteCarSchema, updateCarSchema } from '../schema/car.schema'
+
+import {
+  addCarHandler,
+  deleteCarHandler,
+  updateCarHandler,
+  availableCarsHandler,
+} from '../controllers/car.controller'
 
 const carsRoute = express.Router()
 
