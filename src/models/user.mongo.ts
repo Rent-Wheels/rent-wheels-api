@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema({
   },
 })
 
+userSchema.methods.addCar = function (carId: string) {
+  const user = this as User
+  user.cars?.push(carId)
+  return user
+}
+
 const UserModel = mongoose.model<User>('User', userSchema)
 
 export default UserModel
