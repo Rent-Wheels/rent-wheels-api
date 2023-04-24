@@ -48,16 +48,22 @@ const userSchema = new mongoose.Schema({
   },
 })
 
-userSchema.methods.addCar = function (carId: string) {
+userSchema.methods.addCar = async function (carId: string) {
   const user = this as User
   user.cars?.push(carId)
-  return user
+  return await user.save()
 }
 
-userSchema.methods.removeCar = function (carId: string) {
+userSchema.methods.removeCar = async function (carId: string) {
   const user = this as User
   user.cars = user.cars?.filter(car => car.toString() !== carId)
-  return user
+  return await user.save()
+}
+
+userSchema.methods.addReservation = async function (reservationId: string) {
+  const user = this as User
+  user.reservations.push(reservationId)
+  return await user.save()
 }
 
 const UserModel = mongoose.model<User>('User', userSchema)

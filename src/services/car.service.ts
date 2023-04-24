@@ -15,8 +15,7 @@ async function addCar({ carDetails, userId }: { carDetails: Car; userId: string 
 
   if (!owner) throw new Error('Car cannot be added')
 
-  owner.addCar(car._id)
-  await owner.save()
+  await owner.addCar(car._id)
 
   return car.toJSON()
 }

@@ -1,9 +1,13 @@
 import mongoose from 'mongoose'
 
+import { Reservation } from './dto/userInputs'
+
 const reservationSchema = new mongoose.Schema({
   customer: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
+    id: {
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
+    },
     name: {
       type: String,
       required: true,
@@ -34,6 +38,6 @@ const reservationSchema = new mongoose.Schema({
   },
 })
 
-const ReservationModel = mongoose.model('Reservation', reservationSchema)
+const ReservationModel = mongoose.model<Reservation>('Reservation', reservationSchema)
 
 export default ReservationModel

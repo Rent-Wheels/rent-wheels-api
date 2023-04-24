@@ -33,4 +33,11 @@ enum CarType {
   Crossover = 'Crossover',
 }
 
-export { Roles, Availability, Condition, Plan, CarType }
+enum ReservationStatus {
+  Accepted = 'Accepted',
+  Pending = 'Pending',
+  Rejected = 'Rejected',
+  Cancelled = 'Cancelled',
+}
+
+export { Roles, Availability, Condition, Plan, CarType, ReservationStatus }
