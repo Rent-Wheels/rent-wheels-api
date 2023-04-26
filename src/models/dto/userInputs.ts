@@ -56,7 +56,7 @@ interface Car extends mongoose.Document {
   terms: string
 }
 
-interface Reservation extends mongoose.Document {
+interface ReservationDetails {
   customer: {
     id: User['_id']
     name: User['name']
@@ -66,6 +66,10 @@ interface Reservation extends mongoose.Document {
   startDate: Date
   returnDate: Date
   status: ReservationStatus
+}
+
+interface Reservation extends ReservationDetails, mongoose.Document {
+  updateStatus(status: ReservationStatus): Promise<Reservation>
 }
 
 type Location = {

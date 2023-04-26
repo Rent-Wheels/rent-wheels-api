@@ -2,8 +2,14 @@ import express from 'express'
 
 import requireUser from '../middlewares/requireUser'
 import validateInput from '../middlewares/validateInput'
-import { createReservationSchema } from '../schema/reservation.schema'
-import { createReservationHandler } from '../controllers/reservation.controller'
+import {
+  createReservationSchema,
+  updateReservationStatusSchema,
+} from '../schema/reservation.schema'
+import {
+  createReservationHandler,
+  updateReservationStatusHandler,
+} from '../controllers/reservation.controller'
 
 const reservationRoute = express.Router()
 
@@ -11,6 +17,12 @@ reservationRoute.post(
   '/',
   [requireUser, validateInput(createReservationSchema)],
   createReservationHandler,
+)
+
+reservationRoute.patch(
+  '/:reservationId/status',
+  [requireUser, validateInput(updateReservationStatusSchema)],
+  updateReservationStatusHandler,
 )
 
 export default reservationRoute

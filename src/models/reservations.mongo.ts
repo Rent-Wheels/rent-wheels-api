@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { Reservation } from './dto/userInputs'
+import { ReservationStatus } from './enums'
 
 const reservationSchema = new mongoose.Schema({
   customer: {
@@ -37,6 +38,12 @@ const reservationSchema = new mongoose.Schema({
     required: true,
   },
 })
+
+reservationSchema.methods.updateStatus = async function (status: ReservationStatus) {
+  const reservation = this as Reservation
+  reservation.status = status
+  return await reservation.save()
+}
 
 const ReservationModel = mongoose.model<Reservation>('Reservation', reservationSchema)
 

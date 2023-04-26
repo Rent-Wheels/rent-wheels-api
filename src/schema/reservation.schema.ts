@@ -47,6 +47,15 @@ const updateReservationSchema = object({
   ...params,
 })
 
+const updateReservationStatusSchema = object({
+  ...params,
+  body: object({
+    status: nativeEnum(ReservationStatus, {
+      required_error: 'Reservation status is required',
+    }),
+  }),
+})
+
 const deleteReservationSchema = object({
   ...params,
 })
@@ -54,12 +63,15 @@ const deleteReservationSchema = object({
 type CreateReservationInput = TypeOf<typeof createReservationSchema>
 type UpdateReservationInput = TypeOf<typeof updateReservationSchema>
 type DeleteReservationInput = TypeOf<typeof deleteReservationSchema>
+type UpdateReservationStatusInput = TypeOf<typeof updateReservationStatusSchema>
 
 export {
   createReservationSchema,
   updateReservationSchema,
   deleteReservationSchema,
+  updateReservationStatusSchema,
   CreateReservationInput,
   UpdateReservationInput,
   DeleteReservationInput,
+  UpdateReservationStatusInput,
 }
