@@ -1,3 +1,4 @@
+import log from '../util/logger'
 import { AnyZodObject } from 'zod'
 import { NextFunction, Request, Response } from 'express'
 
@@ -11,6 +12,7 @@ const validateInput =
       })
       return next()
     } catch (e: any) {
+      log.error(e)
       return res.status(400).send(e.errors)
     }
   }

@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 const accessTokenPublicKey = config.get<string>('accessTokenPublicKey')
 const accessTokenPrivateKey = config.get<string>('accessTokenPrivateKey')
 
-function signJWT(object: object, options: jwt.SignOptions | undefined) {
+function signJWT(object: object, options?: jwt.SignOptions) {
   return jwt.sign(object, accessTokenPrivateKey, {
     ...(options && options),
     algorithm: 'RS256',

@@ -108,7 +108,7 @@ async function deleteUserHandler(
 
     return res.sendStatus(200)
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
 
     return res.sendStatus(400)
   }
@@ -125,7 +125,7 @@ async function getUserHandler(
 
     return res.status(200).json(user)
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
     return res.sendStatus(400)
   }
 }
