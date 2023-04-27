@@ -10,4 +10,8 @@ async function mongoConnect() {
   return await mongoose.connect(config.get<string>('mongoUrl'))
 }
 
-export { mongoConnect }
+async function mongoDisconnect() {
+  await mongoose.disconnect()
+}
+
+export { mongoConnect, mongoDisconnect }

@@ -20,6 +20,7 @@ interface UserInput {
   profilePicture: string
   placeOfResidence: Location
   role: Roles
+  age: number
   identificationCard: string
   reservations: Reservation['_id'][]
   cars?: Car['_id'][]
