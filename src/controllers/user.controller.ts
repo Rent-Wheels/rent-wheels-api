@@ -43,7 +43,7 @@ async function createUserHandler(
       session,
     })
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
 
     return res.sendStatus(409)
   }
@@ -64,7 +64,7 @@ async function loginHandler(
 
     return res.status(200).json({ user, session })
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
     return res.status(404).json(e.message)
   }
 }
