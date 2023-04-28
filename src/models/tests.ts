@@ -111,6 +111,24 @@ const updateUserPayload = {
   role: Roles.User,
 }
 
+const carPayload = {
+  owner: renterPayload._id,
+  make: 'BMW',
+  model: 'M3 Competition',
+  capacity: 5,
+  yearOfManufacture: '2019',
+  registrationNumber: 'GT 7789-20',
+  condition: 'Excellent',
+  rate: 55,
+  plan: '/hr',
+  type: 'Sedan',
+  availability: 1,
+  location: 'KNUST',
+  maxDuration: 5,
+  description: "This is a really beautiful and strong car you're going to enjoy every moment in it",
+  terms: 'You crash it, you buy it',
+}
+
 const sessionPayload = {
   accessToken: expect.any(Object),
   refreshToken: expect.any(Object),
@@ -148,6 +166,7 @@ const renterPayloadWithSession = {
 
 export {
   userInput,
+  carPayload,
   renterInput,
   authPayload,
   authDetails,
