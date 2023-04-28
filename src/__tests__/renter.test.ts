@@ -8,6 +8,7 @@ import { addCar } from '../services/car.service'
 import { Car, User } from '../models/dto/userInputs'
 import * as UserService from '../services/user.service'
 import * as AuthService from '../services/auth.service'
+import * as RenterService from '../services/renter.service'
 import * as SessionService from '../services/session.service'
 import {
   renterInput,
@@ -19,7 +20,6 @@ import {
   renterInputWithMissingFields,
   carPayload,
 } from '../models/tests'
-// import * as RenterService from '../services/renter.service'
 
 describe('renter', () => {
   let userId = new mongoose.Types.ObjectId().toString()
@@ -56,30 +56,47 @@ describe('renter', () => {
       describe('given the renter exists', () => {
         describe('given the renter has no cars', () => {
           it('should return 200 status and an empty array', async () => {
+            const getRenterCarsServiceMock = jest
+              .spyOn(RenterService, 'getRenterCars')
+              // @ts-ignore
+              .mockReturnValueOnce([])
+
             const renter = await UserService.createUser({
               ...renterInput,
               dob: new Date(renterInput.dob),
             } as unknown as User)
+
             userId = renter._id
+
             const { body } = await supertest(app)
               .get(`/renters/${renter._id}/cars`)
               .set('Authorization', `Bearer ${jwt}`)
               .expect(200)
+
             expect(body).toEqual([])
+            expect(getRenterCarsServiceMock).toHaveBeenCalledWith(renter._id.toString())
           })
         })
 
         describe('given the renter has cars', () => {
           it('should return 200 status and cars array', async () => {
+            const getRenterCarsServiceMock = jest
+              .spyOn(RenterService, 'getRenterCars')
+              //   @ts-ignore
+              .mockReturnValueOnce([expect.any(Object)])
+
             await addCar({
               carDetails: { ...carPayload, owner: userId } as Car,
               userId,
             })
+
             const { body } = await supertest(app)
               .get(`/renters/${userId}/cars`)
               .set('Authorization', `Bearer ${jwt}`)
               .expect(200)
+
             expect(body).toEqual([expect.any(Object)])
+            expect(getRenterCarsServiceMock).toHaveBeenCalledWith(userId.toString())
           })
         })
       })
