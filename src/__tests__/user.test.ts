@@ -6,18 +6,22 @@ dotenv.config()
 
 import app from '../app'
 import { signJWT } from '../util/jwt'
+import { User } from '../models/dto/userInputs'
 import { createUser } from '../services/user.service'
 import * as UserService from '../services/user.service'
 import * as AuthService from '../services/auth.service'
+import * as SessionService from '../services/session.service'
 import {
   authDetails,
   authPayload,
+  invalidEmail,
+  invalidPassword,
+  sessionPayload,
   userInput,
   userInputWithMissingFields,
   userPayload,
   userPayloadWithSession,
 } from '../models/tests'
-import { User } from '../models/dto/userInputs'
 
 describe('user', () => {
   let userId = new mongoose.Types.ObjectId().toString()
@@ -65,10 +69,10 @@ describe('user', () => {
     })
   })
 
-  describe('createUser', () => {
+  describe('create User', () => {
     describe('given all data is given', () => {
       it('should return a 201 status and sessionId, refreshToken and accessToken', async () => {
-        const createAuthService = jest
+        const createAuthServiceMock = jest
           .spyOn(AuthService, 'createAuth')
           // @ts-ignore
           .mockReturnValueOnce(authPayload)
@@ -78,19 +82,25 @@ describe('user', () => {
           // @ts-ignore
           .mockReturnValueOnce(userPayload)
 
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
         const { body, statusCode } = await supertest(app).post('/users/').send(userInput)
 
         expect(statusCode).toBe(201)
         expect(body).toEqual(userPayloadWithSession)
 
-        expect(createAuthService).toBeCalledWith(authDetails)
+        expect(createAuthServiceMock).toBeCalledWith(authDetails)
         expect(createUserServiceMock).toHaveBeenCalledWith(userInput)
+        expect(createSessionServiceMock).toHaveBeenCalledWith(userPayload._id, userPayload)
       })
     })
 
     describe('given some data is omitted', () => {
       it('should return 400', async () => {
-        const createAuthService = jest
+        const createAuthServiceMock = jest
           .spyOn(AuthService, 'createAuth')
           // @ts-ignore
           .mockReturnValueOnce(authPayload)
@@ -100,16 +110,22 @@ describe('user', () => {
           //  @ts-ignore
           .mockReturnValueOnce(userPayload)
 
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
         await supertest(app).post('/users/').send(userInputWithMissingFields).expect(400)
 
-        expect(createAuthService).not.toHaveBeenCalled()
+        expect(createAuthServiceMock).not.toHaveBeenCalled()
         expect(createUserServiceMock).not.toHaveBeenCalled()
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
       })
     })
 
     describe('given some data is duplicated', () => {
       it('should return 409', async () => {
-        const createAuthService = jest
+        const createAuthServiceMock = jest
           .spyOn(AuthService, 'createAuth')
           // @ts-ignore
           .mockRejectedValueOnce('Duplicate found')
@@ -119,10 +135,78 @@ describe('user', () => {
           //  @ts-ignore
           .mockReturnValueOnce(userPayload)
 
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
         await supertest(app).post('/users/').send(userInput).expect(409)
 
-        expect(createAuthService).toHaveBeenCalledWith(authDetails)
+        expect(createAuthServiceMock).toHaveBeenCalledWith(authDetails)
         expect(createUserServiceMock).not.toHaveBeenCalled()
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('login', () => {
+    describe('given email does not exist', () => {
+      it('should return a 404', async () => {
+        const loginMock = jest
+          .spyOn(AuthService, 'login')
+          // @ts-ignore
+          .mockRejectedValueOnce('Incorrect email or password')
+
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
+        await supertest(app).post('/users/login').send(invalidEmail).expect(404)
+
+        expect(loginMock).toBeCalledWith(invalidEmail)
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('given email does exist and password is wrong', () => {
+      it('should return a 404', async () => {
+        const loginMock = jest
+          .spyOn(AuthService, 'login')
+          // @ts-ignore
+          .mockRejectedValueOnce('Incorrect email or password')
+
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
+        await supertest(app).post('/users/login').send(invalidPassword).expect(404)
+
+        expect(loginMock).toBeCalledWith(invalidPassword)
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('given email does exist and password is correct', () => {
+      it('should return a 200 status and sessionId, refreshToken and accessToken', async () => {
+        const loginMock = jest
+          .spyOn(AuthService, 'login')
+          // @ts-ignore
+          .mockReturnValueOnce(userPayload)
+
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
+
+        const { body, statusCode } = await supertest(app).post('/users/login').send(authDetails)
+
+        expect(statusCode).toBe(200)
+        expect(body).toEqual(userPayloadWithSession)
+
+        expect(loginMock).toBeCalledWith(authDetails)
+        expect(createSessionServiceMock).toHaveBeenCalledWith(userPayload._id, userPayload)
       })
     })
   })
