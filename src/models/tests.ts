@@ -111,9 +111,45 @@ const updateUserPayload = {
   role: Roles.User,
 }
 
-const carPayload = {
-  owner: renterPayload._id,
+const carInput = {
+  owner: renterPayload._id.toString(),
   make: 'BMW',
+  model: 'M3 Competition',
+  capacity: 5,
+  yearOfManufacture: '2019',
+  registrationNumber: 'GT 7789-20',
+  condition: 'Excellent',
+  rate: 55,
+  plan: '/hr',
+  type: 'Sedan',
+  availability: 1,
+  location: 'KNUST',
+  maxDuration: 5,
+  description: "This is a really beautiful and strong car you're going to enjoy every moment in it",
+  terms: 'You crash it, you buy it',
+}
+
+const carPayload = {
+  _id: userId.toString(),
+  owner: renterPayload._id.toString(),
+  make: 'BMW',
+  model: 'M3 Competition',
+  capacity: 5,
+  yearOfManufacture: '2019',
+  registrationNumber: 'GT 7789-20',
+  condition: 'Excellent',
+  rate: 55,
+  plan: '/hr',
+  type: 'Sedan',
+  availability: 1,
+  location: 'KNUST',
+  maxDuration: 5,
+  description: "This is a really beautiful and strong car you're going to enjoy every moment in it",
+  terms: 'You crash it, you buy it',
+}
+
+const carInputOmitted = {
+  owner: renterPayload._id,
   model: 'M3 Competition',
   capacity: 5,
   yearOfManufacture: '2019',
@@ -165,6 +201,7 @@ const renterPayloadWithSession = {
 }
 
 export {
+  carInput,
   userInput,
   carPayload,
   renterInput,
@@ -176,6 +213,7 @@ export {
   sessionPayload,
   invalidPassword,
   renterAuthDetails,
+  carInputOmitted,
   renterAuthPayload,
   updateUserPayload,
   userPayloadWithSession,

@@ -1,5 +1,6 @@
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 
+import { Roles } from '../models/enums'
 import { findUser } from './user.service'
 import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
@@ -11,7 +12,7 @@ async function availableCars() {
 async function addCar({ carDetails, userId }: { carDetails: Car; userId: string }) {
   const car = await CarModel.create(carDetails)
 
-  const owner = await findUser({ _id: userId })
+  const owner = await findUser({ _id: userId, role: Roles.Renter })
 
   if (!owner) throw new Error('Car cannot be added')
 
