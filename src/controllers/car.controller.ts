@@ -29,7 +29,7 @@ async function addCarHandler(
 
     return res.status(201).json(car)
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
 
     return res.status(400).json(e.message)
   }
@@ -49,7 +49,7 @@ async function updateCarHandler(
     const updatedCar = await updateCar({ _id: carId }, carDetails, { new: true })
     return res.status(200).json(updatedCar)
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
 
     return res.status(400).json(e.message)
   }
@@ -76,7 +76,7 @@ async function deleteCarHandler(
 
     return res.sendStatus(200)
   } catch (e: any) {
-    log.info(e)
+    log.error(e)
 
     return res.status(400).json(e.message)
   }
