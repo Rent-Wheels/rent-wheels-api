@@ -11,6 +11,11 @@ const authDetails = {
   password: 'password',
 } as Auth
 
+const renterAuthDetails = {
+  email: 'Maximo.Barrows@gmail.com',
+  password: 'password',
+} as Auth
+
 const invalidEmail = {
   email: 'test@test.com',
   password: 'password',
@@ -27,6 +32,12 @@ const authPayload = {
   password: 'password',
 } as Auth
 
+const renterAuthPayload = {
+  _id: userId,
+  email: 'Maximo.Barrows@gmail.com',
+  password: 'password',
+} as Auth
+
 const userInput = {
   name: 'Alyssa Rolfson',
   age: 20,
@@ -35,6 +46,17 @@ const userInput = {
   password: 'password',
   dob: new Date('10-01-2000').toISOString(),
   role: Roles.User,
+}
+
+const renterInput = {
+  name: 'Alexander Rowe',
+  age: 20,
+  phoneNumber: '1-431-965-3155 x5963',
+  email: 'Maximo.Barrows@gmail.com',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.Renter,
+  cars: [],
 }
 
 const userInputWithMissingFields = {
@@ -46,6 +68,15 @@ const userInputWithMissingFields = {
   role: Roles.User,
 }
 
+const renterInputWithMissingFields = {
+  name: 'Alexander Rowe',
+  age: 20,
+  phoneNumber: '1-431-965-3155 x5963',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.Renter,
+}
+
 const userPayload = {
   _id: userId,
   name: 'Alyssa Rolfson',
@@ -55,6 +86,18 @@ const userPayload = {
   password: 'password',
   dob: new Date('10-01-2000').toISOString(),
   role: Roles.User,
+}
+
+const renterPayload = {
+  _id: userId,
+  name: 'Alexander Rowe',
+  age: 20,
+  phoneNumber: '1-431-965-3155 x5963',
+  email: 'Maximo.Barrows@gmail.com',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.Renter,
+  cars: expect.any(Array),
 }
 
 const updateUserPayload = {
@@ -88,15 +131,36 @@ const userPayloadWithSession = {
   },
 }
 
+const renterPayloadWithSession = {
+  session: sessionPayload,
+  renter: {
+    _id: expect.any(String),
+    name: 'Alexander Rowe',
+    age: 20,
+    phoneNumber: '1-431-965-3155 x5963',
+    email: 'Maximo.Barrows@gmail.com',
+    password: 'password',
+    dob: renterPayload.dob,
+    role: Roles.Renter,
+    cars: expect.any(Object),
+  },
+}
+
 export {
   userInput,
+  renterInput,
   authPayload,
   authDetails,
   userPayload,
   invalidEmail,
+  renterPayload,
   sessionPayload,
   invalidPassword,
+  renterAuthDetails,
+  renterAuthPayload,
   updateUserPayload,
   userPayloadWithSession,
+  renterPayloadWithSession,
   userInputWithMissingFields,
+  renterInputWithMissingFields,
 }
