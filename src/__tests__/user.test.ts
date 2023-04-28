@@ -17,6 +17,7 @@ import {
   invalidEmail,
   invalidPassword,
   sessionPayload,
+  updateUserPayload,
   userInput,
   userInputWithMissingFields,
   userPayload,
@@ -60,6 +61,11 @@ describe('user', () => {
         it('should return a 200 status with the userDetails', async () => {
           const user = await createUser({ ...userPayload, dob: new Date(userPayload.dob) } as User)
           userId = user._id
+          jest
+            .spyOn(UserService, 'findUser')
+            // @ts-ignore
+            .mockReturnValueOnce(userPayload)
+
           await supertest(app)
             .get(`/users/${userId}`)
             .set('Authorization', `Bearer ${jwt}`)
@@ -207,6 +213,118 @@ describe('user', () => {
 
         expect(loginMock).toBeCalledWith(authDetails)
         expect(createSessionServiceMock).toHaveBeenCalledWith(userPayload._id, userPayload)
+      })
+    })
+  })
+
+  describe('logout', () => {
+    describe('given the user is not logged in', () => {
+      it('should return 403', async () => {
+        await supertest(app).post(`/users/logout`).expect(403)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      it('should return a 200', async () => {
+        const jwt = signJWT(userPayloadWithSession)
+
+        const logoutServiceMock = jest
+          .spyOn(AuthService, 'logout')
+          .mockImplementation(SessionService.deleteSession)
+          // @ts-ignore
+          .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
+
+        await supertest(app).post('/users/logout').set('Authorization', `Bearer ${jwt}`).expect(200)
+
+        expect(logoutServiceMock).toHaveBeenCalledWith(userPayloadWithSession.session.session)
+      })
+    })
+  })
+
+  describe('update user details', () => {
+    describe('given the user is not logged in', () => {
+      it('should return 403', async () => {
+        await supertest(app).patch(`/users/${userId}`).expect(403)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      const jwt = signJWT(userPayload)
+
+      describe('given the user is not authorized', () => {
+        it('should return a 403', async () => {
+          userId = new mongoose.Types.ObjectId().toString()
+          await supertest(app)
+            .patch(`/users/${userId}`)
+            .set('Authorization', `Bearer ${jwt}`)
+            .send(userPayload)
+            .expect(403)
+        })
+      })
+
+      describe('given the user is authorized', () => {
+        describe('given the some data is omitted', () => {
+          it('should return 400', async () => {
+            await supertest(app)
+              .patch(`/users/${userPayload._id}`)
+              .set('Authorization', `Bearer ${jwt}`)
+              .send(userInputWithMissingFields)
+              .expect(400)
+          })
+        })
+
+        describe('given no data is omitted', () => {
+          it('should return a 200', async () => {
+            jest
+              .spyOn(UserService, 'updateUser')
+              // @ts-ignore
+              .mockReturnValueOnce(updateUserPayload)
+
+            await supertest(app)
+              .patch(`/users/${userPayload._id}`)
+              .set('Authorization', `Bearer ${jwt}`)
+              .send(updateUserPayload)
+              .expect(200)
+          })
+        })
+      })
+    })
+  })
+
+  describe('delete user details', () => {
+    describe('given the user is not logged in', () => {
+      it('should return 403', async () => {
+        await supertest(app).delete(`/users/${userId}`).expect(403)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      const jwt = signJWT(userPayload)
+
+      describe('user is not authorized', () => {
+        it('should return a 403', async () => {
+          userId = new mongoose.Types.ObjectId().toString()
+          await supertest(app)
+            .delete(`/users/${userId}`)
+            .set('Authorization', `Bearer ${jwt}`)
+            .expect(403)
+        })
+      })
+
+      describe('user is authorized', () => {
+        it('should return a 200', async () => {
+          const deleteUserServiceMock = jest
+            .spyOn(UserService, 'deleteUser')
+            // @ts-ignore
+            .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
+
+          await supertest(app)
+            .delete(`/users/${userPayload._id}`)
+            .set('Authorization', `Bearer ${jwt}`)
+            .expect(200)
+
+          expect(deleteUserServiceMock).toHaveBeenCalled()
+        })
       })
     })
   })

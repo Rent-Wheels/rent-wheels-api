@@ -57,6 +57,17 @@ const userPayload = {
   role: Roles.User,
 }
 
+const updateUserPayload = {
+  _id: userPayload._id,
+  name: 'Alyssa Rolfson',
+  age: 20,
+  phoneNumber: '(901) 919-5975 x61383',
+  email: 'Mandy_Marquardt78@hotmail.com',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.User,
+}
+
 const sessionPayload = {
   accessToken: expect.any(Object),
   refreshToken: expect.any(Object),
@@ -81,10 +92,11 @@ export {
   userInput,
   authPayload,
   authDetails,
-  invalidEmail,
   userPayload,
+  invalidEmail,
   sessionPayload,
   invalidPassword,
+  updateUserPayload,
   userPayloadWithSession,
   userInputWithMissingFields,
 }
