@@ -22,7 +22,7 @@ import {
   userPayloadWithSession,
 } from '../models/tests'
 
-describe.skip('user', () => {
+describe('user', () => {
   let userId = new mongoose.Types.ObjectId().toString()
   jest.setTimeout(15000)
 

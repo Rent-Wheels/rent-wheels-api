@@ -4,22 +4,24 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import app from '../app'
 import { signJWT } from '../util/jwt'
-import { User } from '../models/dto/userInputs'
+import { addCar } from '../services/car.service'
+import { Car, User } from '../models/dto/userInputs'
 import * as UserService from '../services/user.service'
 import * as AuthService from '../services/auth.service'
 import * as SessionService from '../services/session.service'
 import {
-  renterAuthDetails,
-  renterAuthPayload,
   renterInput,
   renterPayload,
+  sessionPayload,
+  renterAuthDetails,
+  renterAuthPayload,
   renterPayloadWithSession,
   renterInputWithMissingFields,
-  sessionPayload,
+  carPayload,
 } from '../models/tests'
 // import * as RenterService from '../services/renter.service'
 
-describe.only('renter', () => {
+describe('renter', () => {
   let userId = new mongoose.Types.ObjectId().toString()
   jest.setTimeout(15000)
 
@@ -65,97 +67,101 @@ describe.only('renter', () => {
               .expect(200)
             expect(body).toEqual([])
           })
-          // })
-          // describe('given the renter has cars', () => {
-          //   it('should return 200 status and cars array', async () => {
-          //     const { body } = await supertest(app)
-          //       .get(`/renters/${userId}/cars`)
-          //       .set('Authorization', `Bearer ${jwt}`)
-          //       .expect(200)
-          //     expect(body).toEqual({})
-          //   })
-          // })
+        })
+
+        describe('given the renter has cars', () => {
+          it('should return 200 status and cars array', async () => {
+            await addCar({
+              carDetails: { ...carPayload, owner: userId } as Car,
+              userId,
+            })
+            const { body } = await supertest(app)
+              .get(`/renters/${userId}/cars`)
+              .set('Authorization', `Bearer ${jwt}`)
+              .expect(200)
+            expect(body).toEqual([expect.any(Object)])
+          })
         })
       })
     })
+  })
 
-    describe('create renter', () => {
-      describe('given all data is given', () => {
-        it('should return a 201 status and sessionId, refreshToken and accessToken', async () => {
-          const createAuthServiceMock = jest
-            .spyOn(AuthService, 'createAuth')
-            // @ts-ignore
-            .mockReturnValueOnce(renterAuthPayload)
+  describe('create renter', () => {
+    describe('given all data is given', () => {
+      it('should return a 201 status and sessionId, refreshToken and accessToken', async () => {
+        const createAuthServiceMock = jest
+          .spyOn(AuthService, 'createAuth')
+          // @ts-ignore
+          .mockReturnValueOnce(renterAuthPayload)
 
-          const createUserServiceMock = jest
-            .spyOn(UserService, 'createUser')
-            // @ts-ignore
-            .mockReturnValueOnce(renterPayload)
+        const createUserServiceMock = jest
+          .spyOn(UserService, 'createUser')
+          // @ts-ignore
+          .mockReturnValueOnce(renterPayload)
 
-          const createSessionServiceMock = jest
-            .spyOn(SessionService, 'createSession')
-            // @ts-ignore
-            .mockReturnValueOnce(sessionPayload)
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
 
-          const { body, statusCode } = await supertest(app).post('/renters/').send(renterInput)
+        const { body, statusCode } = await supertest(app).post('/renters/').send(renterInput)
 
-          expect(statusCode).toBe(201)
-          expect(body).toEqual(renterPayloadWithSession)
+        expect(statusCode).toBe(201)
+        expect(body).toEqual(renterPayloadWithSession)
 
-          expect(createAuthServiceMock).toBeCalledWith(renterAuthDetails)
-          expect(createUserServiceMock).toHaveBeenCalledWith(renterInput)
-          expect(createSessionServiceMock).toHaveBeenCalledWith(renterPayload._id, renterPayload)
-        })
+        expect(createAuthServiceMock).toBeCalledWith(renterAuthDetails)
+        expect(createUserServiceMock).toHaveBeenCalledWith(renterInput)
+        expect(createSessionServiceMock).toHaveBeenCalledWith(renterPayload._id, renterPayload)
       })
+    })
 
-      describe('given some data is omitted', () => {
-        it('should return 400', async () => {
-          const createAuthServiceMock = jest
-            .spyOn(AuthService, 'createAuth')
-            // @ts-ignore
-            .mockReturnValueOnce(renterAuthPayload)
+    describe('given some data is omitted', () => {
+      it('should return 400', async () => {
+        const createAuthServiceMock = jest
+          .spyOn(AuthService, 'createAuth')
+          // @ts-ignore
+          .mockReturnValueOnce(renterAuthPayload)
 
-          const createUserServiceMock = jest
-            .spyOn(UserService, 'createUser')
-            //  @ts-ignore
-            .mockReturnValueOnce(renterPayload)
+        const createUserServiceMock = jest
+          .spyOn(UserService, 'createUser')
+          //  @ts-ignore
+          .mockReturnValueOnce(renterPayload)
 
-          const createSessionServiceMock = jest
-            .spyOn(SessionService, 'createSession')
-            // @ts-ignore
-            .mockReturnValueOnce(sessionPayload)
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
 
-          await supertest(app).post('/renters/').send(renterInputWithMissingFields).expect(400)
+        await supertest(app).post('/renters/').send(renterInputWithMissingFields).expect(400)
 
-          expect(createAuthServiceMock).not.toHaveBeenCalled()
-          expect(createUserServiceMock).not.toHaveBeenCalled()
-          expect(createSessionServiceMock).not.toHaveBeenCalled()
-        })
+        expect(createAuthServiceMock).not.toHaveBeenCalled()
+        expect(createUserServiceMock).not.toHaveBeenCalled()
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
       })
+    })
 
-      describe('given some data is duplicated', () => {
-        it('should return 409', async () => {
-          const createAuthServiceMock = jest
-            .spyOn(AuthService, 'createAuth')
-            // @ts-ignore
-            .mockRejectedValueOnce('Duplicate found')
+    describe('given some data is duplicated', () => {
+      it('should return 409', async () => {
+        const createAuthServiceMock = jest
+          .spyOn(AuthService, 'createAuth')
+          // @ts-ignore
+          .mockRejectedValueOnce('Duplicate found')
 
-          const createUserServiceMock = jest
-            .spyOn(UserService, 'createUser')
-            //  @ts-ignore
-            .mockReturnValueOnce(renterPayload)
+        const createUserServiceMock = jest
+          .spyOn(UserService, 'createUser')
+          //  @ts-ignore
+          .mockReturnValueOnce(renterPayload)
 
-          const createSessionServiceMock = jest
-            .spyOn(SessionService, 'createSession')
-            // @ts-ignore
-            .mockReturnValueOnce(sessionPayload)
+        const createSessionServiceMock = jest
+          .spyOn(SessionService, 'createSession')
+          // @ts-ignore
+          .mockReturnValueOnce(sessionPayload)
 
-          await supertest(app).post('/renters/').send(renterInput).expect(409)
+        await supertest(app).post('/renters/').send(renterInput).expect(409)
 
-          expect(createAuthServiceMock).toHaveBeenCalledWith(renterAuthDetails)
-          expect(createUserServiceMock).not.toHaveBeenCalled()
-          expect(createSessionServiceMock).not.toHaveBeenCalled()
-        })
+        expect(createAuthServiceMock).toHaveBeenCalledWith(renterAuthDetails)
+        expect(createUserServiceMock).not.toHaveBeenCalled()
+        expect(createSessionServiceMock).not.toHaveBeenCalled()
       })
     })
   })
