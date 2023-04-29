@@ -60,15 +60,18 @@ describe('user', () => {
         it('should return a 200 status with the userDetails', async () => {
           const user = await createUser({ ...userPayload, dob: new Date(userPayload.dob) } as User)
           userId = user._id
-          jest
+          const findUserServiceMock = jest
             .spyOn(UserService, 'findUser')
             // @ts-ignore
-            .mockReturnValueOnce(userPayload)
+            .mockReturnValueOnce({ ...user, _id: user._id.toString() })
 
-          await supertest(app)
+          const { body } = await supertest(app)
             .get(`/users/${userId}`)
             .set('Authorization', `Bearer ${jwt}`)
             .expect(200)
+
+          expect(body).toEqual({ ...user, dob: user.dob.toISOString(), _id: user._id.toString() })
+          expect(findUserServiceMock).toHaveBeenCalledWith({ _id: userId.toString() })
         })
       })
     })
@@ -229,7 +232,6 @@ describe('user', () => {
 
         const logoutServiceMock = jest
           .spyOn(AuthService, 'logout')
-          .mockImplementation(SessionService.deleteSession)
           // @ts-ignore
           .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
 
