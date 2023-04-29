@@ -101,7 +101,7 @@ const renterPayload = {
 }
 
 const updateUserPayload = {
-  _id: userPayload._id,
+  _id: userPayload._id.toString(),
   name: 'Alyssa Rolfson',
   age: 20,
   phoneNumber: '(901) 919-5975 x61383',
@@ -129,12 +129,49 @@ const carInput = {
   terms: 'You crash it, you buy it',
 }
 
+const updateCarInput = {
+  owner: renterPayload._id.toString(),
+  make: 'BMW',
+  model: 'M3 Competition',
+  capacity: 4,
+  yearOfManufacture: '2019',
+  registrationNumber: 'GT 7789-20',
+  condition: 'Excellent',
+  rate: 55,
+  plan: '/hr',
+  type: 'Sedan',
+  availability: 1,
+  location: 'KNUST',
+  maxDuration: 5,
+  description: "This is a really beautiful and strong car you're going to enjoy every moment in it",
+  terms: 'You crash it, you buy it',
+}
+
 const carPayload = {
   _id: userId.toString(),
   owner: renterPayload._id.toString(),
   make: 'BMW',
   model: 'M3 Competition',
   capacity: 5,
+  yearOfManufacture: '2019',
+  registrationNumber: 'GT 7789-20',
+  condition: 'Excellent',
+  rate: 55,
+  plan: '/hr',
+  type: 'Sedan',
+  availability: 1,
+  location: 'KNUST',
+  maxDuration: 5,
+  description: "This is a really beautiful and strong car you're going to enjoy every moment in it",
+  terms: 'You crash it, you buy it',
+}
+
+const updateCarPayload = {
+  _id: userId.toString(),
+  owner: renterPayload._id.toString(),
+  make: 'BMW',
+  model: 'M3 Competition',
+  capacity: 4,
   yearOfManufacture: '2019',
   registrationNumber: 'GT 7789-20',
   condition: 'Excellent',
@@ -231,8 +268,10 @@ export {
   invalidEmail,
   renterPayload,
   sessionPayload,
+  updateCarInput,
   invalidPassword,
   carInputOmitted,
+  updateCarPayload,
   renterAuthDetails,
   renterAuthPayload,
   updateUserPayload,

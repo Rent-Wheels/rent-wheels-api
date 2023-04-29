@@ -101,7 +101,6 @@ async function deleteUserHandler(
 ) {
   try {
     const userId = req.params.userId
-    console.log(userId !== res.locals.user._id)
 
     if (userId !== res.locals.user._id) return res.sendStatus(403)
 

@@ -19,8 +19,8 @@ import {
   sessionPayload,
   invalidPassword,
   updateUserPayload,
-  userInputWithMissingFields,
   userPayloadWithSession,
+  userInputWithMissingFields,
 } from '../models/tests'
 
 describe('user', () => {
@@ -45,7 +45,7 @@ describe('user', () => {
     })
 
     describe('given the user is logged in', () => {
-      const jwt = signJWT(userPayload)
+      const jwt = signJWT(userJwt)
 
       describe('given the user does not exist', () => {
         it('should return 404', async () => {
@@ -248,7 +248,7 @@ describe('user', () => {
     })
 
     describe('given the user is logged in', () => {
-      const jwt = signJWT(userPayload)
+      const jwt = signJWT(userJwt)
 
       describe('given the user is not authorized', () => {
         it('should return a 403', async () => {
@@ -274,16 +274,24 @@ describe('user', () => {
 
         describe('given no data is omitted', () => {
           it('should return a 200', async () => {
-            jest
+            const updateUserServiceMock = jest
               .spyOn(UserService, 'updateUser')
               // @ts-ignore
               .mockReturnValueOnce(updateUserPayload)
 
-            await supertest(app)
+            const { body } = await supertest(app)
               .patch(`/users/${userPayload._id}`)
               .set('Authorization', `Bearer ${jwt}`)
               .send(updateUserPayload)
               .expect(200)
+
+            expect(body).toEqual(updateUserPayload)
+
+            expect(updateUserServiceMock).toHaveBeenCalledWith(
+              { _id: updateUserPayload._id },
+              updateUserPayload,
+              { new: true },
+            )
           })
         })
       })
