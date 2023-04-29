@@ -10,15 +10,16 @@ import * as UserService from '../services/user.service'
 import * as AuthService from '../services/auth.service'
 import * as SessionService from '../services/session.service'
 import {
+  userJwt,
+  userInput,
   authDetails,
+  userPayload,
   authPayload,
   invalidEmail,
-  invalidPassword,
   sessionPayload,
+  invalidPassword,
   updateUserPayload,
-  userInput,
   userInputWithMissingFields,
-  userPayload,
   userPayloadWithSession,
 } from '../models/tests'
 
@@ -224,7 +225,7 @@ describe('user', () => {
 
     describe('given the user is logged in', () => {
       it('should return a 200', async () => {
-        const jwt = signJWT(userPayloadWithSession)
+        const jwt = signJWT(userJwt)
 
         const logoutServiceMock = jest
           .spyOn(AuthService, 'logout')
@@ -234,7 +235,7 @@ describe('user', () => {
 
         await supertest(app).post('/users/logout').set('Authorization', `Bearer ${jwt}`).expect(200)
 
-        expect(logoutServiceMock).toHaveBeenCalledWith(userPayloadWithSession.session.session)
+        expect(logoutServiceMock).toHaveBeenCalledWith(userJwt.session)
       })
     })
   })
@@ -297,7 +298,7 @@ describe('user', () => {
     })
 
     describe('given the user is logged in', () => {
-      const jwt = signJWT(userPayload)
+      const jwt = signJWT(userJwt)
 
       describe('user is not authorized', () => {
         it('should return a 403', async () => {
@@ -317,11 +318,14 @@ describe('user', () => {
             .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
 
           await supertest(app)
-            .delete(`/users/${userPayload._id}`)
+            .delete(`/users/${userJwt._id}`)
             .set('Authorization', `Bearer ${jwt}`)
             .expect(200)
 
-          expect(deleteUserServiceMock).toHaveBeenCalled()
+          expect(deleteUserServiceMock).toHaveBeenCalledWith(
+            { _id: userJwt._id.toString() },
+            userJwt.session,
+          )
         })
       })
     })

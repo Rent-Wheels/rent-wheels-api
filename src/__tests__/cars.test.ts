@@ -8,9 +8,10 @@ import { Car, User } from '../models/dto/userInputs'
 import * as CarService from '../services/car.service'
 import * as UserService from '../services/user.service'
 import {
+  userJwt,
   carInput,
+  renterJwt,
   carPayload,
-  userPayload,
   renterInput,
   renterPayload,
   carInputOmitted,
@@ -38,7 +39,7 @@ describe('cars', () => {
     })
 
     describe('given user is logged in', () => {
-      const jwt = signJWT(userPayload)
+      const jwt = signJWT(userJwt)
 
       describe('given there are no available cars', () => {
         it('should return 200 and an empty array', async () => {
@@ -79,7 +80,7 @@ describe('cars', () => {
 
     describe('given user is logged in', () => {
       describe('given user is not a renter', () => {
-        const jwt = signJWT(userPayload)
+        const jwt = signJWT(userJwt)
 
         it('should return 403', async () => {
           await supertest(app).post(`/cars/`).set('Authorization', `Bearer ${jwt}`).expect(403)
@@ -87,7 +88,7 @@ describe('cars', () => {
       })
 
       describe('given user is a renter', () => {
-        const jwt = signJWT(renterPayload)
+        const jwt = signJWT(renterJwt)
 
         describe('given car data is omitted', () => {
           it('should return 400', async () => {

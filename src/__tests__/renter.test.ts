@@ -11,6 +11,8 @@ import * as AuthService from '../services/auth.service'
 import * as RenterService from '../services/renter.service'
 import * as SessionService from '../services/session.service'
 import {
+  renterJwt,
+  carPayload,
   renterInput,
   renterPayload,
   sessionPayload,
@@ -18,7 +20,6 @@ import {
   renterAuthPayload,
   renterPayloadWithSession,
   renterInputWithMissingFields,
-  carPayload,
 } from '../models/tests'
 
 describe('renter', () => {
@@ -43,7 +44,7 @@ describe('renter', () => {
     })
 
     describe('given user is logged in', () => {
-      const jwt = signJWT(renterPayload)
+      const jwt = signJWT(renterJwt)
       describe('given renter does not exist', () => {
         it('should return 404', async () => {
           await supertest(app)

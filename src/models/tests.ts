@@ -166,13 +166,17 @@ const carInputOmitted = {
 }
 
 const sessionPayload = {
-  accessToken: expect.any(Object),
-  refreshToken: expect.any(Object),
-  session: expect.any(Object),
+  accessToken: '',
+  refreshToken: '',
+  session: userId.toString(),
 }
 
 const userPayloadWithSession = {
-  session: sessionPayload,
+  session: {
+    accessToken: expect.any(String),
+    refreshToken: expect.any(String),
+    session: expect.any(String),
+  },
   user: {
     _id: expect.any(String),
     name: 'Alyssa Rolfson',
@@ -186,7 +190,11 @@ const userPayloadWithSession = {
 }
 
 const renterPayloadWithSession = {
-  session: sessionPayload,
+  session: {
+    accessToken: expect.any(String),
+    refreshToken: expect.any(String),
+    session: expect.any(String),
+  },
   renter: {
     _id: expect.any(String),
     name: 'Alexander Rowe',
@@ -200,9 +208,21 @@ const renterPayloadWithSession = {
   },
 }
 
+const userJwt = {
+  ...userPayload,
+  session: userId.toString(),
+}
+
+const renterJwt = {
+  ...renterPayload,
+  session: userId.toString(),
+}
+
 export {
+  userJwt,
   carInput,
   userInput,
+  renterJwt,
   carPayload,
   renterInput,
   authPayload,
@@ -212,8 +232,8 @@ export {
   renterPayload,
   sessionPayload,
   invalidPassword,
-  renterAuthDetails,
   carInputOmitted,
+  renterAuthDetails,
   renterAuthPayload,
   updateUserPayload,
   userPayloadWithSession,
