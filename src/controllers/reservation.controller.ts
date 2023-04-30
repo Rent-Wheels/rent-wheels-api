@@ -42,7 +42,7 @@ async function updateReservationStatusHandler(
   } catch (e: any) {
     log.error(e)
 
-    return res.sendStatus(400)
+    return res.sendStatus(404)
   }
 }
 export { createReservationHandler, updateReservationStatusHandler }

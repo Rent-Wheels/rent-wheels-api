@@ -1,11 +1,19 @@
 import mongoose from 'mongoose'
 
-import { Roles } from './enums'
+import { ReservationStatus, Roles } from './enums'
 import { Auth } from './dto/userInputs'
-// import { User } from './dto/userInputs'
 
 const userId = new mongoose.Types.ObjectId()
 
+// User Details
+// Session
+const sessionPayload = {
+  accessToken: '',
+  refreshToken: '',
+  session: userId.toString(),
+}
+
+// Auth
 const authDetails = {
   email: 'Mandy_Marquardt78@hotmail.com',
   password: 'password',
@@ -38,6 +46,7 @@ const renterAuthPayload = {
   password: 'password',
 } as Auth
 
+// User
 const userInput = {
   name: 'Alyssa Rolfson',
   age: 20,
@@ -46,17 +55,6 @@ const userInput = {
   password: 'password',
   dob: new Date('10-01-2000').toISOString(),
   role: Roles.User,
-}
-
-const renterInput = {
-  name: 'Alexander Rowe',
-  age: 20,
-  phoneNumber: '1-431-965-3155 x5963',
-  email: 'Maximo.Barrows@gmail.com',
-  password: 'password',
-  dob: new Date('10-01-2000').toISOString(),
-  role: Roles.Renter,
-  cars: [],
 }
 
 const userInputWithMissingFields = {
@@ -68,15 +66,6 @@ const userInputWithMissingFields = {
   role: Roles.User,
 }
 
-const renterInputWithMissingFields = {
-  name: 'Alexander Rowe',
-  age: 20,
-  phoneNumber: '1-431-965-3155 x5963',
-  password: 'password',
-  dob: new Date('10-01-2000').toISOString(),
-  role: Roles.Renter,
-}
-
 const userPayload = {
   _id: userId,
   name: 'Alyssa Rolfson',
@@ -86,6 +75,61 @@ const userPayload = {
   password: 'password',
   dob: new Date('10-01-2000').toISOString(),
   role: Roles.User,
+}
+
+const updateUserPayload = {
+  _id: userPayload._id.toString(),
+  name: 'Alyssa Rolfson',
+  age: 20,
+  phoneNumber: '(901) 919-5975 x61383',
+  email: 'Mandy_Marquardt78@hotmail.com',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.User,
+}
+
+const userPayloadWithSession = {
+  session: {
+    accessToken: expect.any(String),
+    refreshToken: expect.any(String),
+    session: expect.any(String),
+  },
+  user: {
+    _id: expect.any(String),
+    name: 'Alyssa Rolfson',
+    age: 20,
+    phoneNumber: '(901) 919-5975 x61383',
+    email: 'Mandy_Marquardt78@hotmail.com',
+    password: 'password',
+    role: Roles.User,
+    dob: userPayload.dob,
+  },
+}
+
+const userJwt = {
+  ...userPayload,
+  session: userId.toString(),
+}
+
+// Renter
+const renterInput = {
+  name: 'Alexander Rowe',
+  age: 20,
+  phoneNumber: '1-431-965-3155 x5963',
+  email: 'Maximo.Barrows@gmail.com',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.Renter,
+  cars: [],
+}
+
+const renterInputWithMissingFields = {
+  name: 'Alexander Rowe',
+  age: 20,
+  phoneNumber: '1-431-965-3155 x5963',
+  password: 'password',
+  dob: new Date('10-01-2000').toISOString(),
+  role: Roles.Renter,
 }
 
 const renterPayload = {
@@ -100,17 +144,31 @@ const renterPayload = {
   cars: expect.any(Array),
 }
 
-const updateUserPayload = {
-  _id: userPayload._id.toString(),
-  name: 'Alyssa Rolfson',
-  age: 20,
-  phoneNumber: '(901) 919-5975 x61383',
-  email: 'Mandy_Marquardt78@hotmail.com',
-  password: 'password',
-  dob: new Date('10-01-2000').toISOString(),
-  role: Roles.User,
+const renterPayloadWithSession = {
+  session: {
+    accessToken: expect.any(String),
+    refreshToken: expect.any(String),
+    session: expect.any(String),
+  },
+  renter: {
+    _id: expect.any(String),
+    name: 'Alexander Rowe',
+    age: 20,
+    phoneNumber: '1-431-965-3155 x5963',
+    email: 'Maximo.Barrows@gmail.com',
+    password: 'password',
+    dob: renterPayload.dob,
+    role: Roles.Renter,
+    cars: expect.any(Object),
+  },
 }
 
+const renterJwt = {
+  ...renterPayload,
+  session: userId.toString(),
+}
+
+// Car
 const carInput = {
   owner: renterPayload._id.toString(),
   make: 'BMW',
@@ -202,57 +260,45 @@ const carInputOmitted = {
   terms: 'You crash it, you buy it',
 }
 
-const sessionPayload = {
-  accessToken: '',
-  refreshToken: '',
-  session: userId.toString(),
+// Reservation
+const reservationInput = {
+  customer: {
+    id: userPayload._id.toString(),
+    name: userPayload.name,
+  },
+  renter: carPayload.owner,
+  car: carPayload._id,
+  startDate: new Date('01-05-2023').toISOString(),
+  returnDate: new Date('10-05-2023').toISOString(),
+  status: ReservationStatus.Pending,
 }
 
-const userPayloadWithSession = {
-  session: {
-    accessToken: expect.any(String),
-    refreshToken: expect.any(String),
-    session: expect.any(String),
-  },
-  user: {
-    _id: expect.any(String),
-    name: 'Alyssa Rolfson',
-    age: 20,
-    phoneNumber: '(901) 919-5975 x61383',
-    email: 'Mandy_Marquardt78@hotmail.com',
-    password: 'password',
-    role: Roles.User,
-    dob: userPayload.dob,
-  },
+const reservationStatusInput = {
+  status: ReservationStatus.Accepted,
 }
 
-const renterPayloadWithSession = {
-  session: {
-    accessToken: expect.any(String),
-    refreshToken: expect.any(String),
-    session: expect.any(String),
+const reservationInputOmitted = {
+  customer: {
+    id: userPayload._id,
+    name: userPayload.name,
   },
-  renter: {
-    _id: expect.any(String),
-    name: 'Alexander Rowe',
-    age: 20,
-    phoneNumber: '1-431-965-3155 x5963',
-    email: 'Maximo.Barrows@gmail.com',
-    password: 'password',
-    dob: renterPayload.dob,
-    role: Roles.Renter,
-    cars: expect.any(Object),
-  },
+  renter: carPayload.owner,
+  startDate: new Date('01-05-2023').toISOString(),
+  returnDate: new Date('10-05-2023').toISOString(),
+  status: ReservationStatus.Pending,
 }
 
-const userJwt = {
-  ...userPayload,
-  session: userId.toString(),
-}
-
-const renterJwt = {
-  ...renterPayload,
-  session: userId.toString(),
+const reservationPayload = {
+  _id: userId.toString(),
+  customer: {
+    id: userPayload._id.toString(),
+    name: userPayload.name,
+  },
+  renter: carPayload.owner.toString(),
+  car: carPayload._id.toString(),
+  startDate: new Date('01-05-2023').toISOString(),
+  returnDate: new Date('10-05-2023').toISOString(),
+  status: ReservationStatus.Pending,
 }
 
 export {
@@ -272,10 +318,14 @@ export {
   invalidPassword,
   carInputOmitted,
   updateCarPayload,
+  reservationInput,
   renterAuthDetails,
   renterAuthPayload,
   updateUserPayload,
+  reservationPayload,
   userPayloadWithSession,
+  reservationStatusInput,
+  reservationInputOmitted,
   renterPayloadWithSession,
   userInputWithMissingFields,
   renterInputWithMissingFields,
