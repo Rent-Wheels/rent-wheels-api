@@ -8,7 +8,6 @@ jobs:
   build:
     env:
       CI: true
-    secrets:
       PORT: ${{secrets.PORT}}
       MONGO_URL: ${{secrets.MONGO_URL}}
       SALT_FACTOR: ${{secrets.SALT_FACTOR}}
