@@ -8,14 +8,13 @@ jobs:
   build:
     env:
       CI: true
-      MONGO_URL: mongodb://localhost/rental
-      PORT: {{secrets.PORT}}
-      MONGO_URL: {{secrets.MONGO_URL}}
-      SALT_FACTOR: {{secrets.SALT_FACTOR}}
-      ACCESS_TOKEN_TTL: {{secrets.ACCESS_TOKEN_TTL}}
-      REFRESH_TOKEN_TTL: {{secrets.REFRESH_TOKEN_TTL}}
-      ACCESS_TOKEN_PRIVATE_KEY: {{secrets.ACCESS_TOKEN_PRIVATE_KEY}}
-      ACCESS_TOKEN_PUBLIC_KEY: {{secrets.ACCESS_TOKEN_PUBLIC_KEY}}
+      PORT: { { secrets.PORT } }
+      MONGO_URL: { { secrets.MONGO_URL } }
+      SALT_FACTOR: { { secrets.SALT_FACTOR } }
+      ACCESS_TOKEN_TTL: { { secrets.ACCESS_TOKEN_TTL } }
+      REFRESH_TOKEN_TTL: { { secrets.REFRESH_TOKEN_TTL } }
+      ACCESS_TOKEN_PRIVATE_KEY: { { secrets.ACCESS_TOKEN_PRIVATE_KEY } }
+      ACCESS_TOKEN_PUBLIC_KEY: { { secrets.ACCESS_TOKEN_PUBLIC_KEY } }
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
