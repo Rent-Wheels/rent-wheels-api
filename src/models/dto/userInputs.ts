@@ -29,6 +29,7 @@ interface User extends UserInput, mongoose.Document {
   addCar(carId: string): Promise<User>
   removeCar(carId: string): Promise<User>
   addReservation(reservationId: string): Promise<User>
+  removeReservation(reservationId: string): Promise<User>
 }
 
 interface Session extends mongoose.Document {

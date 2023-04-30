@@ -43,4 +43,19 @@ async function updateReservation(
   return await ReservationModel.findOneAndUpdate(filter, update, options)
 }
 
-export { createReservation, updateReservationStatus, updateReservation }
+async function deleteReservation(filter: FilterQuery<Reservation>) {
+  const reservation = await ReservationModel.findOne(filter)
+  if (!reservation) throw new Error('Reservation not found')
+
+  const renter = await findUser({ _id: reservation.renter })
+  const customer = await findUser({ _id: reservation.customer.id })
+
+  if (!customer || !renter) throw new Error('Reservation not found')
+
+  await renter.removeReservation(reservation._id)
+  await customer.removeReservation(reservation._id)
+
+  return await ReservationModel.findOneAndDelete(filter)
+}
+
+export { createReservation, updateReservationStatus, updateReservation, deleteReservation }

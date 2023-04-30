@@ -4,11 +4,13 @@ import log from '../util/logger'
 import { Reservation } from '../models/dto/userInputs'
 import {
   createReservation,
+  deleteReservation,
   updateReservation,
   updateReservationStatus,
 } from '../services/reservation.service'
 import {
   CreateReservationInput,
+  DeleteReservationInput,
   UpdateReservationInput,
   UpdateReservationStatusInput,
 } from '../schema/reservation.schema'
@@ -77,4 +79,27 @@ async function updateReservationHandler(
     return res.sendStatus(404)
   }
 }
-export { createReservationHandler, updateReservationStatusHandler, updateReservationHandler }
+
+async function deleteReservationHandler(
+  req: Request<DeleteReservationInput['params'], Record<never, never>, Record<never, never>>,
+  res: Response,
+) {
+  try {
+    const reservationId = req.params.reservationId
+
+    await deleteReservation({ _id: reservationId })
+
+    return res.sendStatus(200)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.sendStatus(404)
+  }
+}
+
+export {
+  createReservationHandler,
+  updateReservationStatusHandler,
+  updateReservationHandler,
+  deleteReservationHandler,
+}

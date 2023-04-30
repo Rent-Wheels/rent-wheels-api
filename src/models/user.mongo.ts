@@ -65,6 +65,11 @@ userSchema.methods.addReservation = async function (reservationId: string) {
   user.reservations.push(reservationId)
   return await user.save()
 }
+userSchema.methods.removeReservation = async function (reservationId: string) {
+  const user = this as User
+  user.reservations = user.reservations.filter(reservation => reservation !== reservationId)
+  return await user.save()
+}
 
 const UserModel = mongoose.model<User>('User', userSchema)
 
