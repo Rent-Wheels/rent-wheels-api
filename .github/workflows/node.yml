@@ -1,4 +1,4 @@
-name: NASA Project CI
+name: Car Rental API CI
 on:
   push:
     branches: [main]
