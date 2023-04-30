@@ -273,6 +273,18 @@ const reservationInput = {
   status: ReservationStatus.Pending,
 }
 
+const updateReservationInput = {
+  customer: {
+    id: userPayload._id.toString(),
+    name: userPayload.name,
+  },
+  renter: carPayload.owner,
+  car: carPayload._id,
+  startDate: new Date('03-05-2023').toISOString(),
+  returnDate: new Date('10-05-2023').toISOString(),
+  status: ReservationStatus.Pending,
+}
+
 const reservationStatusInput = {
   status: ReservationStatus.Accepted,
 }
@@ -301,6 +313,19 @@ const reservationPayload = {
   status: ReservationStatus.Pending,
 }
 
+const updateReservationPayload = {
+  _id: userId.toString(),
+  customer: {
+    id: userPayload._id.toString(),
+    name: userPayload.name,
+  },
+  renter: carPayload.owner.toString(),
+  car: carPayload._id.toString(),
+  startDate: new Date('03-05-2023').toISOString(),
+  returnDate: new Date('10-05-2023').toISOString(),
+  status: ReservationStatus.Pending,
+}
+
 export {
   userJwt,
   carInput,
@@ -323,10 +348,12 @@ export {
   renterAuthPayload,
   updateUserPayload,
   reservationPayload,
+  updateReservationInput,
   userPayloadWithSession,
   reservationStatusInput,
   reservationInputOmitted,
   renterPayloadWithSession,
+  updateReservationPayload,
   userInputWithMissingFields,
   renterInputWithMissingFields,
 }

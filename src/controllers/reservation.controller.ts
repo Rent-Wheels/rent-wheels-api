@@ -2,8 +2,16 @@ import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Reservation } from '../models/dto/userInputs'
-import { createReservation, updateReservationStatus } from '../services/reservation.service'
-import { CreateReservationInput, UpdateReservationStatusInput } from '../schema/reservation.schema'
+import {
+  createReservation,
+  updateReservation,
+  updateReservationStatus,
+} from '../services/reservation.service'
+import {
+  CreateReservationInput,
+  UpdateReservationInput,
+  UpdateReservationStatusInput,
+} from '../schema/reservation.schema'
 
 async function createReservationHandler(
   req: Request<Record<never, never>, Record<never, never>, CreateReservationInput['body']>,
@@ -45,4 +53,28 @@ async function updateReservationStatusHandler(
     return res.sendStatus(404)
   }
 }
-export { createReservationHandler, updateReservationStatusHandler }
+
+async function updateReservationHandler(
+  req: Request<
+    UpdateReservationInput['params'],
+    Record<never, never>,
+    UpdateReservationInput['body']
+  >,
+  res: Response,
+) {
+  try {
+    const reservationUpdate = req.body as Reservation
+    const reservationId = req.params.reservationId
+
+    const updatedReservation = await updateReservation({ _id: reservationId }, reservationUpdate, {
+      new: true,
+    })
+
+    return res.status(200).json(updatedReservation)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.sendStatus(404)
+  }
+}
+export { createReservationHandler, updateReservationStatusHandler, updateReservationHandler }

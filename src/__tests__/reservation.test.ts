@@ -10,8 +10,10 @@ import {
   userJwt,
   reservationInput,
   reservationPayload,
+  updateReservationInput,
   reservationStatusInput,
   reservationInputOmitted,
+  updateReservationPayload,
 } from '../models/tests'
 
 describe('reservation', () => {
@@ -113,6 +115,73 @@ describe('reservation', () => {
           expect(updateReservationStatusMock).toHaveBeenCalledWith({
             ...reservationStatusInput,
             filter: { _id: reservationPayload._id },
+          })
+        })
+      })
+    })
+  })
+
+  describe('edit reservation', () => {
+    describe('given the user is not logged in', () => {
+      it('should return 403', async () => {
+        await supertest(app).patch(`/reservations/${userId}`).expect(403)
+      })
+    })
+
+    describe('given the user is logged in', () => {
+      const jwt = signJWT(userJwt)
+
+      describe('given the reservation does not exist', () => {
+        it('should return 404', async () => {
+          const updateReservationServiceMock = jest
+            .spyOn(ReservationService, 'updateReservation')
+            // @ts-ignore
+            .mockRejectedValueOnce('Does not exist')
+
+          await supertest(app)
+            .patch(`/reservations/${userId}`)
+            .set('Authorization', jwt)
+            .send(updateReservationInput)
+            .expect(404)
+
+          expect(updateReservationServiceMock).toHaveBeenCalledWith(
+            { _id: userId },
+            updateReservationInput,
+            { new: true },
+          )
+        })
+      })
+
+      describe('given the reservation does exist', () => {
+        describe('given some data is omitted', () => {
+          it('should return 400', async () => {
+            await supertest(app)
+              .patch(`/reservations/${reservationPayload._id}`)
+              .set('Authorization', jwt)
+              .send(reservationInputOmitted)
+              .expect(400)
+          })
+        })
+
+        describe('given no data is omitted', () => {
+          it('should return 200 and updated reservation', async () => {
+            const updateReservationServiceMock = jest
+              .spyOn(ReservationService, 'updateReservation')
+              // @ts-ignore
+              .mockReturnValueOnce(updateReservationPayload)
+
+            const { body } = await supertest(app)
+              .patch(`/reservations/${reservationPayload._id}`)
+              .set('Authorization', jwt)
+              .send(updateReservationInput)
+              .expect(200)
+
+            expect(body).toEqual(updateReservationPayload)
+            expect(updateReservationServiceMock).toHaveBeenCalledWith(
+              { _id: reservationPayload._id },
+              updateReservationInput,
+              { new: true },
+            )
           })
         })
       })

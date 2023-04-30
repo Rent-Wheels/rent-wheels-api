@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 
 import { findUser } from './user.service'
 import { ReservationStatus } from '../models/enums'
@@ -35,4 +35,12 @@ async function updateReservationStatus({
   return await reservation.updateStatus(status)
 }
 
-export { createReservation, updateReservationStatus }
+async function updateReservation(
+  filter: FilterQuery<Reservation>,
+  update: UpdateQuery<Reservation>,
+  options: QueryOptions,
+) {
+  return await ReservationModel.findOneAndUpdate(filter, update, options)
+}
+
+export { createReservation, updateReservationStatus, updateReservation }
