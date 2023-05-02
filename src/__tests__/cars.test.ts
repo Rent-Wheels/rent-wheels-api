@@ -17,6 +17,7 @@ import {
   updateCarInput,
   carInputOmitted,
   updateCarPayload,
+  reservationPayload,
 } from '../models/tests'
 
 describe('cars', () => {
@@ -451,7 +452,7 @@ describe('cars', () => {
             expect(getCarHistoryServiceMock).not.toHaveBeenCalled()
           })
         })
-        /*
+
         describe('given the car exists', () => {
           describe('given the renter is the owner', () => {
             it('should return 200', async () => {
@@ -460,22 +461,22 @@ describe('cars', () => {
                 // @ts-ignore
                 .mockReturnValueOnce(carPayload)
 
-              // const getCarHistoryServiceMock = jest
-              //   .spyOn(CarService, 'getCarHistory')
-              //   // @ts-ignore
-              //   .mockReturnValueOnce([])
+              const getCarHistoryServiceMock = jest
+                .spyOn(CarService, 'getCarHistory')
+                // @ts-ignore
+                .mockReturnValueOnce([{ ...reservationPayload }])
 
               const { body } = await supertest(app)
                 .get(`/cars/${carPayload._id}/history`)
                 .set('Authorization', `Bearer ${jwt}`)
                 .expect(200)
 
-              expect(body).toBe([])
+              expect(body).toEqual([reservationPayload])
               expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-              // expect(getCarHistoryServiceMock).toHaveBeenCalledWith({
-              //   _id: carPayload._id,
-              //   owner: carPayload.owner,
-              // })
+              expect(getCarHistoryServiceMock).toHaveBeenCalledWith({
+                _id: carPayload._id,
+                owner: carPayload.owner,
+              })
             })
           })
 
@@ -504,7 +505,6 @@ describe('cars', () => {
             })
           })
         })
-        */
       })
     })
   })

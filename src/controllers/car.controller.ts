@@ -97,13 +97,10 @@ async function getCarHistoryHandler(
     const carId = req.params.carId
     const owner = res.locals.user._id
     const car = await findCar({ _id: carId })
-    console.log(owner, car?.owner)
 
     if (!car) return res.sendStatus(404)
 
-    const history = await getCarHistory({ _id: carId })
-    console.log(history)
-
+    const history = await getCarHistory({ _id: carId, owner })
     if (!history) return res.sendStatus(404)
 
     return res.status(200).json(history)

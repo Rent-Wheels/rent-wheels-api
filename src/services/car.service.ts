@@ -38,7 +38,7 @@ async function findCar(filter: FilterQuery<Car>) {
 }
 
 async function getCarHistory(filter: FilterQuery<Car>) {
-  return await CarModel.findOne(filter, { rentalHistory: 1 })
+  return await CarModel.findOne(filter, { rentalHistory: 1 }).populate('rentalHistory')
 }
 
 export { availableCars, addCar, updateCar, deleteCar, findCar, getCarHistory }
