@@ -407,7 +407,7 @@ describe('cars', () => {
     })
   })
   // TODO(Me): Add view rental history tests
-  /*
+
   describe('view rental history', () => {
     describe('given user is not logged in', () => {
       it('should return 403', async () => {
@@ -435,146 +435,77 @@ describe('cars', () => {
             const findCarServiceMock = jest
               .spyOn(CarService, 'findCar')
               // @ts-ignore
-              .mockReturnValue(undefined)
+              .mockReturnValueOnce(undefined)
+
+            const getCarHistoryServiceMock = jest
+              .spyOn(CarService, 'getCarHistory')
+              // @ts-ignore
+              .mockReturnValueOnce(undefined)
 
             await supertest(app)
               .get(`/cars/${userId}/history`)
               .set('Authorization', `Bearer ${jwt}`)
               .expect(404)
 
-            expect(findCarServiceMock).toBeCalledWith({ _id: userId })
+            expect(findCarServiceMock).toHaveBeenCalledWith({ _id: userId })
+            expect(getCarHistoryServiceMock).not.toHaveBeenCalled()
           })
         })
-
+        /*
         describe('given the car exists', () => {
-          describe('given renter is not the owner', () => {
-            it('should return 403', async () => {
-              const fakeRenter = await UserService.createUser({
-                ...renterInput,
-                email: 'example@example.com',
-                phoneNumber: '00200215232',
-                cars: [],
-              } as unknown as User)
-
+          describe('given the renter is the owner', () => {
+            it('should return 200', async () => {
               const findCarServiceMock = jest
                 .spyOn(CarService, 'findCar')
                 // @ts-ignore
-                .mockReturnValueOnce({ ...carPayload, owner: fakeRenter._id })
+                .mockReturnValueOnce(carPayload)
 
-              const findOwnerServiceMock = jest
-                .spyOn(UserService, 'findUser')
-                // @ts-ignore
-                .mockReturnValueOnce(fakeRenter)
+              // const getCarHistoryServiceMock = jest
+              //   .spyOn(CarService, 'getCarHistory')
+              //   // @ts-ignore
+              //   .mockReturnValueOnce([])
 
-              const deleteCarServiceMock = jest
-                .spyOn(CarService, 'deleteCar')
-                // @ts-ignore
-                .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
-
-              await supertest(app)
-                .delete(`/cars/${carPayload._id}`)
+              const { body } = await supertest(app)
+                .get(`/cars/${carPayload._id}/history`)
                 .set('Authorization', `Bearer ${jwt}`)
-                .expect(403)
+                .expect(200)
 
+              expect(body).toBe([])
               expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-              expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: fakeRenter._id })
-              expect(deleteCarServiceMock).not.toHaveBeenCalled()
+              // expect(getCarHistoryServiceMock).toHaveBeenCalledWith({
+              //   _id: carPayload._id,
+              //   owner: carPayload.owner,
+              // })
             })
           })
 
-          describe('given owner does not exist', () => {
+          describe('given the renter is not the owner', () => {
             it('should return 404', async () => {
               const findCarServiceMock = jest
                 .spyOn(CarService, 'findCar')
                 // @ts-ignore
-                .mockReturnValueOnce({ ...carPayload, owner: userId })
+                .mockReturnValueOnce(carPayload)
 
-              const findOwnerServiceMock = jest
-                .spyOn(UserService, 'findUser')
+              const getCarHistoryServiceMock = jest
+                .spyOn(CarService, 'getCarHistory')
                 // @ts-ignore
                 .mockReturnValueOnce(undefined)
 
-              const deleteCarServiceMock = jest
-                .spyOn(CarService, 'deleteCar')
-                // @ts-ignore
-                .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
-
               await supertest(app)
-                .delete(`/cars/${carPayload._id}`)
+                .get(`/cars/${carPayload._id}/history`)
                 .set('Authorization', `Bearer ${jwt}`)
                 .expect(404)
 
               expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-              expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: userId })
-              expect(deleteCarServiceMock).not.toHaveBeenCalled()
-            })
-          })
-
-          describe('given renter is the owner', () => {
-            describe('given there are any errors', () => {
-              it('should return 400', async () => {
-                const findCarServiceMock = jest
-                  .spyOn(CarService, 'findCar')
-                  // @ts-ignore
-                  .mockReturnValueOnce(carPayload)
-
-                const findOwnerServiceMock = jest
-                  .spyOn(UserService, 'findUser')
-                  // @ts-ignore
-                  .mockReturnValueOnce(renterPayload)
-
-                const deleteCarServiceMock = jest
-                  .spyOn(CarService, 'deleteCar')
-                  // @ts-ignore
-                  .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
-
-                await supertest(app)
-                  .delete(`/cars/${carPayload._id}`)
-                  .set('Authorization', `Bearer ${jwt}`)
-                  .expect(400)
-
-                expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-                expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: carPayload.owner })
-                expect(deleteCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-              })
-            })
-
-            describe('given there are no errors', () => {
-              it('should return 200', async () => {
-                const renter = renterPayload as unknown as User
-
-                const findCarServiceMock = jest
-                  .spyOn(CarService, 'findCar')
-                  // @ts-ignore
-                  .mockReturnValueOnce(carPayload)
-
-                const findOwnerServiceMock = jest
-                  .spyOn(UserService, 'findUser')
-                  // @ts-ignore
-                  .mockReturnValueOnce(renterPayload)
-
-                const deleteCarServiceMock = jest
-                  .spyOn(CarService, 'deleteCar')
-                  // @ts-ignore
-                  .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
-
-                renter.removeCar = jest.fn().mockReturnValueOnce(renter)
-
-                await supertest(app)
-                  .delete(`/cars/${carPayload._id}`)
-                  .set('Authorization', `Bearer ${jwt}`)
-                  .expect(200)
-
-                expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-                expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: carPayload.owner })
-                expect(deleteCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-                expect(renter.removeCar).toHaveBeenCalledWith(carPayload._id)
+              expect(getCarHistoryServiceMock).toHaveBeenCalledWith({
+                _id: carPayload._id,
+                owner: carPayload.owner,
               })
             })
           })
         })
+        */
       })
     })
   })
-  */
 })

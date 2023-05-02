@@ -4,7 +4,14 @@ import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
 import { findUser } from '../services/user.service'
 import { CreateCarInput, DeleteCarInput, UpdateCarInput } from '../schema/car.schema'
-import { addCar, availableCars, deleteCar, findCar, updateCar } from '../services/car.service'
+import {
+  addCar,
+  availableCars,
+  deleteCar,
+  findCar,
+  getCarHistory,
+  updateCar,
+} from '../services/car.service'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -82,4 +89,35 @@ async function deleteCarHandler(
   }
 }
 
-export { availableCarsHandler, addCarHandler, updateCarHandler, deleteCarHandler }
+async function getCarHistoryHandler(
+  req: Request<DeleteCarInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const carId = req.params.carId
+    const owner = res.locals.user._id
+    const car = await findCar({ _id: carId })
+    console.log(owner, car?.owner)
+
+    if (!car) return res.sendStatus(404)
+
+    const history = await getCarHistory({ _id: carId })
+    console.log(history)
+
+    if (!history) return res.sendStatus(404)
+
+    return res.status(200).json(history)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.status(400).json(e.message)
+  }
+}
+
+export {
+  availableCarsHandler,
+  addCarHandler,
+  updateCarHandler,
+  deleteCarHandler,
+  getCarHistoryHandler,
+}
