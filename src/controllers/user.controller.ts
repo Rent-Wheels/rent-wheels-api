@@ -5,7 +5,14 @@ import { Roles } from '../models/enums'
 import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
 import { createAuth, login, logout } from '../services/auth.service'
-import { createUser, deleteUser, findUser, updateUser } from '../services/user.service'
+import {
+  clearUserReservationHistory,
+  createUser,
+  deleteUser,
+  findUser,
+  getUserReservationHistory,
+  updateUser,
+} from '../services/user.service'
 
 import {
   LoginInput,
@@ -130,6 +137,39 @@ async function getUserHandler(
   }
 }
 
+async function getUserReservationHistoryHandler(
+  req: Request<GetUserInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const userId = req.params.userId
+    const history = await getUserReservationHistory({ _id: userId })
+
+    return res.status(200).json(history)
+  } catch (e: any) {
+    log.error(e)
+    return res.sendStatus(404)
+  }
+}
+
+async function clearUserReservationHistoryHandler(
+  req: Request<GetUserInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const userId = req.params.userId
+
+    if (userId !== res.locals.user._id) return res.sendStatus(403)
+
+    await clearUserReservationHistory({ _id: userId })
+
+    return res.sendStatus(200)
+  } catch (e: any) {
+    log.error(e)
+    return res.sendStatus(404)
+  }
+}
+
 export {
   loginHandler,
   logoutHandler,
@@ -137,4 +177,6 @@ export {
   updateUserHandler,
   deleteUserHandler,
   createUserHandler,
+  getUserReservationHistoryHandler,
+  clearUserReservationHistoryHandler,
 }

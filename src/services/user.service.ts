@@ -18,19 +18,19 @@ async function createUser(userDetails: User) {
 }
 
 async function updateUser(
-  query: FilterQuery<User>,
+  filter: FilterQuery<User>,
   update: UpdateQuery<User>,
   options: QueryOptions,
 ) {
   try {
-    return await UserModel.findOneAndUpdate(query, update, options)
+    return await UserModel.findOneAndUpdate(filter, update, options)
   } catch (e: any) {
     throw new Error(e)
   }
 }
 
-async function deleteUser(query: FilterQuery<User>, sessionId: string) {
-  const user = await findUser(query)
+async function deleteUser(filter: FilterQuery<User>, sessionId: string) {
+  const user = await findUser(filter)
   if (user && user.role === Roles.Renter) {
     const userCars: string[] = user.cars as string[]
     for (const car of userCars) {
@@ -40,11 +40,37 @@ async function deleteUser(query: FilterQuery<User>, sessionId: string) {
   await deleteUserAuth({ email: user?.email })
   await deleteSession(sessionId)
 
-  return await UserModel.deleteOne(query)
+  return await UserModel.deleteOne(filter)
 }
 
-async function findUser(query: FilterQuery<User>) {
-  return await UserModel.findOne(query)
+async function findUser(filter: FilterQuery<User>) {
+  return await UserModel.findOne(filter)
 }
 
-export { createUser, updateUser, deleteUser, findUser }
+async function getUserReservationHistory(filter: FilterQuery<User>) {
+  const user = await UserModel.findOne(filter).populate('reservations')
+  if (!user) throw new Error('User not found')
+
+  return user.reservations
+}
+
+async function clearUserReservationHistory(filter: FilterQuery<User>) {
+  const user = await findUser(filter)
+
+  if (!user) throw new Error('User not found')
+
+  for (const reservation of user.reservations) {
+    await user.removeReservation(reservation)
+  }
+
+  return { message: 'History deleted' }
+}
+
+export {
+  createUser,
+  updateUser,
+  deleteUser,
+  findUser,
+  getUserReservationHistory,
+  clearUserReservationHistory,
+}

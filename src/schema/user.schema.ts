@@ -61,6 +61,10 @@ const updateUserSchema = object({
   ...userSchema,
 })
 
+const upgradeUserSchema = object({
+  ...params,
+})
+
 const deleteUserSchema = object({
   ...params,
 })
@@ -69,11 +73,22 @@ const getUserSchema = object({
   ...params,
 })
 
-type CreateUserInput = TypeOf<typeof createUserSchema>
+const getUserReservationHistorySchema = object({
+  ...params,
+})
+
+const clearUserReservationHistorySchema = object({
+  ...params,
+})
+
 type LoginInput = TypeOf<typeof loginSchema>
+type GetUserInput = TypeOf<typeof getUserSchema>
+type CreateUserInput = TypeOf<typeof createUserSchema>
 type UpdateUserInput = TypeOf<typeof updateUserSchema>
 type DeleteUserInput = TypeOf<typeof deleteUserSchema>
-type GetUserInput = TypeOf<typeof getUserSchema>
+type UpgradeUserInput = TypeOf<typeof upgradeUserSchema>
+type GetUserReservationHistoryInput = TypeOf<typeof getUserReservationHistorySchema>
+type ClearUserReservationHistoryInput = TypeOf<typeof clearUserReservationHistorySchema>
 
 export {
   loginSchema,
@@ -81,9 +96,15 @@ export {
   createUserSchema,
   updateUserSchema,
   deleteUserSchema,
+  upgradeUserSchema,
+  getUserReservationHistorySchema,
+  clearUserReservationHistorySchema,
   LoginInput,
   GetUserInput,
   CreateUserInput,
   UpdateUserInput,
   DeleteUserInput,
+  UpgradeUserInput,
+  GetUserReservationHistoryInput,
+  ClearUserReservationHistoryInput,
 }
