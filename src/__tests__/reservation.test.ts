@@ -8,6 +8,7 @@ import { signJWT } from '../util/jwt'
 import * as ReservationService from '../services/reservation.service'
 import {
   userJwt,
+  renterJwt,
   reservationInput,
   reservationPayload,
   updateReservationInput,
@@ -196,37 +197,81 @@ describe('reservation', () => {
     })
 
     describe('given the user is logged in', () => {
-      const jwt = signJWT(userJwt)
+      describe('given the user is not a renter', () => {
+        const jwt = signJWT(userJwt)
 
-      describe('given the reservation does not exist', () => {
-        it('should return 404', async () => {
-          const deleteReservationServiceMock = jest
-            .spyOn(ReservationService, 'deleteReservation')
-            // @ts-ignore
-            .mockRejectedValueOnce('Does not exist')
+        describe('given the reservation does not exist', () => {
+          it('should return 404', async () => {
+            const deleteReservationServiceMock = jest
+              .spyOn(ReservationService, 'userDeleteReservation')
+              // @ts-ignore
+              .mockRejectedValueOnce('Does not exist')
 
-          await supertest(app)
-            .delete(`/reservations/${userId}`)
-            .set('Authorization', jwt)
-            .expect(404)
+            await supertest(app)
+              .delete(`/reservations/${userId}`)
+              .set('Authorization', jwt)
+              .expect(404)
 
-          expect(deleteReservationServiceMock).toHaveBeenCalledWith({ _id: userId })
+            expect(deleteReservationServiceMock).toHaveBeenCalledWith(
+              userId,
+              userJwt._id.toString(),
+            )
+          })
+        })
+
+        describe('given the reservation does exist', () => {
+          it('should return 200 and updated reservation', async () => {
+            const deleteReservationServiceMock = jest
+              .spyOn(ReservationService, 'userDeleteReservation')
+              // @ts-ignore
+              .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
+
+            await supertest(app)
+              .delete(`/reservations/${reservationPayload._id}`)
+              .set('Authorization', jwt)
+              .expect(200)
+
+            expect(deleteReservationServiceMock).toHaveBeenCalledWith(
+              reservationPayload._id,
+              userJwt._id.toString(),
+            )
+          })
         })
       })
 
-      describe('given the reservation does exist', () => {
-        it('should return 200 and updated reservation', async () => {
-          const deleteReservationServiceMock = jest
-            .spyOn(ReservationService, 'deleteReservation')
-            // @ts-ignore
-            .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
+      describe('given the user is a renter', () => {
+        const jwt = signJWT(renterJwt)
 
-          await supertest(app)
-            .delete(`/reservations/${reservationPayload._id}`)
-            .set('Authorization', jwt)
-            .expect(200)
+        describe('given the reservation does not exist', () => {
+          it('should return 404', async () => {
+            const deleteReservationServiceMock = jest
+              .spyOn(ReservationService, 'renterDeleteReservation')
+              // @ts-ignore
+              .mockRejectedValueOnce('Does not exist')
 
-          expect(deleteReservationServiceMock).toHaveBeenCalledWith({ _id: reservationPayload._id })
+            await supertest(app)
+              .delete(`/reservations/${userId}`)
+              .set('Authorization', jwt)
+              .expect(404)
+
+            expect(deleteReservationServiceMock).toHaveBeenCalledWith(userId)
+          })
+        })
+
+        describe('given the reservation does exist', () => {
+          it('should return 200 and updated reservation', async () => {
+            const deleteReservationServiceMock = jest
+              .spyOn(ReservationService, 'renterDeleteReservation')
+              // @ts-ignore
+              .mockReturnValueOnce({ acknowledged: true, deletedCount: 0 })
+
+            await supertest(app)
+              .delete(`/reservations/${reservationPayload._id}`)
+              .set('Authorization', jwt)
+              .expect(200)
+
+            expect(deleteReservationServiceMock).toHaveBeenCalledWith(reservationPayload._id)
+          })
         })
       })
     })

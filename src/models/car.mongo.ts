@@ -66,10 +66,8 @@ const carSchema = new mongoose.Schema({
   },
   rentalHistory: [
     {
-      reservationId: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Reservation',
-      },
+      type: mongoose.Types.ObjectId,
+      ref: 'Reservation',
     },
   ],
 })
@@ -77,6 +75,18 @@ const carSchema = new mongoose.Schema({
 carSchema.methods.changeAvailability = async function (availability: Availability) {
   const car = this as Car
   car.availability = availability
+  return await car.save()
+}
+
+carSchema.methods.addReservation = async function (reservationId: string) {
+  const car = this as Car
+  car.rentalHistory?.push(reservationId)
+  return await car.save()
+}
+
+carSchema.methods.removeReservation = async function (reservationId: string) {
+  const car = this as Car
+  car.rentalHistory = car.rentalHistory?.filter(reservation => reservation !== reservationId)
   return await car.save()
 }
 

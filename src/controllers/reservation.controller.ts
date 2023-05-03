@@ -1,13 +1,18 @@
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
+import { Roles } from '../models/enums'
 import { Reservation } from '../models/dto/userInputs'
+
 import {
   createReservation,
   deleteReservation,
   updateReservation,
+  userDeleteReservation,
   updateReservationStatus,
+  renterDeleteReservation,
 } from '../services/reservation.service'
+
 import {
   CreateReservationInput,
   DeleteReservationInput,
@@ -85,9 +90,16 @@ async function deleteReservationHandler(
   res: Response,
 ) {
   try {
+    const user = res.locals.user
     const reservationId = req.params.reservationId
 
-    await deleteReservation({ _id: reservationId })
+    if (user.role === Roles.User) {
+      await userDeleteReservation(reservationId, user._id)
+    } else if (user.role === Roles.Renter) {
+      await renterDeleteReservation(reservationId)
+    } else {
+      await deleteReservation({ _id: reservationId })
+    }
 
     return res.sendStatus(200)
   } catch (e: any) {
