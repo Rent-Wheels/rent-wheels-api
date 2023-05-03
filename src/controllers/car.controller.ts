@@ -2,11 +2,20 @@ import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
+import { Availability } from '../models/enums'
 import { findUser } from '../services/user.service'
-import { CreateCarInput, DeleteCarInput, UpdateCarInput } from '../schema/car.schema'
+
+import {
+  ChangeCarAvailabilityInput,
+  CreateCarInput,
+  DeleteCarInput,
+  UpdateCarInput,
+} from '../schema/car.schema'
+
 import {
   addCar,
   availableCars,
+  changeAvailability,
   deleteCar,
   findCar,
   getCarHistory,
@@ -111,10 +120,34 @@ async function getCarHistoryHandler(
   }
 }
 
+async function changeAvailabilityHandler(
+  req: Request<
+    ChangeCarAvailabilityInput['params'],
+    Record<string, never>,
+    ChangeCarAvailabilityInput['body']
+  >,
+  res: Response,
+) {
+  try {
+    const carId = req.params.carId
+    const owner = res.locals.user._id
+    const availability: Availability = req.body.availability
+
+    const updatedCar = await changeAvailability({ filter: { _id: carId, owner }, availability })
+
+    return res.status(200).json(updatedCar)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.sendStatus(404)
+  }
+}
+
 export {
-  availableCarsHandler,
   addCarHandler,
   updateCarHandler,
   deleteCarHandler,
   getCarHistoryHandler,
+  availableCarsHandler,
+  changeAvailabilityHandler,
 }

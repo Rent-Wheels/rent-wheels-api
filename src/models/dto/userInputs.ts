@@ -39,7 +39,7 @@ interface Session extends mongoose.Document {
   updatedAt: Date
 }
 
-interface Car extends mongoose.Document {
+interface CarDetails {
   owner: User['_id']
   make: string
   model: string
@@ -56,6 +56,10 @@ interface Car extends mongoose.Document {
   maxDuration: number
   description: string
   terms: string
+}
+
+interface Car extends CarDetails, mongoose.Document {
+  changeAvailability(availability: Availability): Promise<Car>
 }
 
 interface ReservationDetails {

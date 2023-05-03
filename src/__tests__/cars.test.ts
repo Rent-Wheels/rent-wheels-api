@@ -407,7 +407,6 @@ describe('cars', () => {
       })
     })
   })
-  // TODO(Me): Add view rental history tests
 
   describe('view rental history', () => {
     describe('given user is not logged in', () => {

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { Car } from './dto/userInputs'
+import { Availability } from './enums'
 
 const carSchema = new mongoose.Schema({
   owner: {
@@ -72,6 +73,12 @@ const carSchema = new mongoose.Schema({
     },
   ],
 })
+
+carSchema.methods.changeAvailability = async function (availability: Availability) {
+  const car = this as Car
+  car.availability = availability
+  return await car.save()
+}
 
 const CarModel = mongoose.model<Car>('Car', carSchema)
 

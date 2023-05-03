@@ -1,9 +1,9 @@
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
 
-import { Roles } from '../models/enums'
 import { findUser } from './user.service'
 import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
+import { Availability, Roles } from '../models/enums'
 
 async function availableCars() {
   return await CarModel.find({ availability: true })
@@ -41,4 +41,16 @@ async function getCarHistory(filter: FilterQuery<Car>) {
   return await CarModel.findOne(filter, { rentalHistory: 1 }).populate('rentalHistory')
 }
 
-export { availableCars, addCar, updateCar, deleteCar, findCar, getCarHistory }
+async function changeAvailability({
+  filter,
+  availability,
+}: {
+  filter: FilterQuery<Car>
+  availability: Availability
+}) {
+  const car = await findCar(filter)
+  if (!car) throw new Error('Car does not exist')
+  return await car.changeAvailability(availability)
+}
+
+export { availableCars, addCar, updateCar, deleteCar, findCar, getCarHistory, changeAvailability }
