@@ -77,18 +77,17 @@ async function deleteCarHandler(
 ) {
   try {
     const carId = req.params.carId
-    const car = await findCar({ _id: carId })
+    const owner = res.locals.user._id
+    const car = await findCar({ _id: carId, owner })
 
     if (!car) return res.sendStatus(404)
 
-    const owner = await findUser({ _id: car.owner })
+    const ownerDetails = await findUser({ _id: car.owner })
 
-    if (!owner) return res.sendStatus(404)
-
-    if (owner._id.toString() !== res.locals.user._id) return res.sendStatus(403)
+    if (!ownerDetails) return res.sendStatus(404)
 
     await deleteCar({ _id: carId })
-    await owner.removeCar(carId)
+    await ownerDetails.removeCar(carId)
 
     return res.sendStatus(200)
   } catch (e: any) {

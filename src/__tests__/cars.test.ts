@@ -266,20 +266,23 @@ describe('cars', () => {
             const findCarServiceMock = jest
               .spyOn(CarService, 'findCar')
               // @ts-ignore
-              .mockReturnValue(undefined)
+              .mockReturnValueOnce(undefined)
 
             await supertest(app)
               .delete(`/cars/${userId}`)
               .set('Authorization', `Bearer ${jwt}`)
               .expect(404)
 
-            expect(findCarServiceMock).toBeCalledWith({ _id: userId })
+            expect(findCarServiceMock).toHaveBeenCalledWith({
+              _id: userId,
+              owner: renterJwt._id.toString(),
+            })
           })
         })
 
         describe('given the car exists', () => {
           describe('given renter is not the owner', () => {
-            it('should return 403', async () => {
+            it('should return 404', async () => {
               const fakeRenter = await UserService.createUser({
                 ...renterInput,
                 email: 'example@example.com',
@@ -290,7 +293,7 @@ describe('cars', () => {
               const findCarServiceMock = jest
                 .spyOn(CarService, 'findCar')
                 // @ts-ignore
-                .mockReturnValueOnce({ ...carPayload, owner: fakeRenter._id })
+                .mockReturnValueOnce(undefined)
 
               const findOwnerServiceMock = jest
                 .spyOn(UserService, 'findUser')
@@ -305,10 +308,13 @@ describe('cars', () => {
               await supertest(app)
                 .delete(`/cars/${carPayload._id}`)
                 .set('Authorization', `Bearer ${jwt}`)
-                .expect(403)
+                .expect(404)
 
-              expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
-              expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: fakeRenter._id })
+              expect(findCarServiceMock).toHaveBeenCalledWith({
+                _id: carPayload._id,
+                owner: renterJwt._id.toString(),
+              })
+              expect(findOwnerServiceMock).not.toHaveBeenCalledWith({ _id: fakeRenter._id })
               expect(deleteCarServiceMock).not.toHaveBeenCalled()
             })
           })
@@ -335,7 +341,10 @@ describe('cars', () => {
                 .set('Authorization', `Bearer ${jwt}`)
                 .expect(404)
 
-              expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
+              expect(findCarServiceMock).toHaveBeenCalledWith({
+                _id: carPayload._id,
+                owner: carPayload.owner,
+              })
               expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: userId })
               expect(deleteCarServiceMock).not.toHaveBeenCalled()
             })
@@ -364,7 +373,10 @@ describe('cars', () => {
                   .set('Authorization', `Bearer ${jwt}`)
                   .expect(400)
 
-                expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
+                expect(findCarServiceMock).toHaveBeenCalledWith({
+                  _id: carPayload._id,
+                  owner: carPayload.owner,
+                })
                 expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: carPayload.owner })
                 expect(deleteCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
               })
@@ -396,7 +408,10 @@ describe('cars', () => {
                   .set('Authorization', `Bearer ${jwt}`)
                   .expect(200)
 
-                expect(findCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
+                expect(findCarServiceMock).toHaveBeenCalledWith({
+                  _id: carPayload._id,
+                  owner: carPayload.owner,
+                })
                 expect(findOwnerServiceMock).toHaveBeenCalledWith({ _id: carPayload.owner })
                 expect(deleteCarServiceMock).toHaveBeenCalledWith({ _id: carPayload._id })
                 expect(renter.removeCar).toHaveBeenCalledWith(carPayload._id)
