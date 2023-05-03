@@ -21,6 +21,7 @@ import {
   createUserHandler,
   updateUserHandler,
   deleteUserHandler,
+  upgradeToRenterHandler,
   getUserReservationHistoryHandler,
   clearUserReservationHistoryHandler,
 } from '../controllers/user.controller'
@@ -42,7 +43,7 @@ userRoute.patch('/:userId/', [requireUser, validateInput(updateUserSchema)], upd
 userRoute.patch(
   '/:userId/upgrade',
   [requireUser, validateInput(upgradeUserSchema)],
-  updateUserHandler,
+  upgradeToRenterHandler,
 )
 
 userRoute.delete('/:userId/', [requireUser, validateInput(deleteUserSchema)], deleteUserHandler)

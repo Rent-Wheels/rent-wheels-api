@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+import { Roles } from './enums'
 import { User } from './dto/userInputs'
 
 const userSchema = new mongoose.Schema({
@@ -69,6 +70,12 @@ userSchema.methods.addReservation = async function (reservationId: string) {
 userSchema.methods.removeReservation = async function (reservationId: string) {
   const user = this as User
   user.reservations = user.reservations.filter(reservation => reservation !== reservationId)
+  return await user.save()
+}
+
+userSchema.methods.upgradeToRenter = async function () {
+  const user = this as User
+  user.role = Roles.Renter
   return await user.save()
 }
 

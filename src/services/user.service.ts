@@ -66,11 +66,21 @@ async function clearUserReservationHistory(filter: FilterQuery<User>) {
   return { message: 'History deleted' }
 }
 
+async function upgradeToRenter(filter: FilterQuery<User>) {
+  const user = await findUser(filter)
+  if (!user) throw new Error('User not found')
+
+  if (user.role === Roles.Renter) throw new Error('User is already a renter')
+
+  return await user.upgradeToRenter()
+}
+
 export {
+  findUser,
   createUser,
   updateUser,
   deleteUser,
-  findUser,
+  upgradeToRenter,
   getUserReservationHistory,
   clearUserReservationHistory,
 }

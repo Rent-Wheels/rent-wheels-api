@@ -26,6 +26,7 @@ interface UserInput {
   cars?: Car['_id'][]
 }
 interface User extends UserInput, mongoose.Document {
+  upgradeToRenter(): Promise<User>
   addCar(carId: string): Promise<User>
   removeCar(carId: string): Promise<User>
   addReservation(reservationId: string): Promise<User>

@@ -6,12 +6,13 @@ import { Auth, User } from '../models/dto/userInputs'
 import { createSession } from '../services/session.service'
 import { createAuth, login, logout } from '../services/auth.service'
 import {
-  clearUserReservationHistory,
+  findUser,
   createUser,
   deleteUser,
-  findUser,
-  getUserReservationHistory,
   updateUser,
+  upgradeToRenter,
+  getUserReservationHistory,
+  clearUserReservationHistory,
 } from '../services/user.service'
 
 import {
@@ -20,6 +21,9 @@ import {
   CreateUserInput,
   DeleteUserInput,
   UpdateUserInput,
+  UpgradeUserInput,
+  GetUserReservationHistoryInput,
+  ClearUserReservationHistoryInput,
 } from '../schema/user.schema'
 
 async function createUserHandler(
@@ -138,7 +142,11 @@ async function getUserHandler(
 }
 
 async function getUserReservationHistoryHandler(
-  req: Request<GetUserInput['params'], Record<string, never>, Record<string, never>>,
+  req: Request<
+    GetUserReservationHistoryInput['params'],
+    Record<string, never>,
+    Record<string, never>
+  >,
   res: Response,
 ) {
   try {
@@ -153,7 +161,11 @@ async function getUserReservationHistoryHandler(
 }
 
 async function clearUserReservationHistoryHandler(
-  req: Request<GetUserInput['params'], Record<string, never>, Record<string, never>>,
+  req: Request<
+    ClearUserReservationHistoryInput['params'],
+    Record<string, never>,
+    Record<string, never>
+  >,
   res: Response,
 ) {
   try {
@@ -170,6 +182,22 @@ async function clearUserReservationHistoryHandler(
   }
 }
 
+async function upgradeToRenterHandler(
+  req: Request<UpgradeUserInput['params'], Record<string, never>, Record<string, never>>,
+  res: Response,
+) {
+  try {
+    const userId = req.params.userId
+    const upgradedUser = await upgradeToRenter({ _id: userId })
+
+    return res.status(200).json(upgradedUser)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.sendStatus(400)
+  }
+}
+
 export {
   loginHandler,
   logoutHandler,
@@ -177,6 +205,7 @@ export {
   updateUserHandler,
   deleteUserHandler,
   createUserHandler,
+  upgradeToRenterHandler,
   getUserReservationHistoryHandler,
   clearUserReservationHistoryHandler,
 }
