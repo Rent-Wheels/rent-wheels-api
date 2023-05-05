@@ -70,6 +70,11 @@ const carSchema = new mongoose.Schema({
       ref: 'Reservation',
     },
   ],
+  media: [
+    {
+      mediaURL: String,
+    },
+  ],
 })
 
 carSchema.methods.changeAvailability = async function (availability: Availability) {

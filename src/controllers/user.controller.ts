@@ -31,8 +31,11 @@ async function createUserHandler(
   res: Response,
 ) {
   try {
+    const image = req.file as Express.Multer.File
     const signUpDetails = req.body as User
+
     signUpDetails.role = Roles.User
+    signUpDetails.profilePicture = image.path
 
     const auth = await createAuth({
       email: signUpDetails.email,
@@ -95,8 +98,11 @@ async function updateUserHandler(
 
     if (id !== res.locals.user._id) return res.sendStatus(403)
 
+    const updatedAvatar = req.file
     const userDetails = req.body as User
     userDetails._id = id
+
+    if (updatedAvatar) userDetails.profilePicture = updatedAvatar.path
 
     const updatedUser = await updateUser({ _id: id }, userDetails, { new: true })
 

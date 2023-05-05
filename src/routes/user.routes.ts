@@ -48,7 +48,15 @@ userRoute.post(
   createUserHandler,
 )
 
-userRoute.patch('/:userId/', [requireUser, validateInput(updateUserSchema)], updateUserHandler)
+userRoute.patch(
+  '/:userId/',
+  [
+    requireUser,
+    multer({ storage: userFileStorage, fileFilter: userFileFilter }).single('avatar'),
+    validateInput(updateUserSchema),
+  ],
+  updateUserHandler,
+)
 userRoute.patch(
   '/:userId/upgrade',
   [requireUser, validateInput(upgradeUserSchema)],

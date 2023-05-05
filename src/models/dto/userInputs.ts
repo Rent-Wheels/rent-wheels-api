@@ -58,6 +58,11 @@ interface CarDetails {
   maxDuration: number
   description: string
   terms: string
+  media: Media[]
+}
+
+type Media = {
+  mediaUrl: string
 }
 
 interface Car extends CarDetails, mongoose.Document {

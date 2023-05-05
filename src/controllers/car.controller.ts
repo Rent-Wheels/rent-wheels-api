@@ -6,20 +6,20 @@ import { Availability } from '../models/enums'
 import { findUser } from '../services/user.service'
 
 import {
-  ChangeCarAvailabilityInput,
   CreateCarInput,
   DeleteCarInput,
   UpdateCarInput,
+  ChangeCarAvailabilityInput,
 } from '../schema/car.schema'
 
 import {
   addCar,
-  availableCars,
-  changeAvailability,
-  deleteCar,
   findCar,
-  getCarHistory,
+  deleteCar,
   updateCar,
+  availableCars,
+  getCarHistory,
+  changeAvailability,
 } from '../services/car.service'
 
 async function availableCarsHandler(_req: Request, res: Response) {
