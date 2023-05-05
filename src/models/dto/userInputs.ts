@@ -12,16 +12,17 @@ interface Auth extends AuthDetails, mongoose.Document {
 }
 
 interface UserInput {
-  dob: Date
+  userId: string
   name: string
   email: string
   password?: string
   phoneNumber: string
+  age: number
+  dob: Date
   profilePicture: string
   placeOfResidence: Location
-  role: Roles
-  age: number
   identificationCard: string
+  role: Roles
   reservations: Reservation['_id'][]
   cars?: Car['_id'][]
 }

@@ -1,7 +1,9 @@
+import multer from 'multer'
 import express from 'express'
 
 import requireUser from '../middlewares/requireUser'
 import validateInput from '../middlewares/validateInput'
+import { userFileFilter, userFileStorage } from '../util/multer.config'
 
 import {
   loginSchema,
@@ -37,7 +39,14 @@ userRoute.get(
 
 userRoute.post('/logout', requireUser, logoutHandler)
 userRoute.post('/login', validateInput(loginSchema), loginHandler)
-userRoute.post('/', validateInput(createUserSchema), createUserHandler)
+userRoute.post(
+  '/',
+  [
+    multer({ storage: userFileStorage, fileFilter: userFileFilter }).single('avatar'),
+    validateInput(createUserSchema),
+  ],
+  createUserHandler,
+)
 
 userRoute.patch('/:userId/', [requireUser, validateInput(updateUserSchema)], updateUserHandler)
 userRoute.patch(

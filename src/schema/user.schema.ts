@@ -15,6 +15,9 @@ const authSchema = {
 
 const userSchema = {
   body: object({
+    userId: string({
+      required_error: 'UserId is required',
+    }),
     name: string({
       required_error: 'Name is required',
     }),

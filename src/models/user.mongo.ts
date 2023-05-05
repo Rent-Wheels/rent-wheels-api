@@ -4,6 +4,10 @@ import { Roles } from './enums'
 import { User } from './dto/userInputs'
 
 const userSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
   profilePicture: String,
   name: {
     type: String,
