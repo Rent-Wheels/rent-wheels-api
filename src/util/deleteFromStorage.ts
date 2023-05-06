@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 function deleteFile(filePath: string) {
-  filePath = path.join(__dirname, '..', filePath)
+  filePath = path.join(__dirname, '..', '..', filePath)
 
   fs.unlink(filePath, err => {
     if (err) {
