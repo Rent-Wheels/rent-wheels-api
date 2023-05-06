@@ -4,6 +4,7 @@ import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
 import { Availability } from '../models/enums'
 import { findUser } from '../services/user.service'
+import { deleteFolder } from '../util/deleteFromStorage'
 
 import {
   CreateCarInput,
@@ -36,8 +37,11 @@ async function addCarHandler(
   res: Response,
 ) {
   try {
-    const carDetails = req.body as Car
     const user = res.locals.user
+    const carDetails = req.body as Car
+    const files = req.files as Express.Multer.File[]
+    const fileURLs = files.map(file => ({ mediaURL: file.path }))
+    carDetails.media = [...fileURLs]
 
     if (carDetails.owner !== user._id) return res.sendStatus(400)
 
@@ -62,7 +66,7 @@ async function updateCarHandler(
 
     if (carDetails.owner !== userId) return res.sendStatus(403)
 
-    const updatedCar = await updateCar({ _id: carId }, carDetails, { new: true })
+    const updatedCar = await updateCar({ carId }, carDetails, { new: true })
     return res.status(200).json(updatedCar)
   } catch (e: any) {
     log.error(e)
@@ -78,7 +82,7 @@ async function deleteCarHandler(
   try {
     const carId = req.params.carId
     const owner = res.locals.user._id
-    const car = await findCar({ _id: carId, owner })
+    const car = await findCar({ carId, owner })
 
     if (!car) return res.sendStatus(404)
 
@@ -86,8 +90,9 @@ async function deleteCarHandler(
 
     if (!ownerDetails) return res.sendStatus(404)
 
-    await deleteCar({ _id: carId })
-    await ownerDetails.removeCar(carId)
+    await ownerDetails.removeCar(car._id.toString())
+    deleteFolder(`public/uploads/cars/${owner}/${carId}`)
+    await deleteCar({ carId })
 
     return res.sendStatus(200)
   } catch (e: any) {

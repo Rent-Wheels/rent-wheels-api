@@ -1,9 +1,12 @@
-import { TypeOf, array, nativeEnum, number, object, string } from 'zod'
+import { TypeOf, array, coerce, nativeEnum, object, string } from 'zod'
 
 import { Availability, CarType, Condition, Plan } from '../models/enums'
 
 const carSchema = {
   body: object({
+    carId: string({
+      required_error: 'Car Id required',
+    }),
     owner: string({
       required_error: 'Owner Id required',
     }),
@@ -13,7 +16,7 @@ const carSchema = {
     model: string({
       required_error: 'Model is required',
     }),
-    capacity: number({
+    capacity: coerce.number({
       required_error: 'Capacity of car required',
     }),
     yearOfManufacture: string({
@@ -25,7 +28,7 @@ const carSchema = {
     condition: nativeEnum(Condition, {
       required_error: 'Condition of the car is required',
     }),
-    rate: number({
+    rate: coerce.number({
       required_error: 'Rate of rental is required',
     }),
     plan: nativeEnum(Plan, {
@@ -34,14 +37,14 @@ const carSchema = {
     type: nativeEnum(CarType, {
       required_error: 'Car type is required',
     }),
-    availability: nativeEnum(Availability, {
+    availability: coerce.number({
       required_error: 'Availability of the car is required',
     }),
     location: string({
       required_error: 'Location is required',
     }),
     rentalHistory: array(string()).optional(),
-    maxDuration: number({
+    maxDuration: coerce.number({
       required_error: 'The maximum duration is required',
     }),
     description: string({
@@ -87,9 +90,17 @@ const changeCarAvailabilitySchema = object({
   }),
 })
 
+const multerCarSchema = object({
+  params: object({
+    carId: string().optional(),
+  }),
+  ...carSchema,
+})
+
 type CreateCarInput = TypeOf<typeof createCarSchema>
 type UpdateCarInput = TypeOf<typeof updateCarSchema>
 type DeleteCarInput = TypeOf<typeof deleteCarSchema>
+type MulterCarInput = TypeOf<typeof multerCarSchema>
 type GetCarHistoryInput = TypeOf<typeof getCarHistorySchema>
 type ChangeCarAvailabilityInput = TypeOf<typeof changeCarAvailabilitySchema>
 
@@ -97,11 +108,13 @@ export {
   createCarSchema,
   updateCarSchema,
   deleteCarSchema,
+  multerCarSchema,
   getCarHistorySchema,
   changeCarAvailabilitySchema,
   CreateCarInput,
   UpdateCarInput,
   DeleteCarInput,
+  MulterCarInput,
   GetCarHistoryInput,
   ChangeCarAvailabilityInput,
 }

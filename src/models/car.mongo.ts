@@ -4,6 +4,10 @@ import { Car } from './dto/userInputs'
 import { Availability } from './enums'
 
 const carSchema = new mongoose.Schema({
+  carId: {
+    type: String,
+    required: true,
+  },
   owner: {
     type: mongoose.Types.ObjectId,
     ref: 'User',

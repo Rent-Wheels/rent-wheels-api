@@ -1,8 +1,10 @@
+import multer from 'multer'
 import express from 'express'
 
 import isRenter from '../middlewares/isRenter'
 import requireUser from '../middlewares/requireUser'
 import validateInput from '../middlewares/validateInput'
+import { carFileFilter, carFileStorage } from '../util/multer.config'
 
 import {
   changeCarAvailabilitySchema,
@@ -29,7 +31,16 @@ carsRoute.get(
   getCarHistoryHandler,
 )
 
-carsRoute.post('/', [requireUser, isRenter, validateInput(createCarSchema)], addCarHandler)
+carsRoute.post(
+  '/',
+  [
+    requireUser,
+    isRenter,
+    multer({ storage: carFileStorage, fileFilter: carFileFilter }).array('media'),
+    validateInput(createCarSchema),
+  ],
+  addCarHandler,
+)
 
 carsRoute.patch(
   '/:carId/',

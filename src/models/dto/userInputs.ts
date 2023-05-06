@@ -42,6 +42,7 @@ interface Session extends mongoose.Document {
 }
 
 interface CarDetails {
+  carId: string
   owner: User['_id']
   make: string
   model: string
@@ -62,7 +63,7 @@ interface CarDetails {
 }
 
 type Media = {
-  mediaUrl: string
+  mediaURL: string
 }
 
 interface Car extends CarDetails, mongoose.Document {

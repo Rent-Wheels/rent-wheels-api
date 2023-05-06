@@ -1,8 +1,9 @@
-import fs from 'fs-extra'
+import fs from 'fs'
 import multer from 'multer'
 import { Request } from 'express'
+import { v4 as uuid } from 'uuid'
 
-import { CreateCarInput } from '../../schema/car.schema'
+import { MulterCarInput } from '../../schema/car.schema'
 import { CreateUserInput } from '../../schema/user.schema'
 import { findUser } from '../../services/user.service'
 
@@ -19,8 +20,8 @@ const userFileStorage = multer.diskStorage({
     if (user) {
       callback(new Error('Phone number already exists'), '')
     } else {
-      const path = `/uploads/users/${req.body.userId}/`
-      fs.mkdirSync(path)
+      const path = `./public/uploads/users/${req.body.userId}/avatar/`
+      if (!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true })
       callback(null, path)
     }
   },
@@ -31,13 +32,20 @@ const userFileStorage = multer.diskStorage({
 
 const carFileStorage = multer.diskStorage({
   destination: (
-    req: Request<any, any, CreateCarInput['body']>,
+    req: Request<MulterCarInput['params'], any, MulterCarInput['body']>,
     _file: Express.Multer.File,
     callback: DestinationCallBack,
   ) => {
-    const path = `/uploads/cars/${req.body.owner}/`
-    fs.mkdirSync(path)
-    callback(null, path)
+    let carId = uuid()
+    if (req.body.carId) carId = req.body.carId
+    else if (req.params.carId) carId = req.params.carId as string
+
+    const filePath = `./public/uploads/cars/${req.body.owner}/${carId}/`
+
+    if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true })
+
+    if (!req.body.carId) req.body.carId = carId
+    callback(null, filePath)
   },
   filename: (_req: Request, file: Express.Multer.File, callback: FileNameCallBack) => {
     callback(null, new Date().toISOString() + '-' + file.originalname)

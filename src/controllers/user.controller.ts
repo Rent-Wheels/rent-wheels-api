@@ -25,6 +25,7 @@ import {
   GetUserReservationHistoryInput,
   ClearUserReservationHistoryInput,
 } from '../schema/user.schema'
+import { deleteFile, deleteFolder } from '../util/deleteFromStorage'
 
 async function createUserHandler(
   req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
@@ -102,7 +103,10 @@ async function updateUserHandler(
     const userDetails = req.body as User
     userDetails._id = id
 
-    if (updatedAvatar) userDetails.profilePicture = updatedAvatar.path
+    if (updatedAvatar) {
+      deleteFile(userDetails.profilePicture)
+      userDetails.profilePicture = updatedAvatar.path
+    }
 
     const updatedUser = await updateUser({ _id: id }, userDetails, { new: true })
 
@@ -121,6 +125,7 @@ async function deleteUserHandler(
 
     if (userId !== res.locals.user._id) return res.sendStatus(403)
 
+    deleteFolder(`/uploads/users/${res.locals.user.userId}/`)
     await deleteUser({ _id: userId }, res.locals.user.session)
 
     return res.sendStatus(200)
