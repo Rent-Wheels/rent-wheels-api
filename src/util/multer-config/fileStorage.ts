@@ -20,7 +20,7 @@ const userFileStorage = multer.diskStorage({
     if (user) {
       callback(new Error('Phone number already exists'), '')
     } else {
-      const path = `./tmp/users/${req.body.userId}/images`
+      const path = `./tmp/users/${req.body.userId}`
       if (!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true })
       callback(null, path)
     }
@@ -40,7 +40,7 @@ const carFileStorage = multer.diskStorage({
     if (req.body.carId) carId = req.body.carId
     else if (req.params.carId) carId = req.params.carId as string
 
-    const filePath = `./public/uploads/cars/${req.body.owner}/${carId}/`
+    const filePath = `./tmp/cars/${req.body.owner}/${carId}/`
 
     if (!fs.existsSync(filePath)) fs.mkdirSync(filePath, { recursive: true })
 

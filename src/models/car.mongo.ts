@@ -7,6 +7,7 @@ const carSchema = new mongoose.Schema({
   carId: {
     type: String,
     required: true,
+    unique: true,
   },
   owner: {
     type: mongoose.Types.ObjectId,
@@ -101,7 +102,11 @@ carSchema.methods.removeReservation = async function (reservationId: string) {
 
 carSchema.methods.updateCarMedia = async function (oldURL: string, newURL: string) {
   const car = this as Car
-  car.media.filter(media => media.mediaURL !== oldURL).push({ mediaURL: newURL })
+  const index = car.media.findIndex(media => media.mediaURL === oldURL)
+
+  car.media[index] = { mediaURL: newURL }
+  console.log(car.media[index])
+
   return await car.save()
 }
 

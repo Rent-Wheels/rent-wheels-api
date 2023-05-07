@@ -56,7 +56,7 @@ async function changeAvailability({
 async function updateCarMedia(filter: FilterQuery<Car>, oldURL: string, newURL: string) {
   const car = await findCar(filter)
 
-  await car?.updateCarMedia(oldURL, newURL)
+  return await car?.updateCarMedia(oldURL, newURL)
 }
 
 export {

@@ -55,7 +55,7 @@ async function addCarHandler(
         file,
         compressedPath,
         id: car.carId,
-        category: MediaCategory.User,
+        category: MediaCategory.Car,
       })
     }
 

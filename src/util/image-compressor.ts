@@ -2,10 +2,10 @@
 import imagemin from 'imagemin'
 import imageminMozjpeg from 'imagemin-mozjpeg'
 
-import { updateProfilePicture } from '../services/user.service'
-import { deleteFolder } from './deleteFromStorage'
 import { MediaCategory } from '../models/enums'
+import { deleteFolder } from './deleteFromStorage'
 import { updateCarMedia } from '../services/car.service'
+import { updateProfilePicture } from '../services/user.service'
 
 export default async function imageCompressor(
   id: string,
@@ -26,7 +26,7 @@ export default async function imageCompressor(
     ],
   })
 
-  deleteFolder(`tmp/users/${id}/images`)
+  deleteFolder(image.destination)
   await updateMedia(id, file[0].destinationPath, category, filePath)
 }
 
