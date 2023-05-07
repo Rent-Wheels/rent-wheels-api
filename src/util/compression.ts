@@ -1,5 +1,3 @@
-import { mongoConnect } from './mongo'
-
 import { MediaCategory } from '../models/enums'
 import imageCompressor from './image-compressor'
 import videoCompressor from './video-compressor'
@@ -19,14 +17,13 @@ process.on(
     category: MediaCategory
   }) => {
     console.log('Compression Starting...')
-    await mongoConnect()
 
     if (imageMimeTypes.includes(file.mimetype)) {
       await imageCompressor(id, compressedPath, category, file)
     } else {
+      console.log('video compressing')
+
       await videoCompressor(file, compressedPath, id)
     }
-
-    process.exit()
   },
 )
