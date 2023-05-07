@@ -1,6 +1,6 @@
 import { MediaCategory } from '../models/enums'
-import imageCompressor from './image-compressor'
-import videoCompressor from './video-compressor'
+import imageCompressor from './imageCompressor'
+import videoCompressor from './videoCompressor'
 import { imageMimeTypes } from '../models/mimeTypes'
 
 process.on(

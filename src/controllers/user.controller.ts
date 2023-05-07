@@ -1,7 +1,7 @@
-import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
+import createChild from '../util/createChild'
 import { Auth, User } from '../models/dto/userInputs'
 import { MediaCategory, Roles } from '../models/enums'
 import { createSession } from '../services/session.service'
@@ -56,9 +56,7 @@ async function createUserHandler(
     if (!session) throw new Error('Could not create user')
 
     const compressedPath = `./public/uploads/users/${user.userId}/avatar/`
-    const child = fork('src/util/compression')
-
-    child.send({ file: image, compressedPath, id: user.userId, category: MediaCategory.User })
+    createChild({ id: user.userId, file: image, compressedPath, category: MediaCategory.User })
 
     return res.status(201).json({
       user,
@@ -119,12 +117,10 @@ async function updateUserHandler(
 
     if (updatedAvatar) {
       const compressedPath = `./public/uploads/users/${userDetails.userId}/avatar/`
-      const child = fork('src/util/compression')
-
-      child.send({
+      createChild({
+        id: userDetails.userId,
         file: updatedAvatar,
         compressedPath,
-        id: userDetails.userId,
         category: MediaCategory.User,
       })
     }
@@ -144,7 +140,9 @@ async function deleteUserHandler(
 
     if (userId !== res.locals.user._id) return res.sendStatus(403)
 
-    deleteFolder(`/uploads/users/${res.locals.user.userId}/`)
+    deleteFolder(`/tmp/users/${res.locals.user.userId}/`)
+    deleteFolder(`/public/uploads/users/${res.locals.user.userId}/`)
+
     await deleteUser({ _id: userId }, res.locals.user.session)
 
     return res.sendStatus(200)

@@ -1,7 +1,7 @@
-import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
+import createChild from '../util/createChild'
 import { createAuth } from '../services/auth.service'
 import { Auth, User } from '../models/dto/userInputs'
 import { createUser } from '../services/user.service'
@@ -38,9 +38,7 @@ async function createRenterHandler(
     if (!session) throw new Error('Could not create renter')
 
     const compressedPath = `./public/uploads/users/${renter.userId}/avatar/`
-    const child = fork('src/util/compression')
-
-    child.send({ image, compressedPath, userId: renter.userId, category: MediaCategory.User })
+    createChild({ id: renter.userId, file: image, compressedPath, category: MediaCategory.User })
 
     return res.status(201).json({ renter, session })
   } catch (e: any) {

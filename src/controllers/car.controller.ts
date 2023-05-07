@@ -1,9 +1,9 @@
-import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
 import { findUser } from '../services/user.service'
+import multipleUploads from '../util/multipleFileUpload'
 import { deleteFolder } from '../util/deleteFromStorage'
 import { Availability, MediaCategory } from '../models/enums'
 
@@ -47,17 +47,9 @@ async function addCarHandler(
     if (carDetails.owner !== user._id) return res.sendStatus(400)
 
     const car = await addCar({ carDetails, userId: user._id })
+    const compressedPath = `./public/uploads/cars/${car.owner}/${car.carId}/`
 
-    for (const file of files) {
-      const compressedPath = `./public/uploads/cars/${car.owner}/${car.carId}/`
-      const child = fork('src/util/compression')
-      child.send({
-        file,
-        compressedPath,
-        id: car.carId,
-        category: MediaCategory.Car,
-      })
-    }
+    multipleUploads({ id: car.carId, files, compressedPath, category: MediaCategory.Car })
 
     return res.status(201).json(car)
   } catch (e: any) {
@@ -72,13 +64,29 @@ async function updateCarHandler(
   res: Response,
 ) {
   try {
+    const files = req.files as Express.Multer.File[] | undefined
     const carId = req.params.carId
     const userId = res.locals.user._id
     const carDetails = req.body as Car
 
+    if (files) {
+      const fileURLs = files.map(file => ({ mediaURL: file.path }))
+      carDetails.media = [...carDetails.media, ...fileURLs]
+    }
     if (carDetails.owner !== userId) return res.sendStatus(403)
 
     const updatedCar = await updateCar({ carId }, carDetails, { new: true })
+
+    if (files) {
+      const compressedPath = `./public/uploads/cars/${updatedCar?.owner}/${updatedCar?.carId}/`
+      multipleUploads({
+        id: updatedCar?.carId as string,
+        files,
+        compressedPath,
+        category: MediaCategory.Car,
+      })
+    }
+
     return res.status(200).json(updatedCar)
   } catch (e: any) {
     log.error(e)
@@ -103,7 +111,10 @@ async function deleteCarHandler(
     if (!ownerDetails) return res.sendStatus(404)
 
     await ownerDetails.removeCar(car._id.toString())
-    deleteFolder(`public/uploads/cars/${owner}/${carId}`)
+
+    deleteFolder(`/tmp/cars/${owner}`)
+    deleteFolder(`/public/uploads/cars/${owner}/${carId}`)
+
     await deleteCar({ carId })
 
     return res.sendStatus(200)
