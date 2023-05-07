@@ -53,4 +53,19 @@ async function changeAvailability({
   return await car.changeAvailability(availability)
 }
 
-export { availableCars, addCar, updateCar, deleteCar, findCar, getCarHistory, changeAvailability }
+async function updateCarMedia(filter: FilterQuery<Car>, oldURL: string, newURL: string) {
+  const car = await findCar(filter)
+
+  await car?.updateCarMedia(oldURL, newURL)
+}
+
+export {
+  availableCars,
+  addCar,
+  updateCar,
+  deleteCar,
+  findCar,
+  getCarHistory,
+  changeAvailability,
+  updateCarMedia,
+}

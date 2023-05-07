@@ -1,21 +1,32 @@
-import imageCompressor from './image-compressor'
 import { mongoConnect } from './mongo'
+
+import imageCompressor from './image-compressor'
+import videoCompressor from './video-compressor'
+import { imageMimeTypes } from '../models/mimeTypes'
+import { MediaCategory } from '../models/enums'
 
 process.on(
   'message',
   async ({
-    image,
+    file,
     compressedPath,
-    userId,
+    id,
+    category,
   }: {
-    image: Express.Multer.File
+    file: Express.Multer.File
     compressedPath: string
-    userId: string
+    id: string
+    category: MediaCategory
   }) => {
-    console.log('Compression Starting...')
     await mongoConnect()
+    console.log('Compression Starting...')
 
-    await imageCompressor(image, compressedPath, userId)
+    if (imageMimeTypes.includes(file.mimetype)) {
+      await imageCompressor(id, compressedPath, category, file)
+    } else {
+      await videoCompressor(file, compressedPath, id)
+    }
+
     process.exit()
   },
 )

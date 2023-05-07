@@ -99,6 +99,12 @@ carSchema.methods.removeReservation = async function (reservationId: string) {
   return await car.save()
 }
 
+carSchema.methods.updateCarMedia = async function (oldURL: string, newURL: string) {
+  const car = this as Car
+  car.media.filter(media => media.mediaURL !== oldURL).push({ mediaURL: newURL })
+  return await car.save()
+}
+
 const CarModel = mongoose.model<Car>('Car', carSchema)
 
 export default CarModel

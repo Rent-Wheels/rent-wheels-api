@@ -70,6 +70,8 @@ type Media = {
 interface Car extends CarDetails, mongoose.Document {
   addReservation(reservationId: string): Promise<Car>
   removeReservation(reservationId: string): Promise<Car>
+  updateCarMedia(oldURL: string, newURL: string): Promise<Car>
+  changeAvailability(availability: Availability): Promise<Car>
   changeAvailability(availability: Availability): Promise<Car>
 }
 

@@ -2,8 +2,8 @@ import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
-import { Roles } from '../models/enums'
 import { Auth, User } from '../models/dto/userInputs'
+import { MediaCategory, Roles } from '../models/enums'
 import { createSession } from '../services/session.service'
 import { createAuth, login, logout } from '../services/auth.service'
 import { deleteFile, deleteFolder } from '../util/deleteFromStorage'
@@ -58,10 +58,7 @@ async function createUserHandler(
     const compressedPath = `./public/uploads/users/${user.userId}/avatar/`
     const child = fork('src/util/compression')
 
-    child.send({ image, compressedPath, userId: user.userId })
-    child.on('message', () => {
-      return
-    })
+    child.send({ file: image, compressedPath, id: user.userId, category: MediaCategory.User })
 
     return res.status(201).json({
       user,
@@ -119,6 +116,18 @@ async function updateUserHandler(
     }
 
     const updatedUser = await updateUser({ _id: id }, userDetails, { new: true })
+
+    if (updatedAvatar) {
+      const compressedPath = `./public/uploads/users/${userDetails.userId}/avatar/`
+      const child = fork('src/util/compression')
+
+      child.send({
+        file: updatedAvatar,
+        compressedPath,
+        id: userDetails.userId,
+        category: MediaCategory.User,
+      })
+    }
 
     return res.status(200).json(updatedUser)
   } catch (e: any) {
