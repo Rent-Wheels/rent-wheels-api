@@ -1,58 +1,30 @@
-import fs from 'fs'
-import compressImage from 'compress-image'
+// import fs from 'fs'
+import imagemin from 'imagemin'
+import imageminMozjpeg from 'imagemin-mozjpeg'
+
 import { updateProfilePicture } from '../services/user.service'
+import { deleteFolder } from './deleteFromStorage'
 
-process.on(
-  'message',
-  async ({
-    image,
-    compressedPath,
-    userId,
-  }: {
-    image: Express.Multer.File
-    compressedPath: string
-    userId: string
-  }) => {
-    await imageCompressor(image, compressedPath, userId)
-  },
-)
+export default async function imageCompressor(
+  image: Express.Multer.File,
+  compressedPath: string,
+  userId: string,
+) {
+  const filePath = image.path
+  const compressedFilePath = compressedPath
+  const compression = 60
 
-async function imageCompressor(image: Express.Multer.File, compressedPath: string, userId: string) {
-  fs.readFile(image.path, (e, data) => {
-    if (e) throw e
+  process.send?.('continue')
 
-    const filePath = image.path
-    const compressedFilePath = compressedPath
-    const compression = 60
-
-    fs.writeFile(filePath, data, async e => {
-      if (e) throw e
-
-      process.send?.('continue')
-
-      compressImage(
-        filePath,
-        compressedFilePath,
-        // @ts-ignore
-        { compress_force: false, autoupdate: true },
-        // @ts-ignore
-        false,
-        // @ts-ignore
-        { jpg: { engine: 'mozjpeg', command: ['-quality', compression] } },
-        (e: Error, completed: boolean) => {
-          if (!e && completed) {
-            fs.unlink(filePath, e => {
-              if (e) throw e
-            })
-          }
-        },
-      )
-    })
+  const file = await imagemin([filePath], {
+    destination: compressedFilePath,
+    plugins: [
+      imageminMozjpeg({
+        quality: compression,
+      }),
+    ],
   })
-  await updateUserImage(userId, compressedPath)
-  process.exit()
-}
 
-async function updateUserImage(userId: string, filePath: string) {
-  await updateProfilePicture(userId, filePath)
+  deleteFolder(`tmp/${userId}/images`)
+  await updateProfilePicture(userId, file[0].destinationPath)
 }

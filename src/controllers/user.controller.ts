@@ -56,8 +56,9 @@ async function createUserHandler(
     if (!session) throw new Error('Could not create user')
 
     const compressedPath = `./public/uploads/users/${user.userId}/avatar/`
-    const child = fork('../util/image-compressor')
-    child.send({ image, compressedPath })
+    const child = fork('src/util/compression')
+
+    child.send({ image, compressedPath, userId: user.userId })
     child.on('message', () => {
       return
     })
