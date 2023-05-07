@@ -26,7 +26,8 @@ const userFileStorage = multer.diskStorage({
     }
   },
   filename: (_req: Request, file: Express.Multer.File, callback: FileNameCallBack) => {
-    callback(null, new Date().toISOString() + '-' + file.originalname)
+    const withoutName = file.originalname.split('.')
+    callback(null, uuid() + '.' + withoutName[withoutName.length - 1])
   },
 })
 
@@ -48,7 +49,8 @@ const carFileStorage = multer.diskStorage({
     callback(null, filePath)
   },
   filename: (_req: Request, file: Express.Multer.File, callback: FileNameCallBack) => {
-    callback(null, new Date().toISOString() + '-' + file.originalname)
+    const withoutName = file.originalname.split('.')
+    callback(null, uuid() + '.' + withoutName[withoutName.length - 1])
   },
 })
 
