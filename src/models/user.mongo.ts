@@ -86,6 +86,12 @@ userSchema.methods.upgradeToRenter = async function () {
   return await user.save()
 }
 
+userSchema.methods.updateProfilePicture = async function (imageUrl: string) {
+  const user = this as User
+  user.profilePicture = imageUrl
+  return await user.save()
+}
+
 const UserModel = mongoose.model<User>('User', userSchema)
 
 export default UserModel

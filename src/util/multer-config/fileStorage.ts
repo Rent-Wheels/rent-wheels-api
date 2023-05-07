@@ -20,7 +20,7 @@ const userFileStorage = multer.diskStorage({
     if (user) {
       callback(new Error('Phone number already exists'), '')
     } else {
-      const path = `./public/uploads/users/${req.body.userId}/avatar/`
+      const path = `./tmp/${req.body.userId}/avatar/`
       if (!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true })
       callback(null, path)
     }
