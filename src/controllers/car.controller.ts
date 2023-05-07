@@ -1,10 +1,11 @@
+import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
-import { Availability } from '../models/enums'
 import { findUser } from '../services/user.service'
 import { deleteFolder } from '../util/deleteFromStorage'
+import { Availability, MediaCategory } from '../models/enums'
 
 import {
   CreateCarInput,
@@ -46,6 +47,17 @@ async function addCarHandler(
     if (carDetails.owner !== user._id) return res.sendStatus(400)
 
     const car = await addCar({ carDetails, userId: user._id })
+
+    for (const file of files) {
+      const compressedPath = `./public/uploads/cars/${car.owner}/${car.carId}/`
+      const child = fork('src/util/compression')
+      child.send({
+        file,
+        compressedPath,
+        id: car.carId,
+        category: MediaCategory.Car,
+      })
+    }
 
     return res.status(201).json(car)
   } catch (e: any) {

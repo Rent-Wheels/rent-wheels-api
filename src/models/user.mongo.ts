@@ -7,10 +7,11 @@ const userSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
+    unique: true,
   },
   profilePicture: {
     type: String,
-    // required: true,
+    required: true,
   },
   name: {
     type: String,
@@ -83,6 +84,12 @@ userSchema.methods.removeReservation = async function (reservationId: string) {
 userSchema.methods.upgradeToRenter = async function () {
   const user = this as User
   user.role = Roles.Renter
+  return await user.save()
+}
+
+userSchema.methods.updateProfilePicture = async function (imageUrl: string) {
+  const user = this as User
+  user.profilePicture = imageUrl
   return await user.save()
 }
 

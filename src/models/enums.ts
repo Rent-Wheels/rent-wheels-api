@@ -40,4 +40,9 @@ enum ReservationStatus {
   Cancelled = 'Cancelled',
 }
 
-export { Roles, Availability, Condition, Plan, CarType, ReservationStatus }
+enum MediaCategory {
+  User,
+  Car,
+}
+
+export { Roles, Availability, Condition, Plan, CarType, ReservationStatus, MediaCategory }

@@ -31,6 +31,7 @@ interface User extends UserInput, mongoose.Document {
   addCar(carId: string): Promise<User>
   removeCar(carId: string): Promise<User>
   addReservation(reservationId: string): Promise<User>
+  updateProfilePicture(imageUrl: string): Promise<User>
   removeReservation(reservationId: string): Promise<User>
 }
 
@@ -69,6 +70,8 @@ type Media = {
 interface Car extends CarDetails, mongoose.Document {
   addReservation(reservationId: string): Promise<Car>
   removeReservation(reservationId: string): Promise<Car>
+  updateCarMedia(oldURL: string, newURL: string): Promise<Car>
+  changeAvailability(availability: Availability): Promise<Car>
   changeAvailability(availability: Availability): Promise<Car>
 }
 

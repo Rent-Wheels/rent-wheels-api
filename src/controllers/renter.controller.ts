@@ -1,10 +1,11 @@
+import { fork } from 'child_process'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
-import { Roles } from '../models/enums'
 import { createAuth } from '../services/auth.service'
 import { Auth, User } from '../models/dto/userInputs'
 import { createUser } from '../services/user.service'
+import { MediaCategory, Roles } from '../models/enums'
 import { CreateUserInput } from '../schema/user.schema'
 import { getRenterCars } from '../services/renter.service'
 import { createSession } from '../services/session.service'
@@ -15,8 +16,11 @@ async function createRenterHandler(
 ) {
   try {
     const signUpDetails = req.body as User
-    signUpDetails.role = Roles.Renter
+    const image = req.file as Express.Multer.File
+
     signUpDetails.cars = []
+    signUpDetails.role = Roles.Renter
+    signUpDetails.profilePicture = image.path
 
     const auth = await createAuth({
       email: signUpDetails.email,
@@ -32,6 +36,11 @@ async function createRenterHandler(
     const session = await createSession(renter._id, renter)
 
     if (!session) throw new Error('Could not create renter')
+
+    const compressedPath = `./public/uploads/users/${renter.userId}/avatar/`
+    const child = fork('src/util/compression')
+
+    child.send({ image, compressedPath, userId: renter.userId, category: MediaCategory.User })
 
     return res.status(201).json({ renter, session })
   } catch (e: any) {
