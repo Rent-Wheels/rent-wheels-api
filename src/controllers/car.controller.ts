@@ -12,6 +12,7 @@ import {
   DeleteCarInput,
   UpdateCarInput,
   ChangeCarAvailabilityInput,
+  UpdateCarMediaInput,
 } from '../schema/car.schema'
 
 import {
@@ -22,6 +23,7 @@ import {
   availableCars,
   getCarHistory,
   changeAvailability,
+  deleteCarMedia,
 } from '../services/car.service'
 
 async function availableCarsHandler(_req: Request, res: Response) {
@@ -170,11 +172,30 @@ async function changeAvailabilityHandler(
   }
 }
 
+async function updateCarMediaHandler(
+  req: Request<UpdateCarMediaInput['params'], Record<string, never>, UpdateCarMediaInput['body']>,
+  res: Response,
+) {
+  try {
+    const carId = req.params.carId
+    const owner = res.locals.user._id
+
+    const updatedCar = await deleteCarMedia({ carId, owner }, req.body.media)
+
+    return res.status(200).json(updatedCar.media)
+  } catch (e: any) {
+    log.error(e)
+
+    return res.sendStatus(404)
+  }
+}
+
 export {
   addCarHandler,
   updateCarHandler,
   deleteCarHandler,
   getCarHistoryHandler,
   availableCarsHandler,
+  updateCarMediaHandler,
   changeAvailabilityHandler,
 }

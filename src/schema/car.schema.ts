@@ -90,6 +90,19 @@ const changeCarAvailabilitySchema = object({
   }),
 })
 
+const updateCarMediaSchema = object({
+  ...params,
+  body: object({
+    media: array(
+      object({
+        mediaURL: string({
+          required_error: 'Media Url required',
+        }),
+      }),
+    ),
+  }),
+})
+
 const multerCarSchema = object({
   params: object({
     carId: string().optional(),
@@ -102,6 +115,7 @@ type UpdateCarInput = TypeOf<typeof updateCarSchema>
 type DeleteCarInput = TypeOf<typeof deleteCarSchema>
 type MulterCarInput = TypeOf<typeof multerCarSchema>
 type GetCarHistoryInput = TypeOf<typeof getCarHistorySchema>
+type UpdateCarMediaInput = TypeOf<typeof updateCarMediaSchema>
 type ChangeCarAvailabilityInput = TypeOf<typeof changeCarAvailabilitySchema>
 
 export {
@@ -110,11 +124,13 @@ export {
   deleteCarSchema,
   multerCarSchema,
   getCarHistorySchema,
+  updateCarMediaSchema,
   changeCarAvailabilitySchema,
   CreateCarInput,
   UpdateCarInput,
   DeleteCarInput,
   MulterCarInput,
   GetCarHistoryInput,
+  UpdateCarMediaInput,
   ChangeCarAvailabilityInput,
 }

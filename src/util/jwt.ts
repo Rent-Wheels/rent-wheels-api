@@ -1,8 +1,14 @@
 import config from 'config'
 import jwt from 'jsonwebtoken'
 
-const accessTokenPublicKey = config.get<string>('accessTokenPublicKey')
-const accessTokenPrivateKey = config.get<string>('accessTokenPrivateKey')
+const accessTokenPublicKey = Buffer.from(
+  config.get<string>('accessTokenPublicKey'),
+  'base64',
+).toString('ascii')
+const accessTokenPrivateKey = Buffer.from(
+  config.get<string>('accessTokenPrivateKey'),
+  'base64',
+).toString('ascii')
 
 function signJWT(object: object, options?: jwt.SignOptions) {
   return jwt.sign(object, accessTokenPrivateKey, {

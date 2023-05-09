@@ -10,6 +10,7 @@ import {
   changeCarAvailabilitySchema,
   createCarSchema,
   deleteCarSchema,
+  updateCarMediaSchema,
   updateCarSchema,
 } from '../schema/car.schema'
 
@@ -50,6 +51,11 @@ carsRoute.patch(
 carsRoute.patch(
   '/:carId/availability',
   [requireUser, isRenter, validateInput(changeCarAvailabilitySchema)],
+  changeAvailabilityHandler,
+)
+carsRoute.patch(
+  '/:carId/media',
+  [requireUser, isRenter, validateInput(updateCarMediaSchema)],
   changeAvailabilityHandler,
 )
 
