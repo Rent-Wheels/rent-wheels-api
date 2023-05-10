@@ -2,15 +2,6 @@ import mongoose from 'mongoose'
 
 import { Availability, CarType, Condition, Plan, ReservationStatus, Roles } from '../enums'
 
-interface AuthDetails {
-  email: string
-  password: string
-}
-
-interface Auth extends AuthDetails, mongoose.Document {
-  comparePassword(password: string): Promise<boolean>
-}
-
 interface UserInput {
   userId: string
   name: string
@@ -33,13 +24,6 @@ interface User extends UserInput, mongoose.Document {
   addReservation(reservationId: string): Promise<User>
   updateProfilePicture(imageUrl: string): Promise<User>
   removeReservation(reservationId: string): Promise<User>
-}
-
-interface Session extends mongoose.Document {
-  user: User['_id']
-  valid: boolean
-  createdAt: Date
-  updatedAt: Date
 }
 
 interface CarDetails {
@@ -96,4 +80,4 @@ type Location = {
   long: string
 }
 
-export { Auth, User, Session, Car, Reservation }
+export { User, Car, Reservation }

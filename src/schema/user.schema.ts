@@ -2,17 +2,6 @@ import { TypeOf, array, coerce, nativeEnum, object, optional, string } from 'zod
 
 import { Roles } from '../models/enums'
 
-const authSchema = {
-  body: object({
-    email: string({
-      required_error: 'Please enter a valid email address',
-    }).email('Invalid email address'),
-    password: string({
-      required_error: 'Please enter a password',
-    }).min(5, 'Password must be at least 5 characters long'),
-  }),
-}
-
 const userSchema = {
   body: object({
     userId: string({
@@ -51,12 +40,7 @@ const params = {
 }
 
 const createUserSchema = object({
-  ...authSchema,
   ...userSchema,
-})
-
-const loginSchema = object({
-  ...authSchema,
 })
 
 const updateUserSchema = object({
@@ -84,7 +68,6 @@ const clearUserReservationHistorySchema = object({
   ...params,
 })
 
-type LoginInput = TypeOf<typeof loginSchema>
 type GetUserInput = TypeOf<typeof getUserSchema>
 type CreateUserInput = TypeOf<typeof createUserSchema>
 type UpdateUserInput = TypeOf<typeof updateUserSchema>
@@ -94,7 +77,6 @@ type GetUserReservationHistoryInput = TypeOf<typeof getUserReservationHistorySch
 type ClearUserReservationHistoryInput = TypeOf<typeof clearUserReservationHistorySchema>
 
 export {
-  loginSchema,
   getUserSchema,
   createUserSchema,
   updateUserSchema,
@@ -102,7 +84,6 @@ export {
   upgradeUserSchema,
   getUserReservationHistorySchema,
   clearUserReservationHistorySchema,
-  LoginInput,
   GetUserInput,
   CreateUserInput,
   UpdateUserInput,

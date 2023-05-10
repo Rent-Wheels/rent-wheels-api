@@ -2,10 +2,8 @@ import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import createChild from '../util/createChild'
-import { Auth, User } from '../models/dto/userInputs'
+import { User } from '../models/dto/userInputs'
 import { MediaCategory, Roles } from '../models/enums'
-import { createSession } from '../services/session.service'
-import { createAuth, login, logout } from '../services/auth.service'
 import { deleteFile, deleteFolder } from '../util/deleteFromStorage'
 
 import {
@@ -19,7 +17,6 @@ import {
 } from '../services/user.service'
 
 import {
-  LoginInput,
   GetUserInput,
   CreateUserInput,
   DeleteUserInput,
@@ -40,59 +37,19 @@ async function createUserHandler(
     signUpDetails.role = Roles.User
     signUpDetails.profilePicture = image.path
 
-    const auth = await createAuth({
-      email: signUpDetails.email,
-      password: signUpDetails.password,
-    } as Auth)
-
-    if (!auth) throw new Error('Could not create user')
-
     const user = await createUser(signUpDetails)
 
     if (!user) throw new Error('Could not create user')
 
-    const session = await createSession(user._id, user)
-
-    if (!session) throw new Error('Could not create user')
-
     const compressedPath = `./public/uploads/users/${user.userId}/avatar/`
     createChild({ id: user.userId, file: image, compressedPath, category: MediaCategory.User })
 
-    return res.status(201).json({
-      user,
-      session,
-    })
+    return res.status(201).json(user)
   } catch (e: any) {
     log.error(e)
 
     return res.sendStatus(409)
   }
-}
-
-async function loginHandler(
-  req: Request<Record<string, never>, Record<string, never>, LoginInput['body']>,
-  res: Response,
-) {
-  try {
-    const user = await login(req.body)
-
-    if (!user) throw new Error('User not found')
-
-    const session = await createSession(user._id, user)
-
-    if (!session) throw new Error('User not found')
-
-    return res.status(200).json({ user, session })
-  } catch (e: any) {
-    log.error(e)
-    return res.status(404).json(e.message)
-  }
-}
-
-async function logoutHandler(_req: Request, res: Response) {
-  await logout(res.locals.user.session)
-
-  return res.sendStatus(200)
 }
 
 async function updateUserHandler(
@@ -143,7 +100,7 @@ async function deleteUserHandler(
     deleteFolder(`/tmp/users/${res.locals.user.userId}/`)
     deleteFolder(`/public/uploads/users/${res.locals.user.userId}/`)
 
-    await deleteUser({ _id: userId }, res.locals.user.session)
+    await deleteUser({ _id: userId })
 
     return res.sendStatus(200)
   } catch (e: any) {
@@ -227,8 +184,6 @@ async function upgradeToRenterHandler(
 }
 
 export {
-  loginHandler,
-  logoutHandler,
   getUserHandler,
   updateUserHandler,
   deleteUserHandler,

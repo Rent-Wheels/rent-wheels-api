@@ -6,7 +6,6 @@ import validateInput from '../middlewares/validateInput'
 import { userFileFilter, userFileStorage } from '../util/multer.config'
 
 import {
-  loginSchema,
   getUserSchema,
   createUserSchema,
   deleteUserSchema,
@@ -17,8 +16,6 @@ import {
 } from '../schema/user.schema'
 
 import {
-  loginHandler,
-  logoutHandler,
   getUserHandler,
   createUserHandler,
   updateUserHandler,
@@ -37,8 +34,6 @@ userRoute.get(
   getUserReservationHistoryHandler,
 )
 
-userRoute.post('/logout', requireUser, logoutHandler)
-userRoute.post('/login', validateInput(loginSchema), loginHandler)
 userRoute.post(
   '/',
   [

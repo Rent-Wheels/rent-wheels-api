@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
 import { ReservationStatus, Roles } from './enums'
-import { Auth } from './dto/userInputs'
 
 const userId = new mongoose.Types.ObjectId()
 
@@ -12,39 +11,6 @@ const sessionPayload = {
   refreshToken: '',
   session: userId.toString(),
 }
-
-// Auth
-const authDetails = {
-  email: 'Mandy_Marquardt78@hotmail.com',
-  password: 'password',
-} as Auth
-
-const renterAuthDetails = {
-  email: 'Maximo.Barrows@gmail.com',
-  password: 'password',
-} as Auth
-
-const invalidEmail = {
-  email: 'test@test.com',
-  password: 'password',
-} as Auth
-
-const invalidPassword = {
-  email: 'Mandy_Marquardt78@hotmail.com',
-  password: '123456789',
-} as Auth
-
-const authPayload = {
-  _id: userId,
-  email: 'Mandy_Marquardt78@hotmail.com',
-  password: 'password',
-} as Auth
-
-const renterAuthPayload = {
-  _id: userId,
-  email: 'Maximo.Barrows@gmail.com',
-  password: 'password',
-} as Auth
 
 // User
 const userInput = {
@@ -333,19 +299,13 @@ export {
   renterJwt,
   carPayload,
   renterInput,
-  authPayload,
-  authDetails,
   userPayload,
-  invalidEmail,
   renterPayload,
   sessionPayload,
   updateCarInput,
-  invalidPassword,
   carInputOmitted,
   updateCarPayload,
   reservationInput,
-  renterAuthDetails,
-  renterAuthPayload,
   updateUserPayload,
   reservationPayload,
   updateReservationInput,
