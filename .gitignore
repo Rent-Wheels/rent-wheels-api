@@ -2,7 +2,8 @@
 .vscode
 public
 tmp
-rentwheels-service-account.json
+src/model.txt
+
 # Logs
 logs
 *.log

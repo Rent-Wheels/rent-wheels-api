@@ -1,9 +1,10 @@
 {
-  "name": "car-rental-system-api",
+  "name": "rent-wheels-api",
   "version": "1.0.0",
   "description": " Backend for the car rental system",
   "main": "server.js",
   "scripts": {
+    "build": "tsc",
     "dev": "nodemon src/server.ts",
     "test": "jest",
     "test-watch": "jest  --watchAll --detectOpenHandles",
@@ -11,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bra-alex/car-rental-system-api.git"
+    "url": "git+https://github.com/Rent-Wheels/rent-wheels-api.git"
   },
   "author": "Alexander Asiamah Boakye",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bra-alex/car-rental-system-api/issues"
+    "url": "https://github.com/Rent-Wheels/rent-wheels-api/issues"
   },
-  "homepage": "https://github.com/bra-alex/car-rental-system-api#readme",
+  "homepage": "https://github.com/Rent-Wheels/rent-wheels-api#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "config": "^3.3.9",
