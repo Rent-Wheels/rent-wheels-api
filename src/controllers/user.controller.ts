@@ -59,18 +59,18 @@ async function updateUserHandler(
   try {
     const id = req.params.userId
 
-    if (id !== res.locals.user._id) return res.sendStatus(403)
+    if (id !== res.locals.user.userId) return res.sendStatus(403)
 
     const updatedAvatar = req.file
     const userDetails = req.body as User
-    userDetails._id = id
+    userDetails.userId = id
 
     if (updatedAvatar) {
       deleteFile(userDetails.profilePicture)
       userDetails.profilePicture = updatedAvatar.path
     }
 
-    const updatedUser = await updateUser({ _id: id }, userDetails, { new: true })
+    const updatedUser = await updateUser({ userId: id }, userDetails, { new: true })
 
     if (updatedAvatar) {
       const compressedPath = `./public/uploads/users/${userDetails.userId}/avatar/`
@@ -95,12 +95,12 @@ async function deleteUserHandler(
   try {
     const userId = req.params.userId
 
-    if (userId !== res.locals.user._id) return res.sendStatus(403)
+    if (userId !== res.locals.user.userId) return res.sendStatus(403)
 
     deleteFolder(`/tmp/users/${res.locals.user.userId}/`)
     deleteFolder(`/public/uploads/users/${res.locals.user.userId}/`)
 
-    await deleteUser({ _id: userId })
+    await deleteUser({ userId: userId })
 
     return res.sendStatus(200)
   } catch (e: any) {
@@ -115,7 +115,7 @@ async function getUserHandler(
   res: Response,
 ) {
   try {
-    const user = await findUser({ _id: req.params.userId })
+    const user = await findUser({ userId: req.params.userId })
 
     if (!user) return res.sendStatus(404)
 
@@ -136,7 +136,7 @@ async function getUserReservationHistoryHandler(
 ) {
   try {
     const userId = req.params.userId
-    const history = await getUserReservationHistory({ _id: userId })
+    const history = await getUserReservationHistory({ userId: userId })
 
     return res.status(200).json(history)
   } catch (e: any) {
@@ -156,9 +156,9 @@ async function clearUserReservationHistoryHandler(
   try {
     const userId = req.params.userId
 
-    if (userId !== res.locals.user._id) return res.sendStatus(403)
+    if (userId !== res.locals.user.userId) return res.sendStatus(403)
 
-    await clearUserReservationHistory({ _id: userId })
+    await clearUserReservationHistory({ userId: userId })
 
     return res.sendStatus(200)
   } catch (e: any) {
@@ -173,7 +173,7 @@ async function upgradeToRenterHandler(
 ) {
   try {
     const userId = req.params.userId
-    const upgradedUser = await upgradeToRenter({ _id: userId })
+    const upgradedUser = await upgradeToRenter({ userId: userId })
 
     return res.status(200).json(upgradedUser)
   } catch (e: any) {
