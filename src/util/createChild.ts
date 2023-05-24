@@ -13,7 +13,7 @@ export default function createChild({
   compressedPath: string
   category: MediaCategory
 }) {
-  const child = fork('compression')
+  const child = fork('src/util/compression' || 'build/util/compression')
 
   child.send({ file, compressedPath, id, category })
 }

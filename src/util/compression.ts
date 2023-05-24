@@ -1,7 +1,7 @@
-import { MediaCategory } from './src/models/enums'
-import imageCompressor from './src/util/imageCompressor'
-import videoCompressor from './src/util/videoCompressor'
-import { imageMimeTypes } from './src/models/mimeTypes'
+import { MediaCategory } from '../models/enums'
+import imageCompressor from './imageCompressor'
+import videoCompressor from './videoCompressor'
+import { imageMimeTypes } from '../models/mimeTypes'
 
 process.on(
   'message',
