@@ -28,6 +28,7 @@ async function createRenterHandler(
     const compressedPath = path.join(
       __dirname,
       '..',
+      '..',
       'public',
       'uploads',
       'users',

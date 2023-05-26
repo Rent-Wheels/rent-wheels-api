@@ -53,12 +53,15 @@ async function addCarHandler(
     const compressedPath = path.join(
       __dirname,
       '..',
+      '..',
       'public',
       'uploads',
       'cars',
       `${car.owner}`,
       `${car.carId}`,
     )
+
+    console.log(compressedPath)
 
     multipleUploads({ id: car.carId, files, compressedPath, category: MediaCategory.Car })
 
@@ -92,15 +95,13 @@ async function updateCarHandler(
       const compressedPath = path.join(
         __dirname,
         '..',
+        '..',
         'public',
         'uploads',
         'cars',
         `${updatedCar?.owner}`,
         `${updatedCar?.carId}`,
       )
-
-      console.log(compressedPath)
-
       multipleUploads({
         id: updatedCar?.carId as string,
         files,
