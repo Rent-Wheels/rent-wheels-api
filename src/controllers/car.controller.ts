@@ -25,7 +25,6 @@ import {
   changeAvailability,
   deleteCarMedia,
 } from '../services/car.service'
-import path from 'path'
 
 async function availableCarsHandler(_req: Request, res: Response) {
   try {
@@ -50,17 +49,7 @@ async function addCarHandler(
     if (carDetails.owner !== user._id.toString()) return res.sendStatus(400)
 
     const car = await addCar({ carDetails, userId: user._id })
-    const compressedPath = path.join(
-      '..',
-      '..',
-      'public',
-      'uploads',
-      'cars',
-      `${car.owner}`,
-      `${car.carId}`,
-    )
-
-    console.log(compressedPath)
+    const compressedPath = `public/uploads/cars/${car.owner}/${car.carId}/`
 
     multipleUploads({ id: car.carId, files, compressedPath, category: MediaCategory.Car })
 
@@ -91,15 +80,7 @@ async function updateCarHandler(
     const updatedCar = await updateCar({ carId }, carDetails, { new: true })
 
     if (files) {
-      const compressedPath = path.join(
-        '..',
-        '..',
-        'public',
-        'uploads',
-        'cars',
-        `${updatedCar?.owner}`,
-        `${updatedCar?.carId}`,
-      )
+      const compressedPath = `public/uploads/cars/${updatedCar?.owner}/${updatedCar?.carId}/`
       multipleUploads({
         id: updatedCar?.carId as string,
         files,

@@ -7,7 +7,6 @@ import { createUser } from '../services/user.service'
 import { MediaCategory, Roles } from '../models/enums'
 import { CreateUserInput } from '../schema/user.schema'
 import { getRenterCars } from '../services/renter.service'
-import path from 'path'
 
 async function createRenterHandler(
   req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
@@ -25,15 +24,7 @@ async function createRenterHandler(
 
     if (!renter) throw new Error('Could not create renter')
 
-    const compressedPath = path.join(
-      '..',
-      '..',
-      'public',
-      'uploads',
-      'users',
-      `${renter.userId}`,
-      'avatar',
-    )
+    const compressedPath = `public/uploads/users/${renter.userId}/avatar/`
     createChild({ id: renter.userId, file: image, compressedPath, category: MediaCategory.User })
 
     return res.status(201).json(renter)
