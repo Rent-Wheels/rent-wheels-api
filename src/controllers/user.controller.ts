@@ -25,6 +25,7 @@ import {
   GetUserReservationHistoryInput,
   ClearUserReservationHistoryInput,
 } from '../schema/user.schema'
+import path from 'path'
 
 async function createUserHandler(
   req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
@@ -41,7 +42,15 @@ async function createUserHandler(
 
     if (!user) throw new Error('Could not create user')
 
-    const compressedPath = `./public/uploads/users/${user.userId}/avatar/`
+    const compressedPath = path.join(
+      __dirname,
+      '..',
+      'public',
+      'uploads',
+      'users',
+      `${user.userId}`,
+      'avatar',
+    )
     createChild({ id: user.userId, file: image, compressedPath, category: MediaCategory.User })
 
     return res.status(201).json(user)
@@ -73,7 +82,15 @@ async function updateUserHandler(
     const updatedUser = await updateUser({ userId: id }, userDetails, { new: true })
 
     if (updatedAvatar) {
-      const compressedPath = `./public/uploads/users/${userDetails.userId}/avatar/`
+      const compressedPath = path.join(
+        __dirname,
+        '..',
+        'public',
+        'uploads',
+        'users',
+        `${userDetails.userId}`,
+        'avatar',
+      )
       createChild({
         id: userDetails.userId,
         file: updatedAvatar,
