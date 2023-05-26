@@ -98,6 +98,9 @@ async function updateCarHandler(
         `${updatedCar?.owner}`,
         `${updatedCar?.carId}`,
       )
+
+      console.log(compressedPath)
+
       multipleUploads({
         id: updatedCar?.carId as string,
         files,
