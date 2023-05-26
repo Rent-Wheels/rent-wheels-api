@@ -9,6 +9,7 @@ const app: Express = express()
 app.use(express.json())
 app.use(deserializeUser)
 app.use('/public', express.static(path.join(__dirname, '..', 'public')))
+console.log(path.join(__dirname, '..', 'public'))
 
 routes(app)
 

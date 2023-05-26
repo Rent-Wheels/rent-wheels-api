@@ -46,7 +46,7 @@ async function addCarHandler(
     const fileURLs = files.map(file => ({ mediaURL: file.path }))
     carDetails.media = [...fileURLs]
 
-    if (carDetails.owner !== user._id) return res.sendStatus(400)
+    if (carDetails.owner !== user._id.toString()) return res.sendStatus(400)
 
     const car = await addCar({ carDetails, userId: user._id })
     const compressedPath = `public/uploads/cars/${car.owner}/${car.carId}/`
