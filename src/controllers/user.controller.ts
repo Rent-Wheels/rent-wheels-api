@@ -43,7 +43,6 @@ async function createUserHandler(
     if (!user) throw new Error('Could not create user')
 
     const compressedPath = path.join(
-      __dirname,
       '..',
       '..',
       'public',
@@ -84,7 +83,6 @@ async function updateUserHandler(
 
     if (updatedAvatar) {
       const compressedPath = path.join(
-        __dirname,
         '..',
         '..',
         'public',

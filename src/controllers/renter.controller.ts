@@ -26,7 +26,6 @@ async function createRenterHandler(
     if (!renter) throw new Error('Could not create renter')
 
     const compressedPath = path.join(
-      __dirname,
       '..',
       '..',
       'public',

@@ -51,7 +51,6 @@ async function addCarHandler(
 
     const car = await addCar({ carDetails, userId: user._id })
     const compressedPath = path.join(
-      __dirname,
       '..',
       '..',
       'public',
@@ -93,7 +92,6 @@ async function updateCarHandler(
 
     if (files) {
       const compressedPath = path.join(
-        __dirname,
         '..',
         '..',
         'public',
