@@ -45,7 +45,12 @@ carsRoute.post(
 
 carsRoute.patch(
   '/:carId/',
-  [requireUser, isRenter, validateInput(updateCarSchema)],
+  [
+    requireUser,
+    isRenter,
+    multer({ storage: carFileStorage, fileFilter: carFileFilter }).array('media'),
+    validateInput(updateCarSchema),
+  ],
   updateCarHandler,
 )
 carsRoute.patch(
