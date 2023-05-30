@@ -162,7 +162,7 @@ async function changeAvailabilityHandler(
     const owner = res.locals.user._id
     const availability: Availability = req.body.availability
 
-    const updatedCar = await changeAvailability({ filter: { _id: carId, owner }, availability })
+    const updatedCar = await changeAvailability({ filter: { carId, owner }, availability })
 
     return res.status(200).json(updatedCar)
   } catch (e: any) {
