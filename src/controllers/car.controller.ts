@@ -66,20 +66,25 @@ async function updateCarHandler(
   res: Response,
 ) {
   try {
-    const files = req.files as Express.Multer.File[] | undefined
     const carId = req.params.carId
     const userId = res.locals.user._id
     const carDetails = req.body as Car
+    const files = req.files as Express.Multer.File[] | undefined
 
-    if (files) {
+    const car = await findCar({ carId })
+
+    if (!car) return res.sendStatus(404)
+
+    if (files && files.length !== 0) {
       const fileURLs = files.map(file => ({ mediaURL: file.path }))
-      carDetails.media = [...carDetails.media, ...fileURLs]
+      carDetails.media = [...car.media, ...fileURLs]
     }
-    if (carDetails.owner !== userId) return res.sendStatus(403)
+
+    if (carDetails.owner !== userId.toString()) return res.sendStatus(403)
 
     const updatedCar = await updateCar({ carId }, carDetails, { new: true })
 
-    if (files) {
+    if (files && files.length !== 0) {
       const compressedPath = `public/uploads/cars/${updatedCar?.owner}/${updatedCar?.carId}/`
       multipleUploads({
         id: updatedCar?.carId as string,
