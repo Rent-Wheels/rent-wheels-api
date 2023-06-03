@@ -21,6 +21,7 @@ import {
   availableCarsHandler,
   getCarHistoryHandler,
   changeAvailabilityHandler,
+  updateCarMediaHandler,
 } from '../controllers/car.controller'
 
 const carsRoute = express.Router()
@@ -61,7 +62,7 @@ carsRoute.patch(
 carsRoute.patch(
   '/:carId/media',
   [requireUser, isRenter, validateInput(updateCarMediaSchema)],
-  changeAvailabilityHandler,
+  updateCarMediaHandler,
 )
 
 carsRoute.delete(
