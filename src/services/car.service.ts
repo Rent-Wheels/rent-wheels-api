@@ -60,15 +60,12 @@ async function updateCarMedia(filter: FilterQuery<Car>, oldURL: string, newURL: 
   return await car?.updateCarMedia(oldURL, newURL)
 }
 
-async function deleteCarMedia(filter: FilterQuery<Car>, mediaURLs: { mediaURL: string }[]) {
+async function deleteCarMedia(filter: FilterQuery<Car>, mediaURL: string) {
   const car = await findCar(filter)
 
   if (!car) throw new Error('Car not found')
-
-  for (const media of mediaURLs) {
-    car.media = car.media.filter(m => m.mediaURL === media.mediaURL)
-    deleteFile(media.mediaURL)
-  }
+  car.media = car.media.filter(m => m.mediaURL === mediaURL)
+  deleteFile(mediaURL)
 
   return await car.save()
 }

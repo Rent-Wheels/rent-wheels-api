@@ -1,17 +1,18 @@
 import multer from 'multer'
 import express from 'express'
 
-import isRenter from '../middlewares/isRenter'
-import requireUser from '../middlewares/requireUser'
-import validateInput from '../middlewares/validateInput'
+import isRenter from '../middleware/isRenter'
+import requireUser from '../middleware/requireUser'
+import validateInput from '../middleware/validateInput'
 import { carFileFilter, carFileStorage } from '../util/multer.config'
 
 import {
-  changeCarAvailabilitySchema,
   createCarSchema,
   deleteCarSchema,
-  updateCarMediaSchema,
   updateCarSchema,
+  getCarHistorySchema,
+  updateCarMediaSchema,
+  changeCarAvailabilitySchema,
 } from '../schema/car.schema'
 
 import {
@@ -20,8 +21,8 @@ import {
   updateCarHandler,
   availableCarsHandler,
   getCarHistoryHandler,
-  changeAvailabilityHandler,
   updateCarMediaHandler,
+  changeAvailabilityHandler,
 } from '../controllers/car.controller'
 
 const carsRoute = express.Router()
@@ -29,7 +30,7 @@ const carsRoute = express.Router()
 carsRoute.get('/available', requireUser, availableCarsHandler)
 carsRoute.get(
   '/:carId/history',
-  [requireUser, isRenter, validateInput(deleteCarSchema)],
+  [requireUser, isRenter, validateInput(getCarHistorySchema)],
   getCarHistoryHandler,
 )
 
@@ -44,7 +45,7 @@ carsRoute.post(
   addCarHandler,
 )
 
-carsRoute.patch(
+carsRoute.put(
   '/:carId/',
   [
     requireUser,
@@ -54,12 +55,14 @@ carsRoute.patch(
   ],
   updateCarHandler,
 )
+
 carsRoute.patch(
   '/:carId/availability',
   [requireUser, isRenter, validateInput(changeCarAvailabilitySchema)],
   changeAvailabilityHandler,
 )
-carsRoute.patch(
+
+carsRoute.delete(
   '/:carId/media',
   [requireUser, isRenter, validateInput(updateCarMediaSchema)],
   updateCarMediaHandler,

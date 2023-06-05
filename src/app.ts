@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 
 import routes from './routes'
-import deserializeUser from './middlewares/deserializeUser'
+import deserializeUser from './middleware/deserializeUser'
 
 const app: Express = express()
 

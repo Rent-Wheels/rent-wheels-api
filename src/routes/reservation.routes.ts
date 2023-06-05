@@ -1,7 +1,7 @@
 import express from 'express'
 
-import requireUser from '../middlewares/requireUser'
-import validateInput from '../middlewares/validateInput'
+import requireUser from '../middleware/requireUser'
+import validateInput from '../middleware/validateInput'
 import {
   createReservationSchema,
   deleteReservationSchema,

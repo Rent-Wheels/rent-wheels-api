@@ -185,9 +185,11 @@ async function updateCarMediaHandler(
     const carId = req.params.carId
     const owner = res.locals.user._id
 
-    const updatedCar = await deleteCarMedia({ carId, owner }, req.body.media)
+    const updatedCar = await deleteCarMedia({ carId, owner }, req.body.mediaURL)
 
-    return res.status(200).json(updatedCar.media)
+    if (!updatedCar) return res.sendStatus(404)
+
+    return res.sendStatus(200)
   } catch (e: any) {
     log.error(e)
 

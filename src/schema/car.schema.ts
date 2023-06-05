@@ -93,13 +93,9 @@ const changeCarAvailabilitySchema = object({
 const updateCarMediaSchema = object({
   ...params,
   body: object({
-    media: array(
-      object({
-        mediaURL: string({
-          required_error: 'Media Url required',
-        }),
-      }),
-    ),
+    mediaURL: string({
+      required_error: 'Media Url required',
+    }),
   }),
 })
 

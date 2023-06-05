@@ -1,8 +1,8 @@
 import multer from 'multer'
 import express from 'express'
 
-import requireUser from '../middlewares/requireUser'
-import validateInput from '../middlewares/validateInput'
+import requireUser from '../middleware/requireUser'
+import validateInput from '../middleware/validateInput'
 import { createUserSchema } from '../schema/user.schema'
 import { createRenterHandler, getRenterCarsHandler } from '../controllers/renter.controller'
 import { userFileFilter, userFileStorage } from '../util/multer.config'
