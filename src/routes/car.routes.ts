@@ -62,7 +62,7 @@ carsRoute.patch(
   changeAvailabilityHandler,
 )
 
-carsRoute.delete(
+carsRoute.patch(
   '/:carId/media',
   [requireUser, isRenter, validateInput(updateCarMediaSchema)],
   updateCarMediaHandler,
