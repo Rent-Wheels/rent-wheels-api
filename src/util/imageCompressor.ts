@@ -1,6 +1,6 @@
 // import fs from 'fs'
 import imagemin from 'imagemin'
-import { mongoConnect } from './mongo'
+import { mongoConnect, mongoDisconnect } from './mongo'
 import imageminMozjpeg from 'imagemin-mozjpeg'
 
 import { MediaCategory } from '../models/enums'
@@ -31,6 +31,8 @@ export default async function imageCompressor(
 
   deleteFolder(image.destination)
   await updateMedia(id, file[0].destinationPath, category, filePath)
+
+  await mongoDisconnect()
   process.exit()
 }
 

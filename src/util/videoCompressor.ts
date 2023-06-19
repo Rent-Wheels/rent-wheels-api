@@ -1,7 +1,7 @@
 import fs from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
 
-import { mongoConnect } from './mongo'
+import { mongoConnect, mongoDisconnect } from './mongo'
 import { updateCarMedia } from '../services/car.service'
 
 export default async function videoCompressor(
@@ -22,6 +22,7 @@ export default async function videoCompressor(
     .on('end', async () => {
       await mongoConnect()
       await updateCarMedia({ carId }, file.path, finalPath)
+      await mongoDisconnect
       process.exit()
     })
     .on('error', e => {
