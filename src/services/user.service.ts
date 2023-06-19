@@ -43,6 +43,10 @@ async function findUser(filter: FilterQuery<User>) {
   return await UserModel.findOne(filter)
 }
 
+async function findRenter(filter: FilterQuery<User>) {
+  return await UserModel.findOne(filter).populate('cars')
+}
+
 async function getUserReservationHistory(filter: FilterQuery<User>) {
   const user = await UserModel.findOne(filter).populate('reservations')
   if (!user) throw new Error('User not found')
@@ -78,6 +82,7 @@ async function updateProfilePicture(userId: string, imageUrl: string) {
 
 export {
   findUser,
+  findRenter,
   createUser,
   updateUser,
   deleteUser,

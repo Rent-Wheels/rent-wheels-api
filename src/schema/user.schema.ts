@@ -20,10 +20,9 @@ const userSchema = {
       required_error: 'Phone number required',
     }),
     profilePicture: string().optional(),
-    placeOfResidence: object({
-      lat: string(),
-      long: string(),
-    }).optional(),
+    placeOfResidence: string({
+      required_error: 'Place of residence is required',
+    }),
     role: nativeEnum(Roles).optional(),
     identificationCard: string().optional(),
     reservations: optional(array(string())),

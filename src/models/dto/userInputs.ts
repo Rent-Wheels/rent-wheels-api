@@ -11,7 +11,7 @@ interface UserInput {
   age: number
   dob: Date
   profilePicture: string
-  placeOfResidence: Location
+  placeOfResidence: string
   identificationCard: string
   role: Roles
   reservations: Reservation['_id'][]
@@ -73,11 +73,6 @@ interface ReservationDetails {
 
 interface Reservation extends ReservationDetails, mongoose.Document {
   updateStatus(status: ReservationStatus): Promise<Reservation>
-}
-
-type Location = {
-  lat: string
-  long: string
 }
 
 export { User, Car, Reservation }

@@ -32,8 +32,8 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   placeOfResidence: {
-    lat: String,
-    long: String,
+    type: String,
+    required: true,
   },
   role: {
     type: Number,
