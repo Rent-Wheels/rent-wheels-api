@@ -8,6 +8,7 @@ mongoose.connection.on('error', async e => {
   log.info(e)
   await mongoose.disconnect()
 })
+mongoose.connection.on('disconnected', () => log.info('Disconnected'))
 
 async function mongoConnect() {
   return await mongoose.connect(config.get<string>('mongoUrl'))
