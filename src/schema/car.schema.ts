@@ -22,6 +22,9 @@ const carSchema = {
     yearOfManufacture: string({
       required_error: 'Year of manufacture is required',
     }),
+    color: string({
+      required_error: 'Car color is required',
+    }),
     registrationNumber: string({
       required_error: 'Registration number is required',
     }),

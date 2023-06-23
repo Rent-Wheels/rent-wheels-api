@@ -32,6 +32,7 @@ interface CarDetails {
   make: string
   model: string
   capacity: number
+  color: string
   yearOfManufacture: string
   registrationNumber: string
   condition: Condition

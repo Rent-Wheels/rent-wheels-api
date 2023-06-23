@@ -25,6 +25,10 @@ const carSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  color: {
+    type: String,
+    required: true,
+  },
   yearOfManufacture: {
     type: String,
     required: true,
