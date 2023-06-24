@@ -34,6 +34,7 @@ const carSchema = new mongoose.Schema({
     required: true,
   },
   registrationNumber: {
+    unique: true,
     type: String,
     required: true,
   },
@@ -58,6 +59,10 @@ const carSchema = new mongoose.Schema({
     default: true,
   },
   location: {
+    type: String,
+    required: true,
+  },
+  durationUnit: {
     type: String,
     required: true,
   },

@@ -21,6 +21,12 @@ enum Plan {
   Daily = '/day',
 }
 
+enum DurationUnit {
+  Days = 'days',
+  Weeks = 'weeks',
+  Months = 'months',
+}
+
 enum CarType {
   Bus = 'Bus',
   SUV = 'SUV',
@@ -45,4 +51,13 @@ enum MediaCategory {
   Car,
 }
 
-export { Roles, Availability, Condition, Plan, CarType, ReservationStatus, MediaCategory }
+export {
+  Roles,
+  Availability,
+  Condition,
+  Plan,
+  CarType,
+  ReservationStatus,
+  MediaCategory,
+  DurationUnit,
+}

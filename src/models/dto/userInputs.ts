@@ -1,6 +1,14 @@
 import mongoose from 'mongoose'
 
-import { Availability, CarType, Condition, Plan, ReservationStatus, Roles } from '../enums'
+import {
+  Availability,
+  CarType,
+  Condition,
+  DurationUnit,
+  Plan,
+  ReservationStatus,
+  Roles,
+} from '../enums'
 
 interface UserInput {
   userId: string
@@ -45,6 +53,7 @@ interface CarDetails {
   maxDuration: number
   description: string
   terms: string
+  durationUnit: DurationUnit
   media: Media[]
 }
 

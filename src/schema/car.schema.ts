@@ -1,6 +1,6 @@
 import { TypeOf, array, coerce, nativeEnum, object, string } from 'zod'
 
-import { Availability, CarType, Condition, Plan } from '../models/enums'
+import { Availability, CarType, Condition, DurationUnit, Plan } from '../models/enums'
 
 const carSchema = {
   body: object({
@@ -39,6 +39,9 @@ const carSchema = {
     }),
     type: nativeEnum(CarType, {
       required_error: 'Car type is required',
+    }),
+    durationUnit: nativeEnum(DurationUnit, {
+      required_error: 'Duration Unit is required',
     }),
     availability: coerce.number({
       required_error: 'Availability of the car is required',
