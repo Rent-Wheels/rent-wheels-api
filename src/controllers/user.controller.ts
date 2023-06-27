@@ -173,7 +173,7 @@ async function upgradeToRenterHandler(
 ) {
   try {
     const userId = req.params.userId
-    const upgradedUser = await upgradeToRenter({ userId: userId })
+    const upgradedUser = await upgradeToRenter({ userId })
 
     return res.status(200).json(upgradedUser)
   } catch (e: any) {
