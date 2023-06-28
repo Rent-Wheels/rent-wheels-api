@@ -5,7 +5,6 @@ import { v4 as uuid } from 'uuid'
 
 import { MulterCarInput } from '../../schema/car.schema'
 import { CreateUserInput } from '../../schema/user.schema'
-import { findUser } from '../../services/user.service'
 
 type FileNameCallBack = (error: Error | null, fileName: string) => void
 type DestinationCallBack = (error: Error | null, destination: string) => void
@@ -16,14 +15,9 @@ const userFileStorage = multer.diskStorage({
     _file: Express.Multer.File,
     callback: DestinationCallBack,
   ) => {
-    const user = await findUser({ phoneNumber: req.body.phoneNumber })
-    if (user) {
-      callback(new Error('Phone number already exists'), '')
-    } else {
-      const path = `./tmp/users/${req.body.userId}`
-      if (!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true })
-      callback(null, path)
-    }
+    const path = `./tmp/users/${req.body.userId}`
+    if (!fs.existsSync(path)) fs.mkdirSync(path, { recursive: true })
+    callback(null, path)
   },
   filename: (_req: Request, file: Express.Multer.File, callback: FileNameCallBack) => {
     const withoutName = file.originalname.split('.')

@@ -48,7 +48,10 @@ async function createUserHandler(
   } catch (e: any) {
     log.error(e)
 
-    return res.sendStatus(409)
+    const image = req.file as Express.Multer.File
+    deleteFolder(image.path)
+
+    return res.status(409).json('Phone number already exists')
   }
 }
 
@@ -64,15 +67,18 @@ async function updateUserHandler(
     const updatedAvatar = req.file
     const userDetails = req.body as User
     userDetails.userId = id
+    let oldProfilePicture = ''
 
     if (updatedAvatar) {
-      deleteFile(userDetails.profilePicture)
+      oldProfilePicture = userDetails.profilePicture
       userDetails.profilePicture = updatedAvatar.path
     }
 
     const updatedUser = await updateUser({ userId: id }, userDetails, { new: true })
 
     if (updatedAvatar) {
+      deleteFile(oldProfilePicture)
+
       const compressedPath = `public/uploads/users/${userDetails.userId}/avatar/`
       createChild({
         id: userDetails.userId,
@@ -84,7 +90,11 @@ async function updateUserHandler(
 
     return res.status(200).json(updatedUser)
   } catch (e: any) {
-    return res.status(400).json(e.message)
+    log.error(e)
+    if (e.message.includes('phoneNumber'))
+      return res.status(409).json('Phone number already exists')
+    if (e.message.includes('email')) return res.status(409).json('Email already exists')
+    return res.sendStatus(400)
   }
 }
 
