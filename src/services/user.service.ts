@@ -21,7 +21,7 @@ async function updateUser(
   options: QueryOptions,
 ) {
   try {
-    return await UserModel.findOneAndUpdate(filter, update, options)
+    return await UserModel.findOneAndUpdate(filter, update, options).populate('cars')
   } catch (e: any) {
     throw new Error(e)
   }
