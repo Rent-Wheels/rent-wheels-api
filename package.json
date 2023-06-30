@@ -28,6 +28,7 @@
     "express": "^4.18.2",
     "firebase-admin": "^11.8.0",
     "fluent-ffmpeg": "^2.1.2",
+    "helmet": "^7.0.0",
     "imagemin": "^7.0.1",
     "imagemin-mozjpeg": "^9.0.0",
     "jsonwebtoken": "^9.0.0",
