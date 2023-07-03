@@ -1,3 +1,4 @@
+import { FilterQuery } from 'mongoose'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
@@ -26,9 +27,16 @@ import {
   deleteCarMedia,
 } from '../services/car.service'
 
-async function availableCarsHandler(_req: Request, res: Response) {
+async function availableCarsHandler(req: Request, res: Response) {
   try {
-    const cars = await availableCars()
+    let filter: FilterQuery<Car> = { availability: true }
+
+    if (req.query.location) {
+      const location = new RegExp(req.query.location as string, 'i')
+      filter = { availability: true, location }
+    }
+
+    const cars = await availableCars(filter)
     return res.status(200).json(cars)
   } catch (e: any) {
     return res.status(400).json(e.message)

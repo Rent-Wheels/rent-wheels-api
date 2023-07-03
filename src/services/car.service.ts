@@ -6,8 +6,8 @@ import { Car } from '../models/dto/userInputs'
 import { Availability, Roles } from '../models/enums'
 import { deleteFile } from '../util/deleteFromStorage'
 
-async function availableCars() {
-  return await CarModel.find({ availability: true })
+async function availableCars(filter: FilterQuery<Car>) {
+  return await CarModel.find(filter)
 }
 
 async function addCar({ carDetails, userId }: { carDetails: Car; userId: string }) {
