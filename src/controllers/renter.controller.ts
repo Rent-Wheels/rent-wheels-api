@@ -49,7 +49,10 @@ async function getRenterCarsHandler(req: Request<GetUserInput['params']>, res: R
 
 async function getRenterHandler(req: Request<GetUserInput['params']>, res: Response) {
   try {
-    const renter = await findRenter({ userId: req.params.userId })
+    let renter = await findRenter({ userId: req.params.userId })
+    if (!renter) {
+      renter = await findRenter({ _id: req.params.userId })
+    }
     return res.status(200).json(renter)
   } catch (e: any) {
     log.error(e)
