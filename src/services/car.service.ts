@@ -4,7 +4,6 @@ import { findUser } from './user.service'
 import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
 import { Availability, Roles } from '../models/enums'
-import { deleteFile } from '../util/deleteFromStorage'
 
 async function availableCars(filter: FilterQuery<Car>) {
   return await CarModel.find(filter)
@@ -54,30 +53,4 @@ async function changeAvailability({
   return await car.changeAvailability(availability)
 }
 
-async function updateCarMedia(filter: FilterQuery<Car>, oldURL: string, newURL: string) {
-  const car = await findCar(filter)
-
-  return await car?.updateCarMedia(oldURL, newURL)
-}
-
-async function deleteCarMedia(filter: FilterQuery<Car>, mediaURL: string) {
-  const car = await findCar(filter)
-
-  if (!car) throw new Error('Car not found')
-  car.media = car.media.filter(m => m.mediaURL === mediaURL)
-  deleteFile(mediaURL)
-
-  return await car.save()
-}
-
-export {
-  availableCars,
-  addCar,
-  updateCar,
-  deleteCar,
-  findCar,
-  getCarHistory,
-  updateCarMedia,
-  deleteCarMedia,
-  changeAvailability,
-}
+export { addCar, findCar, updateCar, deleteCar, getCarHistory, availableCars, changeAvailability }

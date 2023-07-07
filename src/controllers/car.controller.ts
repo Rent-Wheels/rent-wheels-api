@@ -4,16 +4,13 @@ import { Request, Response } from 'express'
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
 import { findUser } from '../services/user.service'
-import multipleUploads from '../util/multipleFileUpload'
-import { deleteFolder } from '../util/deleteFromStorage'
-import { Availability, MediaCategory } from '../models/enums'
+import { Availability } from '../models/enums'
 
 import {
   CreateCarInput,
   DeleteCarInput,
   UpdateCarInput,
   ChangeCarAvailabilityInput,
-  UpdateCarMediaInput,
 } from '../schema/car.schema'
 
 import {
@@ -24,7 +21,6 @@ import {
   availableCars,
   getCarHistory,
   changeAvailability,
-  deleteCarMedia,
 } from '../services/car.service'
 
 async function availableCarsHandler(req: Request, res: Response) {
@@ -50,16 +46,11 @@ async function addCarHandler(
   try {
     const user = res.locals.user
     const carDetails = req.body as Car
-    const files = req.files as Express.Multer.File[]
-    const fileURLs = files.map(file => ({ mediaURL: file.path }))
-    carDetails.media = [...fileURLs]
+    carDetails.availability = Availability.Available
 
     if (carDetails.owner !== user._id.toString()) return res.sendStatus(400)
 
     const car = await addCar({ carDetails, userId: user._id })
-    const compressedPath = `public/uploads/cars/${car.owner}/${car.carId}/`
-
-    multipleUploads({ id: car.carId, files, compressedPath, category: MediaCategory.Car })
 
     return res.status(201).json(car)
   } catch (e: any) {
@@ -77,30 +68,14 @@ async function updateCarHandler(
     const carId = req.params.carId
     const userId = res.locals.user._id
     const carDetails = req.body as Car
-    const files = req.files as Express.Multer.File[] | undefined
 
-    const car = await findCar({ carId })
+    const car = await findCar({ _id: carId })
 
     if (!car) return res.sendStatus(404)
 
-    if (files && files.length !== 0) {
-      const fileURLs = files.map(file => ({ mediaURL: file.path }))
-      carDetails.media = [...car.media, ...fileURLs]
-    }
-
     if (carDetails.owner !== userId.toString()) return res.sendStatus(403)
 
-    const updatedCar = await updateCar({ carId }, carDetails, { new: true })
-
-    if (files && files.length !== 0) {
-      const compressedPath = `public/uploads/cars/${updatedCar?.owner}/${updatedCar?.carId}/`
-      multipleUploads({
-        id: updatedCar?.carId as string,
-        files,
-        compressedPath,
-        category: MediaCategory.Car,
-      })
-    }
+    const updatedCar = await updateCar({ _id: carId }, carDetails, { new: true })
 
     return res.status(200).json(updatedCar)
   } catch (e: any) {
@@ -126,9 +101,6 @@ async function deleteCarHandler(
     if (!ownerDetails) return res.sendStatus(404)
 
     await ownerDetails.removeCar(car._id.toString())
-
-    deleteFolder(`/tmp/cars/${owner}`)
-    deleteFolder(`/public/uploads/cars/${owner}/${carId}`)
 
     await deleteCar({ carId })
 
@@ -185,32 +157,11 @@ async function changeAvailabilityHandler(
   }
 }
 
-async function updateCarMediaHandler(
-  req: Request<UpdateCarMediaInput['params'], Record<string, never>, UpdateCarMediaInput['body']>,
-  res: Response,
-) {
-  try {
-    const carId = req.params.carId
-    const owner = res.locals.user._id
-
-    const updatedCar = await deleteCarMedia({ carId, owner }, req.body.mediaURL)
-
-    if (!updatedCar) return res.sendStatus(404)
-
-    return res.sendStatus(200)
-  } catch (e: any) {
-    log.error(e)
-
-    return res.sendStatus(404)
-  }
-}
-
 export {
   addCarHandler,
   updateCarHandler,
   deleteCarHandler,
   getCarHistoryHandler,
   availableCarsHandler,
-  updateCarMediaHandler,
   changeAvailabilityHandler,
 }

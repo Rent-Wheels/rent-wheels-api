@@ -1,12 +1,9 @@
-import { TypeOf, array, coerce, nativeEnum, object, string } from 'zod'
+import { TypeOf, array, number, nativeEnum, object, string } from 'zod'
 
 import { Availability, CarType, Condition, DurationUnit, Plan } from '../models/enums'
 
 const carSchema = {
   body: object({
-    carId: string({
-      required_error: 'Car Id required',
-    }),
     owner: string({
       required_error: 'Owner Id required',
     }),
@@ -16,7 +13,7 @@ const carSchema = {
     model: string({
       required_error: 'Model is required',
     }),
-    capacity: coerce.number({
+    capacity: number({
       required_error: 'Capacity of car required',
     }),
     yearOfManufacture: string({
@@ -31,7 +28,7 @@ const carSchema = {
     condition: nativeEnum(Condition, {
       required_error: 'Condition of the car is required',
     }),
-    rate: coerce.number({
+    rate: number({
       required_error: 'Rate of rental is required',
     }),
     plan: nativeEnum(Plan, {
@@ -43,14 +40,11 @@ const carSchema = {
     durationUnit: nativeEnum(DurationUnit, {
       required_error: 'Duration Unit is required',
     }),
-    availability: coerce.number({
-      required_error: 'Availability of the car is required',
-    }),
     location: string({
       required_error: 'Location is required',
     }),
     rentalHistory: array(string()).optional(),
-    maxDuration: coerce.number({
+    maxDuration: number({
       required_error: 'The maximum duration is required',
     }),
     description: string({
@@ -59,6 +53,13 @@ const carSchema = {
     terms: string({
       required_error: 'Terms of the rental is required',
     }),
+    media: array(
+      object({
+        mediaURL: string({
+          required_error: 'Media URL required',
+        }),
+      }),
+    ),
   }),
 }
 
@@ -96,43 +97,21 @@ const changeCarAvailabilitySchema = object({
   }),
 })
 
-const updateCarMediaSchema = object({
-  ...params,
-  body: object({
-    mediaURL: string({
-      required_error: 'Media Url required',
-    }),
-  }),
-})
-
-const multerCarSchema = object({
-  params: object({
-    carId: string().optional(),
-  }),
-  ...carSchema,
-})
-
 type CreateCarInput = TypeOf<typeof createCarSchema>
 type UpdateCarInput = TypeOf<typeof updateCarSchema>
 type DeleteCarInput = TypeOf<typeof deleteCarSchema>
-type MulterCarInput = TypeOf<typeof multerCarSchema>
 type GetCarHistoryInput = TypeOf<typeof getCarHistorySchema>
-type UpdateCarMediaInput = TypeOf<typeof updateCarMediaSchema>
 type ChangeCarAvailabilityInput = TypeOf<typeof changeCarAvailabilitySchema>
 
 export {
   createCarSchema,
   updateCarSchema,
   deleteCarSchema,
-  multerCarSchema,
   getCarHistorySchema,
-  updateCarMediaSchema,
   changeCarAvailabilitySchema,
   CreateCarInput,
   UpdateCarInput,
   DeleteCarInput,
-  MulterCarInput,
   GetCarHistoryInput,
-  UpdateCarMediaInput,
   ChangeCarAvailabilityInput,
 }

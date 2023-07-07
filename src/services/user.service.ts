@@ -75,11 +75,6 @@ async function upgradeToRenter(filter: FilterQuery<User>) {
   return await user.upgradeToRenter()
 }
 
-async function updateProfilePicture(userId: string, imageUrl: string) {
-  const user = await findUser({ userId })
-  return await user?.updateProfilePicture(imageUrl)
-}
-
 export {
   findUser,
   findRenter,
@@ -87,7 +82,6 @@ export {
   updateUser,
   deleteUser,
   upgradeToRenter,
-  updateProfilePicture,
   getUserReservationHistory,
   clearUserReservationHistory,
 }

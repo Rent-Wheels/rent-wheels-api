@@ -17,8 +17,8 @@ enum Condition {
 }
 
 enum Plan {
-  Hourly = '/hr',
   Daily = '/day',
+  Hourly = '/hr',
 }
 
 enum DurationUnit {
@@ -40,24 +40,10 @@ enum CarType {
 }
 
 enum ReservationStatus {
-  Accepted = 'Accepted',
   Pending = 'Pending',
+  Accepted = 'Accepted',
   Rejected = 'Rejected',
   Cancelled = 'Cancelled',
 }
 
-enum MediaCategory {
-  User,
-  Car,
-}
-
-export {
-  Roles,
-  Availability,
-  Condition,
-  Plan,
-  CarType,
-  ReservationStatus,
-  MediaCategory,
-  DurationUnit,
-}
+export { Plan, Roles, CarType, Condition, Availability, DurationUnit, ReservationStatus }

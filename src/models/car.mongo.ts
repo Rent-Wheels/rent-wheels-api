@@ -4,11 +4,6 @@ import { Car } from './dto/userInputs'
 import { Availability } from './enums'
 
 const carSchema = new mongoose.Schema({
-  carId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   owner: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
@@ -106,15 +101,6 @@ carSchema.methods.addReservation = async function (reservationId: string) {
 carSchema.methods.removeReservation = async function (reservationId: string) {
   const car = this as Car
   car.rentalHistory = car.rentalHistory?.filter(reservation => reservation !== reservationId)
-  return await car.save()
-}
-
-carSchema.methods.updateCarMedia = async function (oldURL: string, newURL: string) {
-  const car = this as Car
-  const index = car.media.findIndex(media => media.mediaURL === oldURL)
-
-  car.media[index] = { mediaURL: newURL }
-
   return await car.save()
 }
 
