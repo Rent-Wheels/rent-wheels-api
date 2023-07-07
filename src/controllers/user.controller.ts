@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
-import createChild from '../util/createChild'
+
+import { Roles } from '../models/enums'
 import { User } from '../models/dto/userInputs'
-import { MediaCategory, Roles } from '../models/enums'
-import { deleteFile, deleteFolder } from '../util/deleteFromStorage'
 
 import {
   findUser,
@@ -31,27 +30,23 @@ async function createUserHandler(
   res: Response,
 ) {
   try {
-    const image = req.file as Express.Multer.File
     const signUpDetails = req.body as User
 
     signUpDetails.role = Roles.User
-    signUpDetails.profilePicture = image.path
 
     const user = await createUser(signUpDetails)
 
     if (!user) throw new Error('Could not create user')
 
-    const compressedPath = `public/uploads/users/${user.userId}/avatar/`
-    createChild({ id: user.userId, file: image, compressedPath, category: MediaCategory.User })
-
     return res.status(201).json(user)
   } catch (e: any) {
     log.error(e)
 
-    const image = req.file as Express.Multer.File
-    deleteFolder(image.path)
+    if (e.message.includes('phoneNumber'))
+      return res.status(409).json('Phone number already exists')
+    if (e.message.includes('email')) return res.status(409).json('Email already exists')
 
-    return res.status(409).json('Phone number already exists')
+    return res.sendStatus(400)
   }
 }
 
@@ -64,36 +59,19 @@ async function updateUserHandler(
 
     if (id !== res.locals.user.userId) return res.sendStatus(403)
 
-    const updatedAvatar = req.file
     const userDetails = req.body as User
-    userDetails.userId = id
-    let oldProfilePicture = ''
-
-    if (updatedAvatar) {
-      oldProfilePicture = userDetails.profilePicture
-      userDetails.profilePicture = updatedAvatar.path
-    }
 
     const updatedUser = await updateUser({ userId: id }, userDetails, { new: true })
-
-    if (updatedAvatar) {
-      deleteFile(oldProfilePicture)
-
-      const compressedPath = `public/uploads/users/${userDetails.userId}/avatar/`
-      createChild({
-        id: userDetails.userId,
-        file: updatedAvatar,
-        compressedPath,
-        category: MediaCategory.User,
-      })
-    }
 
     return res.status(200).json(updatedUser)
   } catch (e: any) {
     log.error(e)
+
     if (e.message.includes('phoneNumber'))
       return res.status(409).json('Phone number already exists')
+
     if (e.message.includes('email')) return res.status(409).json('Email already exists')
+
     return res.sendStatus(400)
   }
 }
@@ -106,9 +84,6 @@ async function deleteUserHandler(
     const userId = req.params.userId
 
     if (userId !== res.locals.user.userId) return res.sendStatus(403)
-
-    deleteFolder(`/tmp/users/${res.locals.user.userId}/`)
-    deleteFolder(`/public/uploads/users/${res.locals.user.userId}/`)
 
     await deleteUser({ userId: userId })
 

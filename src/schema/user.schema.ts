@@ -19,7 +19,9 @@ const userSchema = {
     phoneNumber: string({
       required_error: 'Phone number required',
     }),
-    profilePicture: string().optional(),
+    profilePicture: string({
+      required_error: 'Profile picture is required',
+    }),
     placeOfResidence: string({
       required_error: 'Place of residence is required',
     }),

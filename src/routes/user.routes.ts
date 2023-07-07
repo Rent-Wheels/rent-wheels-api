@@ -1,9 +1,7 @@
-import multer from 'multer'
 import express from 'express'
 
 import requireUser from '../middleware/requireUser'
 import validateInput from '../middleware/validateInput'
-import { userFileFilter, userFileStorage } from '../util/multer.config'
 
 import {
   getUserSchema,
@@ -34,24 +32,9 @@ userRoute.get(
   getUserReservationHistoryHandler,
 )
 
-userRoute.post(
-  '/',
-  [
-    multer({ storage: userFileStorage, fileFilter: userFileFilter }).single('avatar'),
-    validateInput(createUserSchema),
-  ],
-  createUserHandler,
-)
+userRoute.post('/', validateInput(createUserSchema), createUserHandler)
 
-userRoute.patch(
-  '/:userId/',
-  [
-    requireUser,
-    multer({ storage: userFileStorage, fileFilter: userFileFilter }).single('avatar'),
-    validateInput(updateUserSchema),
-  ],
-  updateUserHandler,
-)
+userRoute.patch('/:userId/', [requireUser, validateInput(updateUserSchema)], updateUserHandler)
 userRoute.patch(
   '/:userId/upgrade',
   [requireUser, validateInput(upgradeUserSchema)],
