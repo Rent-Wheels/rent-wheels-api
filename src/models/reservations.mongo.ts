@@ -37,6 +37,14 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  destination: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
 })
 
 reservationSchema.methods.updateStatus = async function (status: ReservationStatus) {

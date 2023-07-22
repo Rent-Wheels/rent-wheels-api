@@ -77,6 +77,8 @@ interface ReservationDetails {
   startDate: Date
   returnDate: Date
   status: ReservationStatus
+  destination: string
+  price: number
 }
 
 interface Reservation extends ReservationDetails, mongoose.Document {
