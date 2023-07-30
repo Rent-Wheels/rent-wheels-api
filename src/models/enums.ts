@@ -41,6 +41,7 @@ enum CarType {
 
 enum ReservationStatus {
   Pending = 'Pending',
+  Ongoing = 'Ongoing',
   Accepted = 'Accepted',
   Rejected = 'Rejected',
   Cancelled = 'Cancelled',
