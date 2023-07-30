@@ -104,8 +104,6 @@ async function getUserReservationsHandler(
 
     const reservations = await getUserReservations({ 'customer.id': userId })
 
-    console.log(reservations)
-
     return res.status(200).json(reservations)
   } catch (e) {
     log.error(e)

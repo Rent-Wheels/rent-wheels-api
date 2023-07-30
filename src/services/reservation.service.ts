@@ -58,7 +58,7 @@ async function deleteReservation(filter: FilterQuery<Reservation>) {
 }
 
 async function getUserReservations(filter: FilterQuery<Reservation>) {
-  const reservations = await ReservationModel.findOne(filter).populate([
+  const reservations = await ReservationModel.find(filter).populate([
     {
       path: 'car',
       select: {
