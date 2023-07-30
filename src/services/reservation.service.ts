@@ -12,7 +12,30 @@ async function createReservation(reservationDetails: Reservation) {
 
   if (!customer || !car) throw new Error('Reservation could not be created')
 
-  const reservation = await ReservationModel.create(reservationDetails)
+  const reservation = await (
+    await ReservationModel.create(reservationDetails)
+  ).populate([
+    {
+      path: 'car',
+      select: {
+        _id: 0,
+        __v: 0,
+        owner: 0,
+        rentalHistory: 0,
+      },
+    },
+    {
+      path: 'renter',
+      select: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        profilePicture: 1,
+        placeOfResidence: 1,
+      },
+    },
+  ])
 
   await customer.addReservation(reservation._id)
   await car.addReservation(reservation._id)
