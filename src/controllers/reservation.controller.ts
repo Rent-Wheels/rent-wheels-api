@@ -11,11 +11,13 @@ import {
   userDeleteReservation,
   updateReservationStatus,
   renterDeleteReservation,
+  getUserReservations,
 } from '../services/reservation.service'
 
 import {
   CreateReservationInput,
   DeleteReservationInput,
+  GetUserReservationInput,
   UpdateReservationInput,
   UpdateReservationStatusInput,
 } from '../schema/reservation.schema'
@@ -86,6 +88,32 @@ async function updateReservationHandler(
   }
 }
 
+async function getUserReservationsHandler(
+  req: Request<
+    Record<never, never>,
+    Record<never, never>,
+    Record<never, never>,
+    GetUserReservationInput['query']
+  >,
+  res: Response,
+) {
+  try {
+    const userId = req.query.userId.replace('/', '')
+
+    if (res.locals.user._id.toString() !== userId) return res.sendStatus(403)
+
+    const reservations = await getUserReservations({ 'customer.id': userId })
+
+    console.log(reservations)
+
+    return res.status(200).json(reservations)
+  } catch (e) {
+    log.error(e)
+
+    return res.sendStatus(404)
+  }
+}
+
 async function deleteReservationHandler(
   req: Request<DeleteReservationInput['params'], Record<never, never>, Record<never, never>>,
   res: Response,
@@ -112,7 +140,8 @@ async function deleteReservationHandler(
 
 export {
   createReservationHandler,
-  updateReservationStatusHandler,
   updateReservationHandler,
   deleteReservationHandler,
+  getUserReservationsHandler,
+  updateReservationStatusHandler,
 }

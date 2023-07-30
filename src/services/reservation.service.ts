@@ -57,6 +57,34 @@ async function deleteReservation(filter: FilterQuery<Reservation>) {
   return await ReservationModel.findOneAndDelete(filter)
 }
 
+async function getUserReservations(filter: FilterQuery<Reservation>) {
+  const reservations = await ReservationModel.findOne(filter).populate([
+    {
+      path: 'car',
+      select: {
+        _id: 0,
+        __v: 0,
+        owner: 0,
+        rentalHistory: 0,
+      },
+    },
+    {
+      path: 'renter',
+      select: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        profilePicture: 1,
+        placeOfResidence: 1,
+      },
+    },
+  ])
+  if (!reservations) throw new Error('User not found')
+
+  return reservations
+}
+
 async function renterDeleteReservation(reservationId: string) {
   const reservation = await ReservationModel.findOne({ _id: reservationId })
   if (!reservation) throw new Error('Reservation not found')
@@ -83,9 +111,10 @@ async function userDeleteReservation(reservationId: string, userId: string) {
 
 export {
   createReservation,
-  updateReservationStatus,
   updateReservation,
   deleteReservation,
-  renterDeleteReservation,
+  getUserReservations,
   userDeleteReservation,
+  renterDeleteReservation,
+  updateReservationStatus,
 }
