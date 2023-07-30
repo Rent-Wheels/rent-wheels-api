@@ -121,6 +121,9 @@ async function getUserReservationHistoryHandler(
 ) {
   try {
     const userId = req.params.userId
+
+    if (res.locals.user.userId !== userId) return res.sendStatus(403)
+
     const history = await getUserReservationHistory({ userId: userId })
 
     return res.status(200).json(history)
