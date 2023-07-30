@@ -24,9 +24,6 @@ const reservationSchema = {
     returnDate: coerce.date({
       required_error: 'Return Date is required',
     }),
-    status: nativeEnum(ReservationStatus, {
-      required_error: 'Reservation Status is required',
-    }),
   }),
 }
 

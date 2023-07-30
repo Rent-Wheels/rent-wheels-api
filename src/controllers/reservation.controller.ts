@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
-import { Roles } from '../models/enums'
+import { ReservationStatus, Roles } from '../models/enums'
 import { Reservation } from '../models/dto/userInputs'
 
 import {
@@ -26,6 +26,7 @@ async function createReservationHandler(
 ) {
   try {
     const reservationDetails = req.body as Reservation
+    reservationDetails.status = ReservationStatus.Pending
     const reservation = await createReservation(reservationDetails)
 
     return res.status(201).json(reservation)
