@@ -50,7 +50,28 @@ async function updateReservationStatus({
   status: ReservationStatus
   filter: FilterQuery<Reservation>
 }) {
-  const reservation = await ReservationModel.findOne(filter)
+  const reservation = await ReservationModel.findOne(filter).populate([
+    {
+      path: 'car',
+      select: {
+        _id: 0,
+        __v: 0,
+        owner: 0,
+        rentalHistory: 0,
+      },
+    },
+    {
+      path: 'renter',
+      select: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        profilePicture: 1,
+        placeOfResidence: 1,
+      },
+    },
+  ])
 
   if (!reservation) throw new Error('Reservation does not exist')
 
