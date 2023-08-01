@@ -38,7 +38,25 @@ async function findCar(filter: FilterQuery<Car>) {
 }
 
 async function getCarHistory(filter: FilterQuery<Car>) {
-  return await CarModel.findOne(filter, { rentalHistory: 1 }).populate('rentalHistory')
+  return await CarModel.findOne(filter, { rentalHistory: 1 }).populate([
+    {
+      path: 'rentalHistory',
+      populate: {
+        path: 'customer.id',
+        select: {
+          _id: 0,
+          name: 1,
+          email: 1,
+          phoneNumber: 1,
+          profilePicture: 1,
+          placeOfResidence: 1,
+        },
+      },
+      select: {
+        'customer.name': 0,
+      },
+    },
+  ])
 }
 
 async function changeAvailability({
