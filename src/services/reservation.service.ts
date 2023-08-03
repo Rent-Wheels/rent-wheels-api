@@ -129,6 +129,34 @@ async function getUserReservations(filter: FilterQuery<Reservation>) {
   return reservations
 }
 
+async function getRenterReservations(filter: FilterQuery<Reservation>) {
+  const reservations = await ReservationModel.find(filter, { 'customer.name': 0 }).populate([
+    {
+      path: 'car',
+      select: {
+        _id: 0,
+        __v: 0,
+        owner: 0,
+        rentalHistory: 0,
+      },
+    },
+    {
+      path: 'customer.id',
+      select: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        phoneNumber: 1,
+        profilePicture: 1,
+        placeOfResidence: 1,
+      },
+    },
+  ])
+  if (!reservations) throw new Error('User not found')
+
+  return reservations
+}
+
 async function renterDeleteReservation(reservationId: string) {
   const reservation = await ReservationModel.findOne({ _id: reservationId })
   if (!reservation) throw new Error('Reservation not found')
@@ -158,6 +186,7 @@ export {
   updateReservation,
   deleteReservation,
   getUserReservations,
+  getRenterReservations,
   userDeleteReservation,
   renterDeleteReservation,
   updateReservationStatus,

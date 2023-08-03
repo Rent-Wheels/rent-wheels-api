@@ -8,10 +8,11 @@ import {
   createReservation,
   deleteReservation,
   updateReservation,
+  getUserReservations,
+  getRenterReservations,
   userDeleteReservation,
   updateReservationStatus,
   renterDeleteReservation,
-  getUserReservations,
 } from '../services/reservation.service'
 
 import {
@@ -98,11 +99,15 @@ async function getUserReservationsHandler(
   res: Response,
 ) {
   try {
-    const userId = req.query.userId.replace('/', '')
+    const userId = req.query.userId?.replace('/', '')
+    const renterId = req.query.renterId?.replace('/', '')
 
-    if (res.locals.user._id.toString() !== userId) return res.sendStatus(403)
+    if (res.locals.user._id.toString() !== userId && res.locals.user._id.toString() !== renterId)
+      return res.sendStatus(403)
 
-    const reservations = await getUserReservations({ 'customer.id': userId })
+    let reservations
+    if (userId) reservations = await getUserReservations({ 'customer.id': userId })
+    else reservations = await getRenterReservations({ renter: renterId })
 
     return res.status(200).json(reservations)
   } catch (e) {

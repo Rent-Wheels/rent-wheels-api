@@ -37,9 +37,8 @@ const params = {
 
 const userParams = {
   query: object({
-    userId: string({
-      required_error: 'User id required',
-    }),
+    userId: string({}).optional(),
+    renterId: string({}).optional(),
   }),
 }
 
