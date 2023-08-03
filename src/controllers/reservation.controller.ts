@@ -99,8 +99,8 @@ async function getUserReservationsHandler(
   res: Response,
 ) {
   try {
-    const userId = req.query.userId?.replace('/', '')
-    const renterId = req.query.renterId?.replace('/', '')
+    const userId = req.query.userId
+    const renterId = req.query.renterId
 
     if (res.locals.user._id.toString() !== userId && res.locals.user._id.toString() !== renterId)
       return res.sendStatus(403)
