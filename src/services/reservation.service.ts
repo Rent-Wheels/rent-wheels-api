@@ -106,7 +106,6 @@ async function getUserReservations(filter: FilterQuery<Reservation>) {
     {
       path: 'car',
       select: {
-        _id: 0,
         __v: 0,
         owner: 0,
         rentalHistory: 0,
@@ -115,7 +114,7 @@ async function getUserReservations(filter: FilterQuery<Reservation>) {
     {
       path: 'renter',
       select: {
-        _id: 0,
+        _id: 1,
         name: 1,
         email: 1,
         phoneNumber: 1,
