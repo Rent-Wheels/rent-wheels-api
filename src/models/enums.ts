@@ -44,7 +44,6 @@ enum ReservationStatus {
   Pending = 'Pending',
   Ongoing = 'Ongoing',
   Accepted = 'Accepted',
-  Rejected = 'Rejected',
   Declined = 'Declined',
   Cancelled = 'Cancelled',
   Completed = 'Completed',
