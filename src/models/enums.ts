@@ -40,11 +40,14 @@ enum CarType {
 }
 
 enum ReservationStatus {
+  Paid = 'Paid',
   Pending = 'Pending',
   Ongoing = 'Ongoing',
   Accepted = 'Accepted',
   Rejected = 'Rejected',
+  Declined = 'Declined',
   Cancelled = 'Cancelled',
+  Completed = 'Completed',
 }
 
 export { Plan, Roles, CarType, Condition, Availability, DurationUnit, ReservationStatus }
