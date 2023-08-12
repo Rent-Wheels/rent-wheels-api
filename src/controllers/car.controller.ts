@@ -92,7 +92,7 @@ async function deleteCarHandler(
   try {
     const carId = req.params.carId
     const owner = res.locals.user._id
-    const car = await findCar({ carId, owner })
+    const car = await findCar({ _id: carId, owner })
 
     if (!car) return res.sendStatus(404)
 
@@ -102,7 +102,7 @@ async function deleteCarHandler(
 
     await ownerDetails.removeCar(car._id.toString())
 
-    await deleteCar({ carId })
+    await deleteCar({ _id: carId })
 
     return res.sendStatus(200)
   } catch (e: any) {
@@ -147,7 +147,7 @@ async function changeAvailabilityHandler(
     const owner = res.locals.user._id
     const availability: Availability = req.body.availability
 
-    const updatedCar = await changeAvailability({ filter: { carId, owner }, availability })
+    const updatedCar = await changeAvailability({ filter: { _id: carId, owner }, availability })
 
     return res.status(200).json(updatedCar)
   } catch (e: any) {
