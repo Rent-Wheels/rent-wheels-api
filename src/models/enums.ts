@@ -50,3 +50,5 @@ enum ReservationStatus {
 }
 
 export { Plan, Roles, CarType, Condition, Availability, DurationUnit, ReservationStatus }
+
+// ...
