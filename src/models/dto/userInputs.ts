@@ -1,14 +1,7 @@
-import {
-  Availability,
-  CarType,
-  Condition,
-  DurationUnit,
-  Plan,
-  ReservationStatus,
-  Roles,
-} from '../enums'
+import { CarType, Condition, DurationUnit, Plan, ReservationStatus, Roles } from '../enums'
 
 type Media = {
+  id: string
   mediaURL: string
 }
 
@@ -53,10 +46,9 @@ interface Car {
   maxDuration: number
   rate: number
   plan: Plan
-  availability: Availability
+  availability: boolean
   media: Media[]
   durationUnit: DurationUnit
-  rentalHistory: Reservation[]
 }
 
 export { User, Car, Reservation }
