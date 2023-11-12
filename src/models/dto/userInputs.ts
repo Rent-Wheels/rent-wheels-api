@@ -1,88 +1,54 @@
-import mongoose from 'mongoose'
-
-import {
-  Availability,
-  CarType,
-  Condition,
-  DurationUnit,
-  Plan,
-  ReservationStatus,
-  Roles,
-} from '../enums'
-
-interface UserInput {
-  userId: string
-  name: string
-  email: string
-  password?: string
-  phoneNumber: string
-  age: number
-  dob: Date
-  profilePicture: string
-  placeOfResidence: string
-  identificationCard: string
-  role: Roles
-  reservations: Reservation['_id'][]
-  cars?: Car['_id'][]
-}
-interface User extends UserInput, mongoose.Document {
-  upgradeToRenter(): Promise<User>
-  addCar(carId: string): Promise<User>
-  removeCar(carId: string): Promise<User>
-  addReservation(reservationId: string): Promise<User>
-  removeReservation(reservationId: string): Promise<User>
-}
-
-interface CarDetails {
-  carId: string
-  owner: User['_id']
-  make: string
-  model: string
-  capacity: number
-  color: string
-  yearOfManufacture: string
-  registrationNumber: string
-  condition: Condition
-  rate: number
-  plan: Plan
-  type: CarType
-  availability: Availability
-  location: string
-  rentalHistory?: Reservation['_id'][]
-  maxDuration: number
-  description: string
-  terms: string
-  durationUnit: DurationUnit
-  media: Media[]
-}
+import { CarType, Condition, DurationUnit, Plan, ReservationStatus, Roles } from '../enums'
 
 type Media = {
+  id: string
   mediaURL: string
 }
 
-interface Car extends CarDetails, mongoose.Document {
-  addReservation(reservationId: string): Promise<Car>
-  removeReservation(reservationId: string): Promise<Car>
-  changeAvailability(availability: Availability): Promise<Car>
-  changeAvailability(availability: Availability): Promise<Car>
+interface User {
+  id: string
+  dob: Date
+  email: string
+  name: string
+  phoneNumber: string
+  placeOfResidence: string
+  profilePicture: string
+  role: Roles
+  userId: string
 }
 
-interface ReservationDetails {
-  customer: {
-    id: User['_id']
-    name: User['name']
-  }
-  renter: Car['owner']
-  car: Car['_id']
-  startDate: Date
-  returnDate: Date
-  status: ReservationStatus
+interface Reservation {
+  id: string
+  carId: string
+  customerId: string
+  renterId: string
   destination: string
   price: number
+  returnDate: string
+  startDate: string
+  status: ReservationStatus
 }
 
-interface Reservation extends ReservationDetails, mongoose.Document {
-  updateStatus(status: ReservationStatus): Promise<Reservation>
+interface Car {
+  id?: string
+  make: string
+  model: string
+  yearOfManufacture: string
+  registrationNumber: string
+  color: string
+  capacity: number
+  type: CarType
+  location: string
+  condition: Condition
+  description: string
+  terms: string
+  ownerId: string
+  maxDuration: number
+  rate: number
+  plan: Plan
+  availability: boolean
+  media: Media[]
+  durationUnit: DurationUnit
 }
 
 export { User, Car, Reservation }

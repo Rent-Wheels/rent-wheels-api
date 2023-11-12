@@ -4,11 +4,6 @@ enum Roles {
   Renter = 6631,
 }
 
-enum Availability {
-  Available = 1,
-  Unavailable = 0,
-}
-
 enum Condition {
   Good = 'Good',
   Fair = 'Fair',
@@ -49,6 +44,6 @@ enum ReservationStatus {
   Completed = 'Completed',
 }
 
-export { Plan, Roles, CarType, Condition, Availability, DurationUnit, ReservationStatus }
+export { Plan, Roles, CarType, Condition, DurationUnit, ReservationStatus }
 
 // ...

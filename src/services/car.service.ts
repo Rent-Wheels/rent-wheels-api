@@ -1,74 +1,95 @@
-import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
-
-import { findUser } from './user.service'
-import CarModel from '../models/car.mongo'
 import { Car } from '../models/dto/userInputs'
-import { Availability, Roles } from '../models/enums'
+import PrismaService from './prisma.service'
 
-async function availableCars(filter: FilterQuery<Car>) {
-  return await CarModel.find(filter)
+const prisma = PrismaService
+
+async function availableCars(filter: Car) {
+  return await prisma.cars.findMany({
+    where: filter,
+  })
+}
+
+async function findCar(filter: Car) {
+  return await prisma.cars.findFirst({
+    where: filter,
+  })
 }
 
 async function addCar({ carDetails, userId }: { carDetails: Car; userId: string }) {
-  const car = await CarModel.create(carDetails)
-
-  const owner = await findUser({ _id: userId, role: Roles.Renter })
-
-  if (!owner) throw new Error('Car cannot be added')
-
-  await owner.addCar(car._id)
-
-  return car.toJSON()
+  return await prisma.cars.create({
+    data: {
+      ...carDetails,
+      ownerId: userId,
+    },
+  })
 }
 
-async function updateCar(
-  filter: FilterQuery<Car>,
-  update: UpdateQuery<Car>,
-  options: QueryOptions,
-) {
-  return await CarModel.findOneAndUpdate(filter, update, options)
+async function updateCar({ carDetails, id }: { carDetails: Car; id: string }) {
+  return await prisma.cars.update({
+    where: {
+      id,
+    },
+    data: carDetails,
+  })
 }
 
-async function deleteCar(filter: FilterQuery<Car>) {
-  return await CarModel.deleteOne(filter)
+async function deleteCar(filter: Car) {
+  return await prisma.cars.delete({
+    where: filter,
+  })
 }
 
-async function findCar(filter: FilterQuery<Car>) {
-  return await CarModel.findOne(filter)
-}
-
-async function getCarHistory(filter: FilterQuery<Car>) {
-  return await CarModel.findOne(filter, { rentalHistory: 1 }).populate([
-    {
-      path: 'rentalHistory',
-      populate: {
-        path: 'customer.id',
-        select: {
-          _id: 0,
-          name: 1,
-          email: 1,
-          phoneNumber: 1,
-          profilePicture: 1,
-          placeOfResidence: 1,
+async function getCarHistory(filter: Car) {
+  return await prisma.cars.findFirst({
+    where: filter,
+    select: {
+      rentalHistory: {
+        include: {
+          customer: {
+            select: {
+              name: true,
+              email: true,
+              phoneNumber: true,
+              profilePicture: true,
+              placeOfResidence: true,
+            },
+          },
         },
       },
-      select: {
-        'customer.name': 0,
-      },
     },
-  ])
+  })
 }
 
 async function changeAvailability({
   filter,
   availability,
 }: {
-  filter: FilterQuery<Car>
-  availability: Availability
+  filter: Car
+  availability: boolean
 }) {
-  const car = await findCar(filter)
-  if (!car) throw new Error('Car does not exist')
-  return await car.changeAvailability(availability)
+  return await prisma.cars.update({
+    where: filter,
+    data: {
+      availability,
+    },
+  })
 }
 
-export { addCar, findCar, updateCar, deleteCar, getCarHistory, availableCars, changeAvailability }
+async function deleteCars(ownerId: string) {
+  return await prisma.cars.deleteMany({
+    where: {
+      ownerId,
+    },
+  })
+}
+
+export {
+  addCar,
+  findCar,
+  updateCar,
+  deleteCar,
+  getCarHistory,
+  availableCars,
+  changeAvailability,
+  deleteCars,
+}

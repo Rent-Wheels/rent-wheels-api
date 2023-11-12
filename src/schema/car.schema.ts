@@ -1,6 +1,6 @@
-import { TypeOf, array, number, nativeEnum, object, string } from 'zod'
+import { TypeOf, array, number, nativeEnum, object, string, boolean } from 'zod'
 
-import { Availability, CarType, Condition, DurationUnit, Plan } from '../models/enums'
+import { CarType, Condition, DurationUnit, Plan } from '../models/enums'
 
 const carSchema = {
   body: object({
@@ -91,7 +91,7 @@ const getCarHistorySchema = object({
 const changeCarAvailabilitySchema = object({
   ...params,
   body: object({
-    availability: nativeEnum(Availability, {
+    availability: boolean({
       required_error: 'Availability of the car is required',
     }),
   }),
