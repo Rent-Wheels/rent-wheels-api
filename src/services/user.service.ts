@@ -4,13 +4,13 @@ import PrismaService from './prisma.service'
 
 const prisma = PrismaService
 
-async function findUser(filter: User) {
+async function findUser(filter: Partial<User>) {
   return await prisma.users.findFirst({
     where: filter,
   })
 }
 
-async function findRenter(filter: User) {
+async function findRenter(filter: Partial<User>) {
   return await prisma.users.findFirst({
     where: {
       ...filter,
@@ -28,9 +28,11 @@ async function createUser(userDetails: User) {
   })
 }
 
-async function updateUser({ filter, data }: { filter: User; data: User }) {
+async function updateUser({ id, data }: { id: string; data: User }) {
   return await prisma.users.update({
-    where: filter,
+    where: {
+      id,
+    },
     data,
   })
 }
@@ -63,7 +65,7 @@ async function deleteUser({ role, id }: { role: Roles; id: string }) {
   ])
 }
 
-async function getUserReservationHistory(filter: User) {
+async function getUserReservationHistory(filter: Partial<User>) {
   return await prisma.users.findFirst({
     where: filter,
     select: {
@@ -72,9 +74,11 @@ async function getUserReservationHistory(filter: User) {
   })
 }
 
-async function upgradeToRenter(filter: User) {
+async function upgradeToRenter(id: string) {
   return await prisma.users.update({
-    where: filter,
+    where: {
+      id,
+    },
     data: {
       role: Roles.Renter,
     },

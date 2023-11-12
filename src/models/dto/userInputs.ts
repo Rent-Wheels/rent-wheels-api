@@ -6,7 +6,7 @@ type Media = {
 }
 
 interface User {
-  id?: string
+  id: string
   dob: Date
   email: string
   name: string
