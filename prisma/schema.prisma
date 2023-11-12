@@ -28,7 +28,7 @@ model cars {
   ownerId            String         @db.ObjectId
   maxDuration        Int
   rate               Int
-  plan               Plan
+  plan               String
   availability       Boolean
   media              CarsMedia[]
   durationUnit       DurationUnit
@@ -85,15 +85,10 @@ enum Condition {
   Excellent
 }
 
-enum Plan {
-  Daily
-  Hourly
-}
-
 enum DurationUnit {
-  Days
-  Weeks
-  Months
+  days
+  weeks
+  months
 }
 
 enum CarType {
