@@ -18,7 +18,7 @@ interface User {
 }
 
 interface Reservation {
-  id?: string
+  id: string
   carId: string
   customerId: string
   renterId: string

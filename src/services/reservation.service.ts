@@ -1,182 +1,105 @@
-import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose'
-
-import { findCar } from './car.service'
-import { findUser } from './user.service'
 import { ReservationStatus } from '../models/enums'
+import PrismaService from './prisma.service'
 import { Reservation } from '../models/dto/userInputs'
-import ReservationModel from '../models/reservations.mongo'
+
+const prisma = PrismaService
+
+async function getUserReservations(filter: Reservation) {
+  return await prisma.reservations.findFirst({
+    where: filter,
+    include: {
+      car: true,
+      renter: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          profilePicture: true,
+          placeOfResidence: true,
+        },
+      },
+    },
+  })
+}
+
+async function deleteUserReservations({
+  renterId,
+  customerId,
+}: {
+  renterId?: string
+  customerId?: string
+}) {
+  return await prisma.reservations.deleteMany({
+    where: {
+      renterId,
+      customerId,
+    },
+  })
+}
 
 async function createReservation(reservationDetails: Reservation) {
-  const customer = await findUser({ _id: reservationDetails.customer.id })
-  const car = await findCar({ _id: reservationDetails.car })
-
-  if (!customer || !car) throw new Error('Reservation could not be created')
-
-  const reservation = await (
-    await ReservationModel.create(reservationDetails)
-  ).populate([
-    {
-      path: 'car',
-      select: {
-        _id: 0,
-        __v: 0,
-        owner: 0,
-        rentalHistory: 0,
+  return await prisma.reservations.create({
+    data: reservationDetails,
+    include: {
+      car: true,
+      renter: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          profilePicture: true,
+          placeOfResidence: true,
+        },
       },
     },
-    {
-      path: 'renter',
-      select: {
-        _id: 0,
-        name: 1,
-        email: 1,
-        phoneNumber: 1,
-        profilePicture: 1,
-        placeOfResidence: 1,
-      },
-    },
-  ])
-
-  await customer.addReservation(reservation._id)
-  await car.addReservation(reservation._id)
-
-  return reservation
+  })
 }
 
-async function updateReservationStatus({
-  status,
-  filter,
+async function updateReservationStatus({ id, status }: { id: string; status: ReservationStatus }) {
+  return await prisma.reservations.update({
+    where: {
+      id,
+    },
+    data: {
+      status,
+    },
+    include: {
+      car: true,
+      renter: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true,
+          profilePicture: true,
+          placeOfResidence: true,
+        },
+      },
+    },
+  })
+}
+
+async function updateReservation({
+  id,
+  reservationDetails,
 }: {
-  status: ReservationStatus
-  filter: FilterQuery<Reservation>
+  id: string
+  reservationDetails: Reservation
 }) {
-  const reservation = await ReservationModel.findOne(filter).populate([
-    {
-      path: 'car',
-      select: {
-        _id: 0,
-        __v: 0,
-        owner: 0,
-        rentalHistory: 0,
-      },
+  return await prisma.reservations.update({
+    where: {
+      id,
     },
-    {
-      path: 'renter',
-      select: {
-        _id: 0,
-        name: 1,
-        email: 1,
-        phoneNumber: 1,
-        profilePicture: 1,
-        placeOfResidence: 1,
-      },
-    },
-  ])
-
-  if (!reservation) throw new Error('Reservation does not exist')
-
-  return await reservation.updateStatus(status)
+    data: reservationDetails,
+  })
 }
 
-async function updateReservation(
-  filter: FilterQuery<Reservation>,
-  update: UpdateQuery<Reservation>,
-  options: QueryOptions,
-) {
-  return await ReservationModel.findOneAndUpdate(filter, update, options)
-}
-
-async function deleteReservation(filter: FilterQuery<Reservation>) {
-  const reservation = await ReservationModel.findOne(filter)
-  if (!reservation) throw new Error('Reservation not found')
-
-  const car = await findCar({ _id: reservation.car })
-  const customer = await findUser({ _id: reservation.customer.id })
-
-  if (!customer || !car) throw new Error('Reservation not found')
-
-  await car.removeReservation(reservation._id)
-  await customer.removeReservation(reservation._id)
-
-  return await ReservationModel.findOneAndDelete(filter)
-}
-
-async function getUserReservations(filter: FilterQuery<Reservation>) {
-  const reservations = await ReservationModel.find(filter).populate([
-    {
-      path: 'car',
-      select: {
-        __v: 0,
-        rentalHistory: 0,
-      },
-    },
-    {
-      path: 'renter',
-      select: {
-        _id: 1,
-        name: 1,
-        email: 1,
-        phoneNumber: 1,
-        profilePicture: 1,
-        placeOfResidence: 1,
-      },
-    },
-  ])
-  if (!reservations) throw new Error('User not found')
-
-  return reservations
-}
-
-async function getRenterReservations(filter: FilterQuery<Reservation>) {
-  const reservations = await ReservationModel.find(filter, { 'customer.name': 0 }).populate([
-    {
-      path: 'car',
-      select: {
-        _id: 0,
-        __v: 0,
-        owner: 0,
-        rentalHistory: 0,
-      },
-    },
-    {
-      path: 'customer.id',
-      select: {
-        _id: 0,
-        name: 1,
-        email: 1,
-        phoneNumber: 1,
-        profilePicture: 1,
-        placeOfResidence: 1,
-      },
-    },
-  ])
-  if (!reservations) throw new Error('User not found')
-
-  return reservations
-}
-
-async function renterDeleteReservation(reservationId: string) {
-  const reservation = await ReservationModel.findOne({ _id: reservationId })
-  if (!reservation) throw new Error('Reservation not found')
-
-  const car = await findCar({ _id: reservation.car })
-  if (!car) throw new Error('Reservation not found')
-
-  await reservation.updateStatus(ReservationStatus.Cancelled)
-
-  return await car.removeReservation(reservationId)
-}
-
-async function userDeleteReservation(reservationId: string, userId: string) {
-  const reservation = await ReservationModel.findOne({ _id: reservationId })
-  if (!reservation) throw new Error('Reservation not found')
-
-  const customer = await findUser({ _id: userId })
-  if (!customer) throw new Error('Reservation not found')
-
-  await reservation.updateStatus(ReservationStatus.Cancelled)
-
-  return await customer.removeReservation(reservationId)
+async function deleteReservation(filter: Reservation) {
+  return await prisma.reservations.delete({
+    where: filter,
+  })
 }
 
 export {
@@ -184,8 +107,6 @@ export {
   updateReservation,
   deleteReservation,
   getUserReservations,
-  getRenterReservations,
-  userDeleteReservation,
-  renterDeleteReservation,
+  deleteUserReservations,
   updateReservationStatus,
 }
