@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URL")
+}
+
+type CarsMedia {
+  id       String @map("_id") @db.ObjectId
+  mediaURL String
+}
+
+model cars {
+  id                 String         @id @default(auto()) @map("_id") @db.ObjectId
+  make               String
+  model              String
+  yearOfManufacture  String
+  registrationNumber String         @unique(map: "registrationNumber_1")
+  color              String
+  capacity           Int
+  type               CarType
+  location           String
+  condition          Condition
+  description        String
+  terms              String
+  ownerId            String         @db.ObjectId
+  maxDuration        Int
+  rate               Int
+  plan               Plan
+  availability       Boolean
+  media              CarsMedia[]
+  durationUnit       DurationUnit
+  rentalHistory      reservations[]
+  owner              users          @relation(fields: [ownerId], references: [id])
+}
+
+model reservations {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  carId       String            @db.ObjectId
+  customerId  String            @db.ObjectId
+  renterId    String            @db.ObjectId
+  destination String
+  price       Int
+  returnDate  DateTime          @db.Date
+  startDate   DateTime          @db.Date
+  status      ReservationStatus
+  createdAt   DateTime          @default(now()) @db.Date
+  updatedAt   DateTime          @updatedAt @db.Date
+  car         cars              @relation(fields: [carId], references: [id])
+  renter      users             @relation("Renter", fields: [renterId], references: [id])
+  customer    users             @relation("Customer", fields: [customerId], references: [id])
+}
+
+model users {
+  id                   String         @id @default(auto()) @map("_id") @db.ObjectId
+  dob                  DateTime       @db.Date
+  email                String         @unique(map: "email_1")
+  name                 String
+  phoneNumber          String         @unique(map: "phoneNumber_1")
+  placeOfResidence     String
+  profilePicture       String
+  role                 Int
+  userId               String         @unique(map: "userId_1")
+  cars                 cars[]
+  customerReservations reservations[] @relation("Customer")
+  renterReservations   reservations[] @relation("Renter")
+}
+
+enum ReservationStatus {
+  Paid
+  Pending
+  Ongoing
+  Accepted
+  Declined
+  Cancelled
+  Completed
+}
+
+enum Condition {
+  Good
+  Fair
+  Poor
+  Excellent
+}
+
+enum Plan {
+  Daily
+  Hourly
+}
+
+enum DurationUnit {
+  Days
+  Weeks
+  Months
+}
+
+enum CarType {
+  Bus
+  SUV
+  Van
+  Sedan
+  Pickup
+  Minivan
+  Offroad
+  Hatchback
+  Crossover
+}
