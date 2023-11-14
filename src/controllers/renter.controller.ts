@@ -13,10 +13,10 @@ async function createRenterHandler(
   res: Response,
 ) {
   try {
-    const signUpDetails = req.body as User
-
-    signUpDetails.cars = []
-    signUpDetails.role = Roles.Renter
+    const signUpDetails = {
+      ...req.body,
+      role: Roles.Renter,
+    } as User
 
     const renter = await createUser(signUpDetails)
 
@@ -46,7 +46,7 @@ async function getRenterHandler(req: Request<GetUserInput['params']>, res: Respo
   try {
     let renter = await findRenter({ userId: req.params.userId })
     if (!renter) {
-      renter = await findRenter({ _id: req.params.userId })
+      renter = await findRenter({ id: req.params.userId })
     }
     return res.status(200).json(renter)
   } catch (e: any) {
