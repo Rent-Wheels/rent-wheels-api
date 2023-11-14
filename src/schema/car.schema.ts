@@ -4,7 +4,7 @@ import { CarType, Condition, DurationUnit, Plan } from '../models/enums'
 
 const carSchema = {
   body: object({
-    owner: string({
+    ownerId: string({
       required_error: 'Owner Id required',
     }),
     make: string({

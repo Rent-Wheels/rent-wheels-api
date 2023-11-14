@@ -1,15 +1,16 @@
+import { Prisma } from '@prisma/client'
 import { Car } from '../models/dto/userInputs'
 import PrismaService from './prisma.service'
 
 const prisma = PrismaService
 
-async function availableCars(filter: Car) {
+async function availableCars(filter: Prisma.carsWhereInput) {
   return await prisma.cars.findMany({
     where: filter,
   })
 }
 
-async function findCar(filter: Car) {
+async function findCar(filter: Partial<Car>) {
   return await prisma.cars.findFirst({
     where: filter,
   })
@@ -33,13 +34,15 @@ async function updateCar({ carDetails, id }: { carDetails: Car; id: string }) {
   })
 }
 
-async function deleteCar(filter: Car) {
+async function deleteCar(id: string) {
   return await prisma.cars.delete({
-    where: filter,
+    where: {
+      id,
+    },
   })
 }
 
-async function getCarHistory(filter: Car) {
+async function getCarHistory(filter: Partial<Car>) {
   return await prisma.cars.findFirst({
     where: filter,
     select: {
@@ -64,7 +67,7 @@ async function changeAvailability({
   filter,
   availability,
 }: {
-  filter: Car
+  filter: Prisma.carsWhereUniqueInput
   availability: boolean
 }) {
   return await prisma.cars.update({
