@@ -28,10 +28,10 @@ async function createUser(userDetails: User) {
   })
 }
 
-async function updateUser({ id, data }: { id: string; data: User }) {
+async function updateUser({ userId, data }: { userId: string; data: User }) {
   return await prisma.users.update({
     where: {
-      id,
+      userId,
     },
     data,
   })
@@ -74,10 +74,10 @@ async function getUserReservationHistory(filter: Partial<User>) {
   })
 }
 
-async function upgradeToRenter(id: string) {
+async function upgradeToRenter(userId: string) {
   return await prisma.users.update({
     where: {
-      id,
+      userId,
     },
     data: {
       role: Roles.Renter,
