@@ -27,7 +27,11 @@ carsRoute.get('/:carId/history', [requireUser, isRenter], getCarHistoryHandler)
 
 carsRoute.post('/', [requireUser, isRenter, validateInput(createCarSchema)], addCarHandler)
 
-carsRoute.put('/:carId/', [requireUser, isRenter, validateInput(updateCarSchema)], updateCarHandler)
+carsRoute.patch(
+  '/:carId/',
+  [requireUser, isRenter, validateInput(updateCarSchema)],
+  updateCarHandler,
+)
 
 carsRoute.patch(
   '/:carId/availability',

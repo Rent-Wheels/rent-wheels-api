@@ -42,7 +42,7 @@ async function createUserHandler(
 }
 
 async function updateUserHandler(
-  req: Request<UpdateUserInput['params'], Record<string, never>, UpdateUserInput['body']>,
+  req: Request<Record<string, never>, Record<string, never>, UpdateUserInput['body']>,
   res: Response,
 ) {
   try {
