@@ -8,7 +8,6 @@ import {
   createCarSchema,
   deleteCarSchema,
   updateCarSchema,
-  getCarHistorySchema,
   changeCarAvailabilitySchema,
 } from '../schema/car.schema'
 
@@ -24,11 +23,7 @@ import {
 const carsRoute = express.Router()
 
 carsRoute.get('/available', requireUser, availableCarsHandler)
-carsRoute.get(
-  '/:carId/history',
-  [requireUser, isRenter, validateInput(getCarHistorySchema)],
-  getCarHistoryHandler,
-)
+carsRoute.get('/:carId/history', [requireUser, isRenter], getCarHistoryHandler)
 
 carsRoute.post('/', [requireUser, isRenter, validateInput(createCarSchema)], addCarHandler)
 

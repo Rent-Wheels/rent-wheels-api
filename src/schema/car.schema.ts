@@ -84,10 +84,6 @@ const deleteCarSchema = object({
   ...params,
 })
 
-const getCarHistorySchema = object({
-  ...params,
-})
-
 const changeCarAvailabilitySchema = object({
   ...params,
   body: object({
@@ -100,18 +96,15 @@ const changeCarAvailabilitySchema = object({
 type CreateCarInput = TypeOf<typeof createCarSchema>
 type UpdateCarInput = TypeOf<typeof updateCarSchema>
 type DeleteCarInput = TypeOf<typeof deleteCarSchema>
-type GetCarHistoryInput = TypeOf<typeof getCarHistorySchema>
 type ChangeCarAvailabilityInput = TypeOf<typeof changeCarAvailabilitySchema>
 
 export {
   createCarSchema,
   updateCarSchema,
   deleteCarSchema,
-  getCarHistorySchema,
   changeCarAvailabilitySchema,
   CreateCarInput,
   UpdateCarInput,
   DeleteCarInput,
-  GetCarHistoryInput,
   ChangeCarAvailabilityInput,
 }
