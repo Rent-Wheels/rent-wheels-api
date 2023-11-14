@@ -1,11 +1,12 @@
 import { ReservationStatus } from '../models/enums'
 import PrismaService from './prisma.service'
 import { Reservation } from '../models/dto/userInputs'
+import { Prisma } from '@prisma/client'
 
 const prisma = PrismaService
 
-async function getUserReservations(filter: Reservation) {
-  return await prisma.reservations.findFirst({
+async function getUserReservations(filter: Partial<Reservation>) {
+  return await prisma.reservations.findMany({
     where: filter,
     include: {
       car: true,
@@ -96,7 +97,7 @@ async function updateReservation({
   })
 }
 
-async function deleteReservation(filter: Reservation) {
+async function deleteReservation(filter: Prisma.reservationsWhereUniqueInput) {
   return await prisma.reservations.delete({
     where: filter,
   })

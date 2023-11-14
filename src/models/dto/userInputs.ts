@@ -24,8 +24,8 @@ interface Reservation {
   renterId: string
   destination: string
   price: number
-  returnDate: string
-  startDate: string
+  returnDate: Date
+  startDate: Date
   status: ReservationStatus
 }
 

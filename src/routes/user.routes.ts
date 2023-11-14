@@ -3,15 +3,7 @@ import express from 'express'
 import requireUser from '../middleware/requireUser'
 import validateInput from '../middleware/validateInput'
 
-import {
-  getUserSchema,
-  createUserSchema,
-  deleteUserSchema,
-  updateUserSchema,
-  upgradeUserSchema,
-  getUserReservationHistorySchema,
-  clearUserReservationHistorySchema,
-} from '../schema/user.schema'
+import { getUserSchema, createUserSchema, updateUserSchema } from '../schema/user.schema'
 
 import {
   getUserHandler,
@@ -26,26 +18,14 @@ import {
 const userRoute = express.Router()
 
 userRoute.get('/:userId', [requireUser, validateInput(getUserSchema)], getUserHandler)
-userRoute.get(
-  '/:userId/reservations/history',
-  [requireUser, validateInput(getUserReservationHistorySchema)],
-  getUserReservationHistoryHandler,
-)
+userRoute.get('/reservations/history', requireUser, getUserReservationHistoryHandler)
 
 userRoute.post('/', validateInput(createUserSchema), createUserHandler)
 
-userRoute.patch('/:userId/', [requireUser, validateInput(updateUserSchema)], updateUserHandler)
-userRoute.patch(
-  '/:userId/upgrade',
-  [requireUser, validateInput(upgradeUserSchema)],
-  upgradeToRenterHandler,
-)
+userRoute.patch('/', [requireUser, validateInput(updateUserSchema)], updateUserHandler)
+userRoute.patch('/upgrade', requireUser, upgradeToRenterHandler)
 
-userRoute.delete('/:userId/', [requireUser, validateInput(deleteUserSchema)], deleteUserHandler)
-userRoute.delete(
-  '/:userId/reservations/history',
-  [requireUser, validateInput(clearUserReservationHistorySchema)],
-  clearUserReservationHistoryHandler,
-)
+userRoute.delete('/', requireUser, deleteUserHandler)
+userRoute.delete('/reservations/history', requireUser, clearUserReservationHistoryHandler)
 
 export default userRoute

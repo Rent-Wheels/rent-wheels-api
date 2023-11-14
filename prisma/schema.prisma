@@ -45,7 +45,7 @@ model reservations {
   price       Int
   returnDate  DateTime          @db.Date
   startDate   DateTime          @db.Date
-  status      ReservationStatus
+  status      ReservationStatus @default(Pending)
   createdAt   DateTime          @default(now()) @db.Date
   updatedAt   DateTime          @updatedAt @db.Date
   car         cars              @relation(fields: [carId], references: [id])

@@ -1,10 +1,8 @@
-import { FilterQuery } from 'mongoose'
+import { Prisma } from '@prisma/client'
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
 import { Car } from '../models/dto/userInputs'
-import { findUser } from '../services/user.service'
-import { Availability } from '../models/enums'
 
 import {
   CreateCarInput,
@@ -25,11 +23,11 @@ import {
 
 async function availableCarsHandler(req: Request, res: Response) {
   try {
-    let filter: FilterQuery<Car> = { availability: true }
+    const location = req.query.location as string | undefined
+    let filter: Prisma.carsWhereInput = { availability: true }
 
-    if (req.query.location) {
-      const location = new RegExp(req.query.location as string, 'i')
-      filter = { availability: true, location }
+    if (location) {
+      filter = { availability: true, location: { contains: location } }
     }
 
     const cars = await availableCars(filter)
@@ -45,12 +43,14 @@ async function addCarHandler(
 ) {
   try {
     const user = res.locals.user
-    const carDetails = req.body as Car
-    carDetails.availability = Availability.Available
+    const carDetails = {
+      ...req.body,
+      availability: true,
+    } as Car
 
-    if (carDetails.owner !== user._id.toString()) return res.sendStatus(400)
+    if (carDetails.ownerId !== user.id.toString()) return res.sendStatus(400)
 
-    const car = await addCar({ carDetails, userId: user._id })
+    const car = await addCar({ carDetails, userId: user.id })
 
     return res.status(201).json(car)
   } catch (e: any) {
@@ -69,13 +69,13 @@ async function updateCarHandler(
     const userId = res.locals.user._id
     const carDetails = req.body as Car
 
-    const car = await findCar({ _id: carId })
+    const car = await findCar({ id: carId })
 
     if (!car) return res.sendStatus(404)
 
-    if (carDetails.owner !== userId.toString()) return res.sendStatus(403)
+    if (carDetails.ownerId !== userId.toString()) return res.sendStatus(403)
 
-    const updatedCar = await updateCar({ _id: carId }, carDetails, { new: true })
+    const updatedCar = await updateCar({ carDetails, id: carId })
 
     return res.status(200).json(updatedCar)
   } catch (e: any) {
@@ -91,18 +91,12 @@ async function deleteCarHandler(
 ) {
   try {
     const carId = req.params.carId
-    const owner = res.locals.user._id
-    const car = await findCar({ _id: carId, owner })
+    const ownerId = res.locals.user._id
+    const car = await findCar({ id: carId, ownerId })
 
     if (!car) return res.sendStatus(404)
 
-    const ownerDetails = await findUser({ _id: car.owner })
-
-    if (!ownerDetails) return res.sendStatus(404)
-
-    await ownerDetails.removeCar(car._id.toString())
-
-    await deleteCar({ _id: carId })
+    await deleteCar(carId)
 
     return res.sendStatus(200)
   } catch (e: any) {
@@ -118,12 +112,12 @@ async function getCarHistoryHandler(
 ) {
   try {
     const carId = req.params.carId
-    const owner = res.locals.user._id
-    const car = await findCar({ _id: carId })
+    const ownerId = res.locals.user.id
+    const car = await findCar({ id: carId })
 
     if (!car) return res.sendStatus(404)
 
-    const history = await getCarHistory({ _id: carId, owner })
+    const history = await getCarHistory({ id: carId, ownerId })
     if (!history) return res.sendStatus(404)
 
     return res.status(200).json(history)
@@ -144,10 +138,10 @@ async function changeAvailabilityHandler(
 ) {
   try {
     const carId = req.params.carId
-    const owner = res.locals.user._id
-    const availability: Availability = req.body.availability
+    const ownerId = res.locals.user._id
+    const availability = req.body.availability
 
-    const updatedCar = await changeAvailability({ filter: { _id: carId, owner }, availability })
+    const updatedCar = await changeAvailability({ filter: { id: carId, ownerId }, availability })
 
     return res.status(200).json(updatedCar)
   } catch (e: any) {
