@@ -6,7 +6,6 @@ import {
   createReservationSchema,
   deleteReservationSchema,
   updateReservationSchema,
-  getUserReservationSchema,
   updateReservationStatusSchema,
 } from '../schema/reservation.schema'
 import {
@@ -19,11 +18,7 @@ import {
 
 const reservationRoute = express.Router()
 
-reservationRoute.get(
-  '/',
-  [requireUser, validateInput(getUserReservationSchema)],
-  getUserReservationsHandler,
-)
+reservationRoute.get('/', requireUser, getUserReservationsHandler)
 
 reservationRoute.post(
   '/',

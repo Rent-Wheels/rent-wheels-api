@@ -36,13 +36,6 @@ const params = {
   }),
 }
 
-const userParams = {
-  query: object({
-    userId: string({}).optional(),
-    renterId: string({}).optional(),
-  }),
-}
-
 const createReservationSchema = object({
   ...reservationSchema,
 })
@@ -65,25 +58,18 @@ const deleteReservationSchema = object({
   ...params,
 })
 
-const getUserReservationSchema = object({
-  ...userParams,
-})
-
 type CreateReservationInput = TypeOf<typeof createReservationSchema>
 type UpdateReservationInput = TypeOf<typeof updateReservationSchema>
 type DeleteReservationInput = TypeOf<typeof deleteReservationSchema>
-type GetUserReservationInput = TypeOf<typeof getUserReservationSchema>
 type UpdateReservationStatusInput = TypeOf<typeof updateReservationStatusSchema>
 
 export {
   createReservationSchema,
   updateReservationSchema,
   deleteReservationSchema,
-  getUserReservationSchema,
   updateReservationStatusSchema,
   CreateReservationInput,
   UpdateReservationInput,
   DeleteReservationInput,
-  GetUserReservationInput,
   UpdateReservationStatusInput,
 }
