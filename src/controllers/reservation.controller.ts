@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 
 import log from '../util/logger'
-import { ReservationStatus, Roles } from '../models/enums'
+import { Roles } from '../models/enums'
 import { Reservation } from '../models/dto/userInputs'
 
 import {
@@ -9,16 +9,12 @@ import {
   deleteReservation,
   updateReservation,
   getUserReservations,
-  getRenterReservations,
-  userDeleteReservation,
   updateReservationStatus,
-  renterDeleteReservation,
 } from '../services/reservation.service'
 
 import {
   CreateReservationInput,
   DeleteReservationInput,
-  GetUserReservationInput,
   UpdateReservationInput,
   UpdateReservationStatusInput,
 } from '../schema/reservation.schema'
@@ -29,7 +25,6 @@ async function createReservationHandler(
 ) {
   try {
     const reservationDetails = req.body as Reservation
-    reservationDetails.status = ReservationStatus.Pending
     const reservation = await createReservation(reservationDetails)
 
     return res.status(201).json(reservation)
@@ -54,7 +49,7 @@ async function updateReservationStatusHandler(
 
     const updatedReservation = await updateReservationStatus({
       status,
-      filter: { _id: reservationId },
+      id: reservationId,
     })
 
     return res.status(200).json(updatedReservation)
@@ -74,12 +69,10 @@ async function updateReservationHandler(
   res: Response,
 ) {
   try {
-    const reservationUpdate = req.body as Reservation
+    const reservationDetails = req.body as Reservation
     const reservationId = req.params.reservationId
 
-    const updatedReservation = await updateReservation({ _id: reservationId }, reservationUpdate, {
-      new: true,
-    })
+    const updatedReservation = await updateReservation({ id: reservationId, reservationDetails })
 
     return res.status(200).json(updatedReservation)
   } catch (e: any) {
@@ -89,25 +82,13 @@ async function updateReservationHandler(
   }
 }
 
-async function getUserReservationsHandler(
-  req: Request<
-    Record<never, never>,
-    Record<never, never>,
-    Record<never, never>,
-    GetUserReservationInput['query']
-  >,
-  res: Response,
-) {
+async function getUserReservationsHandler(_req: Request, res: Response) {
   try {
-    const userId = req.query.userId
-    const renterId = req.query.renterId
+    const { id } = res.locals.user
 
-    if (res.locals.user._id.toString() !== userId && res.locals.user._id.toString() !== renterId)
-      return res.sendStatus(403)
-
-    let reservations
-    if (userId) reservations = await getUserReservations({ 'customer.id': userId })
-    else reservations = await getRenterReservations({ renter: renterId })
+    const reservations =
+      (await getUserReservations({ customerId: id })) ??
+      (await getUserReservations({ renterId: id }))
 
     return res.status(200).json(reservations)
   } catch (e) {
@@ -122,16 +103,12 @@ async function deleteReservationHandler(
   res: Response,
 ) {
   try {
-    const user = res.locals.user
-    const reservationId = req.params.reservationId
+    const { role, id } = res.locals.user
+    const { reservationId } = req.params
 
-    if (user.role === Roles.User) {
-      await userDeleteReservation(reservationId, user._id)
-    } else if (user.role === Roles.Renter) {
-      await renterDeleteReservation(reservationId)
-    } else {
-      await deleteReservation({ _id: reservationId })
-    }
+    role === Roles.User
+      ? await deleteReservation({ id: reservationId, customerId: id })
+      : await deleteReservation({ id: reservationId, renterId: id })
 
     return res.sendStatus(200)
   } catch (e: any) {
