@@ -10,6 +10,17 @@ async function findUser(filter: Partial<User>) {
   })
 }
 
+async function getRenters() {
+  return await prisma.users.findMany({
+    where: {
+      role: Roles.Renter,
+    },
+    include: {
+      cars: true,
+    },
+  })
+}
+
 async function findRenter(filter: Partial<User>) {
   return await prisma.users.findFirst({
     where: {
@@ -91,6 +102,7 @@ export {
   createUser,
   updateUser,
   deleteUser,
+  getRenters,
   upgradeToRenter,
   getUserReservationHistory,
 }

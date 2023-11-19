@@ -2,7 +2,15 @@ import { TypeOf, array, coerce, nativeEnum, object, optional, string } from 'zod
 
 import { Roles } from '../models/enums'
 
-const userSchema = {
+const params = {
+  params: object({
+    userId: string({
+      required_error: 'User id required',
+    }),
+  }),
+}
+
+const createUserSchema = object({
   body: object({
     userId: string({
       required_error: 'UserId is required',
@@ -30,22 +38,21 @@ const userSchema = {
     reservations: optional(array(string())),
     cars: array(string()).optional(),
   }),
-}
-
-const params = {
-  params: object({
-    userId: string({
-      required_error: 'User id required',
-    }),
-  }),
-}
-
-const createUserSchema = object({
-  ...userSchema,
 })
 
 const updateUserSchema = object({
-  ...userSchema,
+  body: object({
+    name: string({}).optional(),
+    email: string({}).email('Invalid email address').optional(),
+    dob: coerce.date({}).optional(),
+    phoneNumber: string({}).optional(),
+    profilePicture: string({}).optional(),
+    placeOfResidence: string({}).optional(),
+    role: nativeEnum(Roles).optional(),
+    identificationCard: string().optional(),
+    reservations: optional(array(string())),
+    cars: array(string()).optional(),
+  }),
 })
 
 const getUserSchema = object({

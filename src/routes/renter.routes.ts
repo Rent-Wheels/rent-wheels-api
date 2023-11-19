@@ -7,10 +7,12 @@ import {
   createRenterHandler,
   getRenterCarsHandler,
   getRenterHandler,
+  getRentersHandler,
 } from '../controllers/renter.controller'
 
 const renterRoute = express.Router()
 
+renterRoute.get('/', getRentersHandler)
 renterRoute.post('/', validateInput(createUserSchema), createRenterHandler)
 renterRoute.get('/:userId/', requireUser, validateInput(getUserSchema), getRenterHandler)
 renterRoute.get('/:userId/cars', requireUser, validateInput(getUserSchema), getRenterCarsHandler)
