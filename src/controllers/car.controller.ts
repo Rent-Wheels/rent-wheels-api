@@ -30,6 +30,8 @@ async function availableCarsHandler(req: Request, res: Response) {
       filter = { availability: true, location: { contains: location } }
     }
 
+    console.log(filter)
+
     const cars = await availableCars(filter)
     return res.status(200).json(cars)
   } catch (e: any) {

@@ -5,8 +5,19 @@ import log from '../util/logger'
 import { Roles } from '../models/enums'
 import { User } from '../models/dto/userInputs'
 import { getRenterCars } from '../services/renter.service'
-import { createUser, findRenter } from '../services/user.service'
+import { createUser, findRenter, getRenters } from '../services/user.service'
 import { CreateUserInput, GetUserInput } from '../schema/user.schema'
+
+async function getRentersHandler(_req: Request, res: Response) {
+  try {
+    const renters = await getRenters()
+
+    return res.status(200).json(renters)
+  } catch (e: any) {
+    log.error(e)
+    return res.status(400).json(e)
+  }
+}
 
 async function createRenterHandler(
   req: Request<Record<string, never>, Record<string, never>, CreateUserInput['body']>,
@@ -34,7 +45,7 @@ async function getRenterCarsHandler(req: Request<GetUserInput['params']>, res: R
   try {
     const cars = await getRenterCars(req.params.userId)
 
-    return res.status(200).json(cars)
+    return res.status(200).json(cars?.cars)
   } catch (e: any) {
     log.error(e)
 
@@ -44,16 +55,14 @@ async function getRenterCarsHandler(req: Request<GetUserInput['params']>, res: R
 
 async function getRenterHandler(req: Request<GetUserInput['params']>, res: Response) {
   try {
-    let renter = await findRenter({ userId: req.params.userId })
-    if (!renter) {
-      renter = await findRenter({ id: req.params.userId })
-    }
+    const renter =
+      (await findRenter({ userId: req.params.userId })) ??
+      (await findRenter({ id: req.params.userId }))
+    if (!renter) return res.sendStatus(404)
     return res.status(200).json(renter)
   } catch (e: any) {
-    log.error(e)
-
-    return res.status(404).json('Renter not found')
+    return log.error(e)
   }
 }
 
-export { createRenterHandler, getRenterCarsHandler, getRenterHandler }
+export { createRenterHandler, getRenterCarsHandler, getRenterHandler, getRentersHandler }

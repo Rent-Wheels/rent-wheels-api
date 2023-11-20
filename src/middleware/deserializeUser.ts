@@ -26,5 +26,6 @@ export default async function deserializeUser(req: Request, res: Response, next:
         message: e.message,
       })
     }
+    return res.status(500).json(e)
   }
 }
