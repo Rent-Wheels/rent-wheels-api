@@ -48,7 +48,9 @@ async function updateUserHandler(
   try {
     const { userId } = res.locals.user
 
-    const userDetails = req.body as User
+    const { dob } = req.body
+
+    const userDetails = { ...req.body, dob: new Date(dob as string) } as User
 
     const updatedUser = await updateUser({ userId, data: userDetails })
 

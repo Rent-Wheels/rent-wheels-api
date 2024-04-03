@@ -8,7 +8,15 @@ const prisma = PrismaService
 async function getUserReservations(filter: Partial<Reservation>) {
   return await prisma.reservations.findMany({
     where: filter,
-    include: {
+    select: {
+      id: true,
+      destination: true,
+      price: true,
+      returnDate: true,
+      startDate: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
       car: true,
       renter: {
         select: {
@@ -18,6 +26,12 @@ async function getUserReservations(filter: Partial<Reservation>) {
           phoneNumber: true,
           profilePicture: true,
           placeOfResidence: true,
+        },
+      },
+      customer: {
+        select: {
+          id: true,
+          name: true,
         },
       },
     },

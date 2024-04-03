@@ -24,7 +24,12 @@ async function createReservationHandler(
   res: Response,
 ) {
   try {
-    const reservationDetails = req.body as Reservation
+    const { startDate, returnDate } = req.body
+    const reservationDetails = {
+      ...req.body,
+      startDate: new Date(startDate),
+      returnDate: new Date(returnDate),
+    } as Reservation
     const reservation = await createReservation(reservationDetails)
 
     return res.status(201).json(reservation)
@@ -69,7 +74,12 @@ async function updateReservationHandler(
   res: Response,
 ) {
   try {
-    const reservationDetails = req.body as Reservation
+    const { startDate, returnDate } = req.body
+    const reservationDetails = {
+      ...req.body,
+      startDate: new Date(startDate),
+      returnDate: new Date(returnDate),
+    } as Reservation
     const reservationId = req.params.reservationId
 
     const updatedReservation = await updateReservation({ id: reservationId, reservationDetails })

@@ -1,4 +1,4 @@
-import { TypeOf, coerce, nativeEnum, number, object, string } from 'zod'
+import { TypeOf, nativeEnum, number, object, string } from 'zod'
 
 import { ReservationStatus } from '../models/enums'
 
@@ -19,10 +19,10 @@ const reservationSchema = {
     price: number({
       required_error: 'Price is required',
     }),
-    startDate: coerce.date({
+    startDate: string({
       required_error: 'Start Date is required',
     }),
-    returnDate: coerce.date({
+    returnDate: string({
       required_error: 'Return Date is required',
     }),
   }),

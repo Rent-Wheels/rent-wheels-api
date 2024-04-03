@@ -44,7 +44,7 @@ const updateUserSchema = object({
   body: object({
     name: string({}).optional(),
     email: string({}).email('Invalid email address').optional(),
-    dob: coerce.date({}).optional(),
+    dob: string().optional(),
     phoneNumber: string({}).optional(),
     profilePicture: string({}).optional(),
     placeOfResidence: string({}).optional(),
