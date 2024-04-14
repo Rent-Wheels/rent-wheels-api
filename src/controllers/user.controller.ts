@@ -21,7 +21,7 @@ async function createUserHandler(
   res: Response,
 ) {
   try {
-    const signUpDetails = req.body as User
+    const signUpDetails = { ...req.body, dob: new Date(req.body.dob) } as User
 
     signUpDetails.role = Roles.User
 
