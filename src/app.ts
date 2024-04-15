@@ -8,7 +8,7 @@ import deserializeUser from './middleware/deserializeUser'
 const app: Express = express()
 
 app.use(helmet())
-app.use(morgan('dev'))
+app.use(morgan('combined'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(deserializeUser)
